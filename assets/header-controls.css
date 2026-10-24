@@ -1,4 +1,3 @@
-
 .header-actions {
     position: relative;
 }
@@ -192,6 +191,7 @@
 }
 
 @media (max-width: 760px) {
+
     .header-search-panel,
     .header-notifications-panel {
         position: fixed;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -11,12 +12,12 @@ function render_dashboard(PDO $pdo, array $user): string
     $name = user_display($user);
 
     ob_start();
-    ?>
+?>
     <section class="welcome dashboard-welcome">
         <div>
             <span class="eyebrow">Academic year 2026–2027</span>
             <h2><?= $role === 'employee' ? 'Welcome back, ' : 'Good morning, ' ?><?= h($name) ?>.</h2>
-            
+
         </div>
         <div class="welcome-actions">
             <?php if ($role === 'admin'): ?>
@@ -185,8 +186,7 @@ function render_dashboard(PDO $pdo, array $user): string
                         class="dashboard-competency-donut<?= $competencyTotal === 0 ? ' is-empty' : '' ?>"
                         style="--target-percent: <?= $competencyTargetPercent ?>%; width:4.6rem; height:4.6rem; min-width:4.6rem; min-height:4.6rem; flex:0 0 4.6rem; display:grid; place-items:center; position:relative; border-radius:50%; background:<?= $competencyTotal > 0 ? 'conic-gradient(#237a57 0 ' . $competencyTargetPercent . '%, #d4af37 ' . $competencyTargetPercent . '% 100%)' : '#e9e7e2' ?>;"
                         role="img"
-                        aria-label="<?= $competencyTargetPercent ?> percent of assessed competencies are at target"
-                    >
+                        aria-label="<?= $competencyTargetPercent ?> percent of assessed competencies are at target">
                         <span aria-hidden="true" style="position:absolute; inset:.62rem; border-radius:50%; background:#fff;"></span>
                         <div class="dashboard-competency-donut-center" style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; line-height:1.15;">
                             <strong><?= $competencyTotal > 0 ? $competencyTargetPercent . '%' : '—' ?></strong>
@@ -308,6 +308,6 @@ function render_dashboard(PDO $pdo, array $user): string
             </section>
         </div>
     <?php endif; ?>
-    <?php
+<?php
     return (string) ob_get_clean();
 }

@@ -1,7 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
-function render_profile(PDO $pdo, array $user): string {
+function render_profile(PDO $pdo, array $user): string
+{
     if (in_array($user['role'], ['employee', 'trainer'], true)) {
         $id = (int)($user['employee_id'] ?? 0);
 
@@ -43,16 +45,18 @@ function render_profile(PDO $pdo, array $user): string {
             . section_head('Contact & employment', 'Personal and workplace details')
             . '<div class="sample-records">';
 
-        foreach ([
-            'Employee ID' => $employee['employee_code'],
-            'Email' => $employee['email'],
-            'Phone' => $employee['phone'],
-            'Department' => $employee['department'],
-            'Job title' => $employee['job_title'],
-            'Specialization' => $employee['specialization'],
-            'Hire date' => $employee['hire_date'],
-            'Employment status' => $employee['employment_status']
-        ] as $label => $value) {
+        foreach (
+            [
+                'Employee ID' => $employee['employee_code'],
+                'Email' => $employee['email'],
+                'Phone' => $employee['phone'],
+                'Department' => $employee['department'],
+                'Job title' => $employee['job_title'],
+                'Specialization' => $employee['specialization'],
+                'Hire date' => $employee['hire_date'],
+                'Employment status' => $employee['employment_status']
+            ] as $label => $value
+        ) {
             $html .= '<div><span class="small-muted">'
                 . h($label)
                 . '</span><span><b>'
@@ -130,7 +134,7 @@ function render_profile(PDO $pdo, array $user): string {
             . '</div>'
             . '</form></section></div></div>';
 
-      
+
 
         $html .= '<script>
 (function () {
@@ -245,17 +249,19 @@ function render_profile(PDO $pdo, array $user): string {
             . section_head('Contact & employment', 'Personal and workplace details')
             . '<div class="sample-records">';
 
-        foreach ([
-            'Employee ID' => $employee['employee_code'],
-            'Email' => $employee['email'],
-            'Phone' => $employee['phone'],
-            'Department' => $employee['department'],
-            'Job title' => $employee['job_title'],
-            'Specialization' => $employee['specialization'],
-            'Hire date' => $employee['hire_date'],
-            'Employment status' => $employee['employment_status'],
-            'Account type' => $roleLabel
-        ] as $label => $value) {
+        foreach (
+            [
+                'Employee ID' => $employee['employee_code'],
+                'Email' => $employee['email'],
+                'Phone' => $employee['phone'],
+                'Department' => $employee['department'],
+                'Job title' => $employee['job_title'],
+                'Specialization' => $employee['specialization'],
+                'Hire date' => $employee['hire_date'],
+                'Employment status' => $employee['employment_status'],
+                'Account type' => $roleLabel
+            ] as $label => $value
+        ) {
             $html .= '<div><span class="small-muted">'
                 . h($label)
                 . '</span><span><b>'
@@ -303,20 +309,20 @@ function render_profile(PDO $pdo, array $user): string {
         $html .= '</section></div>';
 
         if (($employee['account_role'] ?? '') === 'trainer') {
-    $stmt = $pdo->prepare(
-        "SELECT id
+            $stmt = $pdo->prepare(
+                "SELECT id
          FROM users
          WHERE employee_id = ? AND role = 'trainer'
          LIMIT 1"
-    );
-    $stmt->execute([$selectedId]);
-    $trainerUserId = (int)($stmt->fetchColumn() ?: 0);
+            );
+            $stmt->execute([$selectedId]);
+            $trainerUserId = (int)($stmt->fetchColumn() ?: 0);
 
-    $programRows = [];
+            $programRows = [];
 
-    if ($trainerUserId > 0) {
-        $stmt = $pdo->prepare(
-            "SELECT
+            if ($trainerUserId > 0) {
+                $stmt = $pdo->prepare(
+                    "SELECT
                 p.title,
                 p.specialization,
                 p.start_date,
@@ -331,43 +337,43 @@ function render_profile(PDO $pdo, array $user): string {
              FROM training_programs p
              WHERE p.trainer_user_id = ?
              ORDER BY p.start_date DESC, p.id DESC"
-        );
+                );
 
-        $stmt->execute([$trainerUserId]);
+                $stmt->execute([$trainerUserId]);
 
-        foreach ($stmt->fetchAll() as $program) {
-            $programRows[] = [
-                h($program['title']),
-                h($program['specialization']),
-                h($program['start_date']),
-                h($program['end_date'] ?: 'Not set'),
-                badge($program['status']),
-                (int)$program['participant_count']
-            ];
-        }
-    }
+                foreach ($stmt->fetchAll() as $program) {
+                    $programRows[] = [
+                        h($program['title']),
+                        h($program['specialization']),
+                        h($program['start_date']),
+                        h($program['end_date'] ?: 'Not set'),
+                        badge($program['status']),
+                        (int)$program['participant_count']
+                    ];
+                }
+            }
 
-    $html .= '<section class="card" style="margin-top:1rem">'
-        . section_head(
-            'Training history',
-            'Training programs assigned to this trainer'
-        )
-        . render_table(
-            [
-                'Training program',
-                'Specialization',
-                'Start date',
-                'End date',
-                'Program status',
-                'Participants'
-            ],
-            $programRows,
-            'No training programs are assigned to this trainer.'
-        )
-        . '</section>';
-} else {
-    $stmt = $pdo->prepare(
-        'SELECT
+            $html .= '<section class="card" style="margin-top:1rem">'
+                . section_head(
+                    'Training history',
+                    'Training programs assigned to this trainer'
+                )
+                . render_table(
+                    [
+                        'Training program',
+                        'Specialization',
+                        'Start date',
+                        'End date',
+                        'Program status',
+                        'Participants'
+                    ],
+                    $programRows,
+                    'No training programs are assigned to this trainer.'
+                )
+                . '</section>';
+        } else {
+            $stmt = $pdo->prepare(
+                'SELECT
             p.title,
             p.start_date,
             r.status AS registration_status,
@@ -381,46 +387,46 @@ function render_profile(PDO $pdo, array $user): string {
         LEFT JOIN certificates c ON c.registration_id = r.id
         WHERE r.employee_id = ?
         ORDER BY p.start_date DESC, r.id DESC'
-    );
+            );
 
-    $stmt->execute([$selectedId]);
-    $trainingRecords = $stmt->fetchAll();
-    $trainingRows = [];
+            $stmt->execute([$selectedId]);
+            $trainingRecords = $stmt->fetchAll();
+            $trainingRows = [];
 
-    foreach ($trainingRecords as $record) {
-        $score = $record['score'] !== null
-            ? number_format((float)$record['score'], 1) . '%'
-            : 'Pending';
+            foreach ($trainingRecords as $record) {
+                $score = $record['score'] !== null
+                    ? number_format((float)$record['score'], 1) . '%'
+                    : 'Pending';
 
-        $trainingRows[] = [
-            h($record['title']),
-            h($record['start_date']),
-            h($record['registration_status']),
-            h($record['attendance_status'] ?: 'Not recorded'),
-            h($score),
-            h($record['certificate_code'] ?: 'Not issued')
-        ];
-    }
+                $trainingRows[] = [
+                    h($record['title']),
+                    h($record['start_date']),
+                    h($record['registration_status']),
+                    h($record['attendance_status'] ?: 'Not recorded'),
+                    h($score),
+                    h($record['certificate_code'] ?: 'Not issued')
+                ];
+            }
 
-    $html .= '<section class="card" style="margin-top:1rem">'
-        . section_head(
-            'Training history',
-            'Programs, attendance, assessment results, and certificates'
-        )
-        . render_table(
-            [
-                'Training program',
-                'Start date',
-                'Registration status',
-                'Attendance',
-                'Assessment score',
-                'Certificate'
-            ],
-            $trainingRows,
-            'No training history has been recorded for this employee.'
-        )
-        . '</section>';
-}
+            $html .= '<section class="card" style="margin-top:1rem">'
+                . section_head(
+                    'Training history',
+                    'Programs, attendance, assessment results, and certificates'
+                )
+                . render_table(
+                    [
+                        'Training program',
+                        'Start date',
+                        'Registration status',
+                        'Attendance',
+                        'Assessment score',
+                        'Certificate'
+                    ],
+                    $trainingRows,
+                    'No training history has been recorded for this employee.'
+                )
+                . '</section>';
+        }
 
         return $html;
     }
@@ -432,8 +438,8 @@ function render_profile(PDO $pdo, array $user): string {
         'Employee Profiles',
         '',
         '<a class="btn" href="employees.php#add-employee">'
-        . icon('plus')
-        . ' Add employee</a>'
+            . icon('plus')
+            . ' Add employee</a>'
     );
 
     $html .= '<section class="card" style="margin-bottom:1rem">'
@@ -512,20 +518,20 @@ function render_profile(PDO $pdo, array $user): string {
 
         $rows[] = [
             '<div class="person-cell"><span class="avatar">'
-            . h(initials($name))
-            . '</span><span><b>'
-            . h($name)
-            . '</b><small>'
-            . h($employee['employee_code'])
-            . '</small></span></div>',
+                . h(initials($name))
+                . '</span><span><b>'
+                . h($name)
+                . '</b><small>'
+                . h($employee['employee_code'])
+                . '</small></span></div>',
             h($employee['department']),
             h($employee['job_title']),
             h($employee['specialization']),
             h($roleLabel),
             badge($employee['employment_status']),
             '<div class="table-actions"><a class="btn btn-ghost" href="?employee_id='
-            . (int)$employee['id']
-            . '">View Profile</a></div>'
+                . (int)$employee['id']
+                . '">View Profile</a></div>'
         ];
     }
 

@@ -1,7 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
-function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $content): void {
+function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $content): void
+{
     $role = $user['role'];
     $name = user_display($user);
     $roleText = $role === 'admin' ? 'HR MANAGEMENT' : ($role === 'employee' ? 'FACULTY PORTAL' : 'TRAINER PORTAL');
@@ -147,7 +149,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                    OR a.attendance_status IS NULL
                    OR a.attendance_status = ''
                )"
-            . $trainerCondition
+                . $trainerCondition
         );
         $stmt->execute($trainerParams);
 
@@ -166,7 +168,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
              WHERE r.status <> 'Withdrawn'
                AND p.start_date <= CURDATE()
                AND ev.id IS NULL"
-            . $trainerCondition
+                . $trainerCondition
         );
         $stmt->execute($trainerParams);
 
@@ -205,7 +207,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
              WHERE p.start_date >= CURDATE()
                AND p.start_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
                AND p.status IN ('Upcoming', 'Ongoing')"
-            . $trainerCondition
+                . $trainerCondition
         );
         $stmt->execute($trainerParams);
 
@@ -246,422 +248,419 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
         ? 'Account settings'
         : ($role === 'employee' ? 'My profile' : 'My training programs');
 
-    ?>
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#800000">
-<title><?=h($page)?> | Westmead International School</title>
-<link rel="stylesheet" href="<?=h(app_base_url() . '/assets/style.css')?>">
-<link rel="stylesheet" href="<?=h(app_base_url() . '/assets/header-controls.css')?>">
-<link rel="icon" href="<?=h(app_base_url() . '/assets/favicon.svg')?>" type="image/svg+xml">
-</head>
-<body>
-<div class="app-shell">
-<div class="sidebar-wrap" id="sidebar-wrap">
-<aside class="sidebar">
-<div class="side-brand">
-<div class="brand-seal"><span>WIS</span></div>
-<div>
-<b>Westmead International School</b>
-<small>Training &amp; Development</small>
-</div>
-<button class="mobile-close" type="button" id="mobile-close" aria-label="Close menu"><?=icon('close')?></button>
-</div>
-
-<div class="side-role"><?=h($roleText)?></div>
-
-<nav>
-<?php foreach (nav_for($role) as [$label, $ico]): ?>
-<a class="<?=$page === $label ? 'active' : ''?>" href="<?=h(app_page_url($label, $role))?>">
-<?=icon($ico)?>
-<span><?=h($label)?></span>
-</a>
-<?php endforeach; ?>
-</nav>
-
-<div class="side-user">
-<span class="avatar avatar-gold"><?=h($initial)?></span>
-<div>
-<b><?=h($name)?></b>
-<small><?=h(role_label($role))?></small>
-</div>
-<form method="post">
-<input type="hidden" name="csrf_token" value="<?=h(csrf_token())?>">
-<input type="hidden" name="action" value="logout">
-<button title="Sign out" aria-label="Sign out" type="submit"><?=icon('logout')?></button>
-</form>
-</div>
-</aside>
-</div>
-
-<button class="scrim" id="scrim" hidden aria-label="Close menu"></button>
-
-<div class="main-shell">
-<header class="topbar">
-<button class="hamburger" type="button" id="hamburger" aria-label="Open menu"><?=icon('menu')?></button>
-
-<div>
-<span>Workspace / <?=h($headerRole)?></span>
-<h1><?=h($page)?></h1>
-</div>
-
-<div class="header-actions">
-<button
-    class="icon-circle"
-    type="button"
-    id="search-toggle"
-    title="Search"
-    aria-label="Open search"
-    aria-expanded="<?=$globalSearch !== '' ? 'true' : 'false'?>"
-    aria-controls="global-search-panel"
-><?=icon('search')?></button>
-
-<button
-    class="icon-circle notification"
-    type="button"
-    id="notifications-toggle"
-    title="Notifications"
-    aria-label="Open notifications"
-    aria-expanded="false"
-    aria-controls="notifications"
->
-<?=icon('bell')?>
-<?php if ($notificationTotal > 0): ?>
-<i data-notification-indicator></i>
-<span class="header-notification-count" data-notification-total><?=min($notificationTotal, 99)?></span>
-<?php endif; ?>
-</button>
-
-<button
-    class="header-profile"
-    type="button"
-    id="profile-toggle"
-    aria-label="Open account menu"
-    aria-expanded="false"
-    aria-controls="profile-menu"
->
-<span class="avatar"><?=h($initial)?></span>
-<span>
-<?=h($name)?>
-<small><?=h(role_label($role))?></small>
-</span>
-<?=icon('chevron', 14)?>
-</button>
-
-<div id="global-search-panel" class="header-popover header-search-panel" <?=$globalSearch === '' ? 'hidden' : ''?>>
-<h3>Search workspace</h3>
-<p class="popover-subtitle">Find pages, employees, and training programs.</p>
-
-<form method="get" action="<?=h((string)($_SERVER['PHP_SELF'] ?? ''))?>">
-<input
-    class="search-input"
-    type="search"
-    name="global_search"
-    value="<?=h($globalSearch)?>"
-    placeholder="Type a name, page, or program..."
-    autocomplete="off"
-    aria-label="Search the workspace"
->
-<button class="btn" type="submit"><?=icon('search')?> Search</button>
-</form>
-
-<?php if ($globalSearch !== ''): ?>
-<div class="header-search-results">
-<?php if (!$searchResults): ?>
-<p class="popover-empty">No matching pages, employees, or training programs found.</p>
-<?php else: ?>
-<?php foreach ($searchResults as $result): ?>
-<a class="header-search-result" href="<?=h($result['url'])?>">
-<span class="header-result-type"><?=h($result['type'])?></span>
-<b><?=h($result['label'])?></b>
-<small><?=h($result['detail'])?></small>
-</a>
-<?php endforeach; ?>
-<?php endif; ?>
-</div>
-<?php endif; ?>
-</div>
-
-<div id="notifications" class="header-popover header-notifications-panel" hidden>
-<h3>
-Notifications
-<?php if ($notificationTotal > 0): ?>
-<span class="header-notification-count" data-notification-total><?=min($notificationTotal, 99)?></span>
-<?php endif; ?>
-</h3>
-
-<p class="popover-subtitle">Updates based on your current workspace and saved records.</p>
-
-<?php if (!$notifications): ?>
-<p class="popover-empty">You're all caught up. No pending items were found.</p>
-<?php else: ?>
-<?php foreach ($notifications as $notification): ?>
-<?php
-$notificationKey = strtolower(
-    trim(
-        preg_replace('/[^a-z0-9]+/i', '-', $notification['title']),
-        '-'
-    )
-);
 ?>
-<a
-    class="header-notification-item"
-    href="<?=h($notification['url'])?>"
-    data-notification-key="<?=h($notificationKey)?>"
-    data-notification-count="<?=$notification['count']?>"
->
-<b>
-<?=h($notification['title'])?>
-<span class="header-notification-count"><?=min($notification['count'], 99)?></span>
-</b>
-<small><?=h($notification['detail'])?></small>
-</a>
-<?php endforeach; ?>
+    <!doctype html>
+    <html lang="en">
 
-<p class="popover-empty" data-no-visible-notifications hidden>
-You've cleared these notifications for now.
-</p>
-<?php endif; ?>
-</div>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#800000">
+        <title><?= h($page) ?> | Westmead International School</title>
+        <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/style.css') ?>">
+        <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/header-controls.css') ?>">
+        <link rel="icon" href="<?= h(app_base_url() . '/assets/favicon.svg') ?>" type="image/svg+xml">
+    </head>
 
-<div id="profile-menu" class="header-popover header-profile-menu" hidden>
-<div class="account-heading">
-<b><?=h($name)?></b>
-<small><?=h($user['email'] ?? '')?></small>
-<small><?=h(role_label($role))?></small>
-</div>
+    <body>
+        <div class="app-shell">
+            <div class="sidebar-wrap" id="sidebar-wrap">
+                <aside class="sidebar">
+                    <div class="side-brand">
+                        <div class="brand-seal"><span>WIS</span></div>
+                        <div>
+                            <b>Westmead International School</b>
+                            <small>Training &amp; Development</small>
+                        </div>
+                        <button class="mobile-close" type="button" id="mobile-close" aria-label="Close menu"><?= icon('close') ?></button>
+                    </div>
 
-<a class="header-menu-link" href="<?=h(app_page_url($accountPage, $role))?>">
-<?=h($accountLabel)?>
-</a>
+                    <div class="side-role"><?= h($roleText) ?></div>
 
-<form method="post">
-<input type="hidden" name="csrf_token" value="<?=h(csrf_token())?>">
-<input type="hidden" name="action" value="logout">
-<button class="header-menu-link logout" type="submit">Sign out <?=icon('logout', 14)?></button>
-</form>
-</div>
-</div>
-</header>
+                    <nav>
+                        <?php foreach (nav_for($role) as [$label, $ico]): ?>
+                            <a class="<?= $page === $label ? 'active' : '' ?>" href="<?= h(app_page_url($label, $role)) ?>">
+                                <?= icon($ico) ?>
+                                <span><?= h($label) ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </nav>
 
-<main class="<?=h($mainClass)?>">
-<?php if ($flash): ?>
-<div class="notice <?=$flash['type'] === 'error' ? 'error' : ''?>"><?=h($flash['message'])?></div>
-<?php endif; ?>
+                    <div class="side-user">
+                        <span class="avatar avatar-gold"><?= h($initial) ?></span>
+                        <div>
+                            <b><?= h($name) ?></b>
+                            <small><?= h(role_label($role)) ?></small>
+                        </div>
+                        <form method="post">
+                            <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
+                            <input type="hidden" name="action" value="logout">
+                            <button title="Sign out" aria-label="Sign out" type="submit"><?= icon('logout') ?></button>
+                        </form>
+                    </div>
+                </aside>
+            </div>
 
-<?=rewrite_page_links($content, $role)?>
+            <button class="scrim" id="scrim" hidden aria-label="Close menu"></button>
 
-<footer>
-<span>Westmead International School · HR Training &amp; Development System</span>
-<span>Academic year 2026–2027 </span>
-</footer>
-</main>
-</div>
-</div>
+            <div class="main-shell">
+                <header class="topbar">
+                    <button class="hamburger" type="button" id="hamburger" aria-label="Open menu"><?= icon('menu') ?></button>
 
-<script>
-const wrap = document.getElementById('sidebar-wrap');
-const scrim = document.getElementById('scrim');
-const searchToggle = document.getElementById('search-toggle');
-const searchPanel = document.getElementById('global-search-panel');
-const searchInput = searchPanel.querySelector('input[name="global_search"]');
-const notificationsToggle = document.getElementById('notifications-toggle');
-const notificationsPanel = document.getElementById('notifications');
-const profileToggle = document.getElementById('profile-toggle');
-const profileMenu = document.getElementById('profile-menu');
+                    <div>
+                        <span>Workspace / <?= h($headerRole) ?></span>
+                        <h1><?= h($page) ?></h1>
+                    </div>
 
-document.querySelectorAll('form[method=post]').forEach(form => {
-    if (!form.querySelector('[name=return_page]')) {
-        const field = document.createElement('input');
-        field.type = 'hidden';
-        field.name = 'return_page';
-        field.value = <?=json_encode($page, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)?>;
-        form.appendChild(field);
-    }
-});
+                    <div class="header-actions">
+                        <button
+                            class="icon-circle"
+                            type="button"
+                            id="search-toggle"
+                            title="Search"
+                            aria-label="Open search"
+                            aria-expanded="<?= $globalSearch !== '' ? 'true' : 'false' ?>"
+                            aria-controls="global-search-panel"><?= icon('search') ?></button>
 
-function closeHeaderPanels() {
-    searchPanel.hidden = true;
-    notificationsPanel.hidden = true;
-    profileMenu.hidden = true;
+                        <button
+                            class="icon-circle notification"
+                            type="button"
+                            id="notifications-toggle"
+                            title="Notifications"
+                            aria-label="Open notifications"
+                            aria-expanded="false"
+                            aria-controls="notifications">
+                            <?= icon('bell') ?>
+                            <?php if ($notificationTotal > 0): ?>
+                                <i data-notification-indicator></i>
+                                <span class="header-notification-count" data-notification-total><?= min($notificationTotal, 99) ?></span>
+                            <?php endif; ?>
+                        </button>
 
-    searchToggle.setAttribute('aria-expanded', 'false');
-    notificationsToggle.setAttribute('aria-expanded', 'false');
-    profileToggle.setAttribute('aria-expanded', 'false');
-}
+                        <button
+                            class="header-profile"
+                            type="button"
+                            id="profile-toggle"
+                            aria-label="Open account menu"
+                            aria-expanded="false"
+                            aria-controls="profile-menu">
+                            <span class="avatar"><?= h($initial) ?></span>
+                            <span>
+                                <?= h($name) ?>
+                                <small><?= h(role_label($role)) ?></small>
+                            </span>
+                            <?= icon('chevron', 14) ?>
+                        </button>
 
-searchToggle.addEventListener('click', () => {
-    const shouldOpen = searchPanel.hidden;
+                        <div id="global-search-panel" class="header-popover header-search-panel" <?= $globalSearch === '' ? 'hidden' : '' ?>>
+                            <h3>Search workspace</h3>
+                            <p class="popover-subtitle">Find pages, employees, and training programs.</p>
 
-    closeHeaderPanels();
-    searchPanel.hidden = !shouldOpen;
-    searchToggle.setAttribute('aria-expanded', String(shouldOpen));
+                            <form method="get" action="<?= h((string)($_SERVER['PHP_SELF'] ?? '')) ?>">
+                                <input
+                                    class="search-input"
+                                    type="search"
+                                    name="global_search"
+                                    value="<?= h($globalSearch) ?>"
+                                    placeholder="Type a name, page, or program..."
+                                    autocomplete="off"
+                                    aria-label="Search the workspace">
+                                <button class="btn" type="submit"><?= icon('search') ?> Search</button>
+                            </form>
 
-    if (shouldOpen) {
-        searchInput.focus();
-    }
-});
+                            <?php if ($globalSearch !== ''): ?>
+                                <div class="header-search-results">
+                                    <?php if (!$searchResults): ?>
+                                        <p class="popover-empty">No matching pages, employees, or training programs found.</p>
+                                    <?php else: ?>
+                                        <?php foreach ($searchResults as $result): ?>
+                                            <a class="header-search-result" href="<?= h($result['url']) ?>">
+                                                <span class="header-result-type"><?= h($result['type']) ?></span>
+                                                <b><?= h($result['label']) ?></b>
+                                                <small><?= h($result['detail']) ?></small>
+                                            </a>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
 
-notificationsToggle.addEventListener('click', () => {
-    const shouldOpen = notificationsPanel.hidden;
+                        <div id="notifications" class="header-popover header-notifications-panel" hidden>
+                            <h3>
+                                Notifications
+                                <?php if ($notificationTotal > 0): ?>
+                                    <span class="header-notification-count" data-notification-total><?= min($notificationTotal, 99) ?></span>
+                                <?php endif; ?>
+                            </h3>
 
-    closeHeaderPanels();
-    notificationsPanel.hidden = !shouldOpen;
-    notificationsToggle.setAttribute('aria-expanded', String(shouldOpen));
-});
+                            <p class="popover-subtitle">Updates based on your current workspace and saved records.</p>
 
-profileToggle.addEventListener('click', () => {
-    const shouldOpen = profileMenu.hidden;
+                            <?php if (!$notifications): ?>
+                                <p class="popover-empty">You're all caught up. No pending items were found.</p>
+                            <?php else: ?>
+                                <?php foreach ($notifications as $notification): ?>
+                                    <?php
+                                    $notificationKey = strtolower(
+                                        trim(
+                                            preg_replace('/[^a-z0-9]+/i', '-', $notification['title']),
+                                            '-'
+                                        )
+                                    );
+                                    ?>
+                                    <a
+                                        class="header-notification-item"
+                                        href="<?= h($notification['url']) ?>"
+                                        data-notification-key="<?= h($notificationKey) ?>"
+                                        data-notification-count="<?= $notification['count'] ?>">
+                                        <b>
+                                            <?= h($notification['title']) ?>
+                                            <span class="header-notification-count"><?= min($notification['count'], 99) ?></span>
+                                        </b>
+                                        <small><?= h($notification['detail']) ?></small>
+                                    </a>
+                                <?php endforeach; ?>
 
-    closeHeaderPanels();
-    profileMenu.hidden = !shouldOpen;
-    profileToggle.setAttribute('aria-expanded', String(shouldOpen));
-});
+                                <p class="popover-empty" data-no-visible-notifications hidden>
+                                    You've cleared these notifications for now.
+                                </p>
+                            <?php endif; ?>
+                        </div>
 
-document.addEventListener('click', event => {
-    if (
-        !event.target.closest('#global-search-panel') &&
-        !event.target.closest('#search-toggle') &&
-        !event.target.closest('#notifications') &&
-        !event.target.closest('#notifications-toggle') &&
-        !event.target.closest('#profile-menu') &&
-        !event.target.closest('#profile-toggle')
-    ) {
-        closeHeaderPanels();
-    }
-});
+                        <div id="profile-menu" class="header-popover header-profile-menu" hidden>
+                            <div class="account-heading">
+                                <b><?= h($name) ?></b>
+                                <small><?= h($user['email'] ?? '') ?></small>
+                                <small><?= h(role_label($role)) ?></small>
+                            </div>
 
-const dismissedStorageKey = <?=json_encode(
-    'wis-dismissed-header-notifications-' . $role . '-' . (string)($user['id'] ?? '0'),
-    JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
-)?>;
+                            <a class="header-menu-link" href="<?= h(app_page_url($accountPage, $role)) ?>">
+                                <?= h($accountLabel) ?>
+                            </a>
 
-let dismissedNotifications = {};
+                            <form method="post">
+                                <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
+                                <input type="hidden" name="action" value="logout">
+                                <button class="header-menu-link logout" type="submit">Sign out <?= icon('logout', 14) ?></button>
+                            </form>
+                        </div>
+                    </div>
+                </header>
 
-try {
-    dismissedNotifications = JSON.parse(
-        localStorage.getItem(dismissedStorageKey) || '{}'
-    );
+                <main class="<?= h($mainClass) ?>">
+                    <?php if ($flash): ?>
+                        <div class="notice <?= $flash['type'] === 'error' ? 'error' : '' ?>"><?= h($flash['message']) ?></div>
+                    <?php endif; ?>
 
-    if (
-        !dismissedNotifications ||
-        typeof dismissedNotifications !== 'object' ||
-        Array.isArray(dismissedNotifications)
-    ) {
-        dismissedNotifications = {};
-    }
-} catch (error) {
-    dismissedNotifications = {};
-}
+                    <?= rewrite_page_links($content, $role) ?>
 
-const notificationItems = Array.from(
-    document.querySelectorAll('.header-notification-item')
-);
+                    <footer>
+                        <span>Westmead International School · HR Training &amp; Development System</span>
+                        <span>Academic year 2026–2027 </span>
+                    </footer>
+                </main>
+            </div>
+        </div>
 
-const activeNotificationKeys = new Set(
-    notificationItems.map(item => item.dataset.notificationKey)
-);
+        <script>
+            const wrap = document.getElementById('sidebar-wrap');
+            const scrim = document.getElementById('scrim');
+            const searchToggle = document.getElementById('search-toggle');
+            const searchPanel = document.getElementById('global-search-panel');
+            const searchInput = searchPanel.querySelector('input[name="global_search"]');
+            const notificationsToggle = document.getElementById('notifications-toggle');
+            const notificationsPanel = document.getElementById('notifications');
+            const profileToggle = document.getElementById('profile-toggle');
+            const profileMenu = document.getElementById('profile-menu');
 
-Object.keys(dismissedNotifications).forEach(key => {
-    if (!activeNotificationKeys.has(key)) {
-        delete dismissedNotifications[key];
-    }
-});
+            document.querySelectorAll('form[method=post]').forEach(form => {
+                if (!form.querySelector('[name=return_page]')) {
+                    const field = document.createElement('input');
+                    field.type = 'hidden';
+                    field.name = 'return_page';
+                    field.value = <?= json_encode($page, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+                    form.appendChild(field);
+                }
+            });
 
-notificationItems.forEach(item => {
-    const key = item.dataset.notificationKey;
-    const count = Number(item.dataset.notificationCount);
+            function closeHeaderPanels() {
+                searchPanel.hidden = true;
+                notificationsPanel.hidden = true;
+                profileMenu.hidden = true;
 
-    if (Number(dismissedNotifications[key]) === count) {
-        item.hidden = true;
-    } else if (Object.prototype.hasOwnProperty.call(dismissedNotifications, key)) {
-        delete dismissedNotifications[key];
-    }
-});
+                searchToggle.setAttribute('aria-expanded', 'false');
+                notificationsToggle.setAttribute('aria-expanded', 'false');
+                profileToggle.setAttribute('aria-expanded', 'false');
+            }
 
-function saveDismissedNotifications() {
-    try {
-        localStorage.setItem(
-            dismissedStorageKey,
-            JSON.stringify(dismissedNotifications)
-        );
-    } catch (error) {
-    }
-}
+            searchToggle.addEventListener('click', () => {
+                const shouldOpen = searchPanel.hidden;
 
-function updateNotificationTotals() {
-    const visibleItems = notificationItems.filter(item => !item.hidden);
+                closeHeaderPanels();
+                searchPanel.hidden = !shouldOpen;
+                searchToggle.setAttribute('aria-expanded', String(shouldOpen));
 
-    const remainingTotal = visibleItems.reduce((total, item) => {
-        return total + Number(item.dataset.notificationCount || 0);
-    }, 0);
+                if (shouldOpen) {
+                    searchInput.focus();
+                }
+            });
 
-    document.querySelectorAll('[data-notification-total]').forEach(badge => {
-        badge.textContent = String(Math.min(remainingTotal, 99));
-        badge.hidden = remainingTotal === 0;
-    });
+            notificationsToggle.addEventListener('click', () => {
+                const shouldOpen = notificationsPanel.hidden;
 
-    const indicator = document.querySelector('[data-notification-indicator]');
+                closeHeaderPanels();
+                notificationsPanel.hidden = !shouldOpen;
+                notificationsToggle.setAttribute('aria-expanded', String(shouldOpen));
+            });
 
-    if (indicator) {
-        indicator.hidden = remainingTotal === 0;
-    }
+            profileToggle.addEventListener('click', () => {
+                const shouldOpen = profileMenu.hidden;
 
-    const emptyMessage = document.querySelector('[data-no-visible-notifications]');
+                closeHeaderPanels();
+                profileMenu.hidden = !shouldOpen;
+                profileToggle.setAttribute('aria-expanded', String(shouldOpen));
+            });
 
-    if (emptyMessage) {
-        emptyMessage.hidden = visibleItems.length !== 0;
-    }
-}
+            document.addEventListener('click', event => {
+                if (
+                    !event.target.closest('#global-search-panel') &&
+                    !event.target.closest('#search-toggle') &&
+                    !event.target.closest('#notifications') &&
+                    !event.target.closest('#notifications-toggle') &&
+                    !event.target.closest('#profile-menu') &&
+                    !event.target.closest('#profile-toggle')
+                ) {
+                    closeHeaderPanels();
+                }
+            });
 
-notificationItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const key = item.dataset.notificationKey;
-        const count = Number(item.dataset.notificationCount);
+            const dismissedStorageKey = <?= json_encode(
+                                            'wis-dismissed-header-notifications-' . $role . '-' . (string)($user['id'] ?? '0'),
+                                            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
+                                        ) ?>;
 
-        dismissedNotifications[key] = count;
-        saveDismissedNotifications();
+            let dismissedNotifications = {};
 
-        item.hidden = true;
-        updateNotificationTotals();
-        closeHeaderPanels();
-    });
-});
+            try {
+                dismissedNotifications = JSON.parse(
+                    localStorage.getItem(dismissedStorageKey) || '{}'
+                );
 
-saveDismissedNotifications();
-updateNotificationTotals();
+                if (
+                    !dismissedNotifications ||
+                    typeof dismissedNotifications !== 'object' ||
+                    Array.isArray(dismissedNotifications)
+                ) {
+                    dismissedNotifications = {};
+                }
+            } catch (error) {
+                dismissedNotifications = {};
+            }
 
-document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-        closeHeaderPanels();
-        closeNav();
-    }
-});
+            const notificationItems = Array.from(
+                document.querySelectorAll('.header-notification-item')
+            );
 
-function openNav() {
-    wrap.classList.add('open');
-    scrim.hidden = false;
-}
+            const activeNotificationKeys = new Set(
+                notificationItems.map(item => item.dataset.notificationKey)
+            );
 
-function closeNav() {
-    wrap.classList.remove('open');
-    scrim.hidden = true;
-}
+            Object.keys(dismissedNotifications).forEach(key => {
+                if (!activeNotificationKeys.has(key)) {
+                    delete dismissedNotifications[key];
+                }
+            });
 
-document.getElementById('hamburger')?.addEventListener('click', openNav);
-document.getElementById('mobile-close')?.addEventListener('click', closeNav);
-scrim?.addEventListener('click', closeNav);
+            notificationItems.forEach(item => {
+                const key = item.dataset.notificationKey;
+                const count = Number(item.dataset.notificationCount);
 
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 760) {
-        closeNav();
-    }
-});
-</script>
-</body>
-</html>
+                if (Number(dismissedNotifications[key]) === count) {
+                    item.hidden = true;
+                } else if (Object.prototype.hasOwnProperty.call(dismissedNotifications, key)) {
+                    delete dismissedNotifications[key];
+                }
+            });
+
+            function saveDismissedNotifications() {
+                try {
+                    localStorage.setItem(
+                        dismissedStorageKey,
+                        JSON.stringify(dismissedNotifications)
+                    );
+                } catch (error) {}
+            }
+
+            function updateNotificationTotals() {
+                const visibleItems = notificationItems.filter(item => !item.hidden);
+
+                const remainingTotal = visibleItems.reduce((total, item) => {
+                    return total + Number(item.dataset.notificationCount || 0);
+                }, 0);
+
+                document.querySelectorAll('[data-notification-total]').forEach(badge => {
+                    badge.textContent = String(Math.min(remainingTotal, 99));
+                    badge.hidden = remainingTotal === 0;
+                });
+
+                const indicator = document.querySelector('[data-notification-indicator]');
+
+                if (indicator) {
+                    indicator.hidden = remainingTotal === 0;
+                }
+
+                const emptyMessage = document.querySelector('[data-no-visible-notifications]');
+
+                if (emptyMessage) {
+                    emptyMessage.hidden = visibleItems.length !== 0;
+                }
+            }
+
+            notificationItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const key = item.dataset.notificationKey;
+                    const count = Number(item.dataset.notificationCount);
+
+                    dismissedNotifications[key] = count;
+                    saveDismissedNotifications();
+
+                    item.hidden = true;
+                    updateNotificationTotals();
+                    closeHeaderPanels();
+                });
+            });
+
+            saveDismissedNotifications();
+            updateNotificationTotals();
+
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    closeHeaderPanels();
+                    closeNav();
+                }
+            });
+
+            function openNav() {
+                wrap.classList.add('open');
+                scrim.hidden = false;
+            }
+
+            function closeNav() {
+                wrap.classList.remove('open');
+                scrim.hidden = true;
+            }
+
+            document.getElementById('hamburger')?.addEventListener('click', openNav);
+            document.getElementById('mobile-close')?.addEventListener('click', closeNav);
+            scrim?.addEventListener('click', closeNav);
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 760) {
+                    closeNav();
+                }
+            });
+        </script>
+    </body>
+
+    </html>
 <?php
 }

@@ -1,7 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
-function process_post_request(PDO $pdo): void {
+function process_post_request(PDO $pdo): void
+{
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
         return;
     }
@@ -571,71 +573,71 @@ function process_post_request(PDO $pdo): void {
                 header('Location: ' . app_base_url() . '/change-password.php');
                 exit;
 
-                    case 'update_profile':
-            $name = explode(' ', post_string('display_name'), 2);
-            $first = trim($name[0] ?? '');
-            $last = trim($name[1] ?? '');
+            case 'update_profile':
+                $name = explode(' ', post_string('display_name'), 2);
+                $first = trim($name[0] ?? '');
+                $last = trim($name[1] ?? '');
 
-            $email = strtolower(trim(
-                post_string('email', (string)$user['email'])
-            ));
+                $email = strtolower(trim(
+                    post_string('email', (string)$user['email'])
+                ));
 
-            if (!$first || !$last) {
-                throw new RuntimeException(
-                    'Enter your first and last name.'
+                if (!$first || !$last) {
+                    throw new RuntimeException(
+                        'Enter your first and last name.'
+                    );
+                }
+
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    throw new RuntimeException(
+                        'Enter a valid email address.'
+                    );
+                }
+
+                $stmt = $pdo->prepare(
+                    'SELECT id FROM users WHERE email = ? AND id <> ? LIMIT 1'
                 );
-            }
+                $stmt->execute([$email, (int)$user['id']]);
 
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                throw new RuntimeException(
-                    'Enter a valid email address.'
-                );
-            }
+                if ($stmt->fetch()) {
+                    throw new RuntimeException(
+                        'That email address is already used by another account.'
+                    );
+                }
 
-            $stmt = $pdo->prepare(
-                'SELECT id FROM users WHERE email = ? AND id <> ? LIMIT 1'
-            );
-            $stmt->execute([$email, (int)$user['id']]);
-
-            if ($stmt->fetch()) {
-                throw new RuntimeException(
-                    'That email address is already used by another account.'
-                );
-            }
-
-            $stmt = $pdo->prepare(
-                'UPDATE users
+                $stmt = $pdo->prepare(
+                    'UPDATE users
                 SET first_name = ?, last_name = ?, email = ?
                 WHERE id = ?'
-            );
-
-            $stmt->execute([
-                $first,
-                $last,
-                $email,
-                (int)$user['id']
-            ]);
-
-            $employeeId = (int)($user['employee_id'] ?? 0);
-
-            if ($employeeId > 0) {
-                $stmt = $pdo->prepare(
-                    'UPDATE employees SET email = ? WHERE id = ?'
                 );
-                $stmt->execute([$email, $employeeId]);
-            }
 
-            $_SESSION['user']['first_name'] = $first;
-            $_SESSION['user']['last_name'] = $last;
-            $_SESSION['user']['email'] = $email;
+                $stmt->execute([
+                    $first,
+                    $last,
+                    $email,
+                    (int)$user['id']
+                ]);
 
-            flash('Profile details updated.');
+                $employeeId = (int)($user['employee_id'] ?? 0);
 
-            redirect(
-                $user['role'] === 'employee'
-                    ? 'My Profile'
-                    : 'Settings'
-            );
+                if ($employeeId > 0) {
+                    $stmt = $pdo->prepare(
+                        'UPDATE employees SET email = ? WHERE id = ?'
+                    );
+                    $stmt->execute([$email, $employeeId]);
+                }
+
+                $_SESSION['user']['first_name'] = $first;
+                $_SESSION['user']['last_name'] = $last;
+                $_SESSION['user']['email'] = $email;
+
+                flash('Profile details updated.');
+
+                redirect(
+                    $user['role'] === 'employee'
+                        ? 'My Profile'
+                        : 'Settings'
+                );
 
             default:
                 throw new RuntimeException('That action is not available.');
@@ -657,10 +659,12 @@ function process_post_request(PDO $pdo): void {
             exit;
         }
 
-        redirect(post_string('return_page', 'Dashboard'));    }
+        redirect(post_string('return_page', 'Dashboard'));
+    }
 }
 
-function handle_training_export(PDO $pdo, array $user): void {
+function handle_training_export(PDO $pdo, array $user): void
+{
     if (isset($_GET['export']) && $_GET['export'] === 'training') {
         if (!in_array($user['role'], ['admin', 'trainer'], true)) {
             http_response_code(403);

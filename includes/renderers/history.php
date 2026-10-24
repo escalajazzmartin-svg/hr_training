@@ -1,7 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
-function render_history(PDO $pdo, array $user, bool $report = false): string {
+function render_history(PDO $pdo, array $user, bool $report = false): string
+{
     $where = '';
     $params = [];
     $isEmployee = $user['role'] === 'employee';
@@ -44,8 +46,8 @@ function render_history(PDO $pdo, array $user, bool $report = false): string {
 
         $rows[] = [
             '<span style="white-space:nowrap">'
-            . h($r['employee_code'])
-            . '</span>',
+                . h($r['employee_code'])
+                . '</span>',
             h($r['first_name'] . ' ' . $r['last_name']),
             h($r['title']),
             h($r['specialization']),
@@ -57,8 +59,8 @@ function render_history(PDO $pdo, array $user, bool $report = false): string {
                 : '—',
             !empty($r['certificate_code'])
                 ? '<span class="badge badge-success">'
-                    . h($r['certificate_code'])
-                    . '</span>'
+                . h($r['certificate_code'])
+                . '</span>'
                 : '—'
         ];
     }
@@ -230,8 +232,8 @@ function render_history(PDO $pdo, array $user, bool $report = false): string {
 
             $filteredRows[] = [
                 '<span style="white-space:nowrap">'
-                . h($r['employee_code'])
-                . '</span>',
+                    . h($r['employee_code'])
+                    . '</span>',
                 h($r['first_name'] . ' ' . $r['last_name']),
                 h($r['title']),
                 h($r['specialization']),
@@ -243,8 +245,8 @@ function render_history(PDO $pdo, array $user, bool $report = false): string {
                     : '—',
                 !empty($r['certificate_code'])
                     ? '<span class="badge badge-success">'
-                        . h($r['certificate_code'])
-                        . '</span>'
+                    . h($r['certificate_code'])
+                    . '</span>'
                     : '—'
             ];
         }
@@ -253,8 +255,8 @@ function render_history(PDO $pdo, array $user, bool $report = false): string {
             'Reports & Analytics',
             'Review training participation, attendance, assessments, and certification outcomes.',
             '<a class="btn" href="?page=Reports&export=training">'
-            . icon('download')
-            . ' Export CSV</a>'
+                . icon('download')
+                . ' Export CSV</a>'
         );
 
         $html .= '<form class="report-tiles" method="get" action="?page=Reports">'
