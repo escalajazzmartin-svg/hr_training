@@ -1,0 +1,430 @@
+/* ========================================
+   COMPETENCY MANAGEMENT — competencies.css
+   Employee directory visual style reference
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scrollbar-gutter: stable;
+}
+
+.content .eyebrow {
+    color: var(--muted, #73747a);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+/* Page title and Add competency button */
+.competency-page-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin: 0 0 8px;
+}
+
+.competency-page-label {
+    margin: 0;
+    color: #202b3d;
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.competency-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 10px 16px;
+    border: 1px solid var(--maroon);
+    border-radius: 10px;
+    color: #fff;
+    background: var(--maroon);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.competency-add-button:hover {
+    border-color: #7f0000;
+    background: #7f0000;
+}
+
+/* Main white directory panel */
+.competency-directory-card {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--shadow);
+}
+
+/* Search field */
+.competency-search-row {
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 18px;
+}
+
+#competency-search {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 11px;
+    border: 1px solid #dedbd5;
+    border-radius: 8px;
+    color: var(--ink);
+    background: #fff;
+}
+
+#competency-search::placeholder {
+    color: #718096;
+    opacity: 1;
+}
+
+#competency-search:focus {
+    outline: none;
+    border-color: #d8b8b8;
+    box-shadow: 0 0 0 3px rgba(151, 0, 0, .07);
+}
+
+#competency-department-filter {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border, #dbe1e8);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text, #1f2937);
+    font: inherit;
+    font-size: 13px;
+}
+
+#competency-department-filter {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border, #dbe1e8);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text, #1f2937);
+    font: inherit;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+#competency-status-filter {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border, #dbe1e8);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text, #1f2937);
+    font: inherit;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+#competency-name-filter {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border, #dbe1e8);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text, #1f2937);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Three dropdowns and Clear filters in one row */
+.competency-filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 18px;
+}
+
+.competency-filter-row select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid #d7dfeb;
+    border-radius: 11px;
+    background-color: #fff;
+    color: #18243a;
+    font: inherit;
+}
+
+.competency-filter-row select:focus {
+    outline: none;
+    border-color: #970000;
+    box-shadow: 0 0 0 2px rgba(151, 0, 0, .06);
+}
+
+.competency-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    margin: 0;
+    padding: 0 16px;
+    border: 1px solid #d7dfeb;
+    border-radius: 10px;
+    background: #fff;
+    color: #334155;
+    font: inherit;
+    font-size: 13px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.form-field.full.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.competency-clear-filters:hover {
+    border-color: #b8c2d0;
+    background: #faf9f7;
+}
+
+/* Table scrolling area */
+.competency-table-scroll {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    max-height: 460px;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+}
+
+.competency-table {
+    width: 100%;
+    min-width: 900px;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+}
+
+.competency-table thead {
+    background: white;
+}
+
+.competency-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 14px 15px;
+    border-bottom: 1px solid #eee9e4;
+    background: white;
+    color: #85817d;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .045em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 1px 0 #e5e7eb;
+}
+
+.competency-table tbody td {
+    padding: 14px 15px;
+    border-bottom: 1px solid #eee9e4;
+    background: #fff;
+    color: #18243a;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.competency-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.competency-table tbody tr:hover td {
+    background: #fdfcfb;
+}
+
+.competency-table tbody tr[hidden] {
+    display: none !important;
+}
+
+/* Faculty member avatar, name and employee ID */
+.competency-person-cell {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 210px;
+}
+
+.competency-avatar {
+    display: inline-flex;
+    flex: 0 0 43px;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    background: #f8ebec;
+    color: #a40000;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.competency-person-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.competency-person-copy strong {
+    color: #172033;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+.competency-person-copy small {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+/* Score and readiness progress bar */
+.competency-table .competency-score {
+    color: #18243a;
+    white-space: nowrap;
+}
+
+.competency-progress {
+    display: block;
+    width: 178px;
+    max-width: 100%;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #eeeae6;
+}
+
+.competency-progress>span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #d8b12d;
+    transition: width .2s ease;
+}
+
+.competency-progress>span.is-on-target {
+    background: #970000;
+}
+
+.competency-empty {
+    padding: 28px 15px !important;
+    color: #718096 !important;
+    text-align: center;
+}
+
+.competency-record-count {
+    margin: 14px 0 0;
+    color: #718096;
+    font-size: 14px;
+}
+
+/* Forms shown above the records */
+.competency-directory-card .form-grid,
+.card .form-grid {
+    min-width: 0;
+}
+
+.competency-directory-card input,
+.competency-directory-card select,
+.competency-directory-card textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+@media (max-width: 900px) {
+    .competency-directory-card {
+        padding: 18px 16px 14px;
+    }
+
+    .competency-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .competency-clear-filters {
+        width: 100%;
+    }
+
+    .competency-table {
+        min-width: 850px;
+    }
+}
+
+@media (max-width: 760px) {
+    .competency-directory-card {
+        padding: 18px 14px 12px;
+        border-radius: 12px;
+    }
+
+    .competency-table th,
+    .competency-table td {
+        padding: 12px 11px;
+    }
+}
+
+@media (max-width: 520px) {
+    .competency-page-toolbar {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .competency-add-button {
+        min-height: 44px;
+        margin-left: auto;
+        padding: 0 16px;
+    }
+
+    .competency-directory-card {
+        padding: 16px 12px;
+    }
+
+    .competency-filter-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 9px;
+    }
+
+    .competency-filter-row select,
+    .competency-clear-filters {
+        height: 46px;
+        min-height: 46px;
+    }
+}

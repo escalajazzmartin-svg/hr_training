@@ -1,0 +1,691 @@
+/* =========================================================
+   EMPLOYEE PROFILE
+   Compact layout — employee details, competencies,
+   and account security
+========================================================= */
+
+/* Employee profile header */
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 1.75rem 1.9rem;
+    margin-bottom: 1.25rem;
+    background: var(--surface, #fff);
+    border: 1px solid var(--line, #e8e3dc);
+    border-radius: 1rem;
+}
+
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 5.4rem;
+    width: 5.4rem;
+    height: 5.4rem;
+    font-size: 1.35rem;
+}
+
+.profile-hero>div {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.profile-hero .eyebrow {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--maroon, #800000);
+    font-size: var(--text-xs, 0.8rem);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.profile-hero h2 {
+    margin: 0;
+    font-family: var(--font-heading, Georgia, serif);
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.profile-hero p {
+    margin: 0.55rem 0 0;
+    color: var(--muted, #777);
+    font-size: var(--text-sm, 0.9rem);
+}
+
+.profile-hero>.badge {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.profile-hero>a.btn {
+    flex: 0 0 auto;
+    min-height: 3rem;
+    padding: 0.8rem 1.15rem;
+    border: 1px solid #e0c5c5;
+    border-radius: 0.75rem;
+    background: #fff;
+    color: var(--maroon, #800000);
+}
+
+/* Main profile columns */
+.profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+    align-items: stretch;
+    gap: 1.25rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.profile-grid>.card,
+.profile-info-card,
+.profile-competency-card,
+.profile-security-card {
+    min-width: 0;
+    box-sizing: border-box;
+    align-self: stretch;
+}
+
+.profile-grid>.card {
+    padding: 1.35rem 1.45rem;
+    border-radius: 1rem;
+}
+
+.profile-grid>.card.span-2 {
+    grid-column: auto;
+}
+
+/* Section headings */
+.profile-grid .section-head {
+    margin-bottom: 1.25rem;
+}
+
+.profile-grid .section-head h2 {
+    margin: 0;
+    font-family: var(--font-heading, Georgia, serif);
+    font-size: 1.25rem;
+    line-height: 1.35;
+}
+
+.profile-grid .section-head p {
+    margin: 0.25rem 0 0;
+    color: var(--muted, #777);
+    font-size: var(--text-sm, 0.9rem);
+    line-height: 1.5;
+}
+
+/* Contact and employment details */
+.profile-grid .sample-records {
+    width: min(100%, 46rem);
+    margin: 1.75rem auto 0;
+}
+
+.profile-grid .sample-records>div {
+    display: grid;
+    grid-template-columns: minmax(7rem, auto) minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+    padding: 0.85rem 0.8rem;
+    border-top: 1px solid var(--line, #e8e3dc);
+}
+
+.profile-grid .sample-records>div:last-child {
+    border-bottom: 1px solid var(--line, #e8e3dc);
+}
+
+.profile-grid .sample-records>div>span:first-child {
+    color: var(--text, #242424);
+    font-size: var(--text-base, 1rem);
+}
+
+.profile-grid .sample-records>div>span:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.profile-grid .sample-records b {
+    font-size: var(--text-sm, 0.9rem);
+    font-weight: 700;
+}
+
+/* Competency summary table */
+.profile-grid>.card:has(.table-wrap),
+.profile-grid>.card:has(table) {
+    overflow: hidden;
+}
+
+.profile-grid .table-wrap,
+.profile-grid .table-container,
+.profile-grid .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.profile-grid table {
+    width: 100%;
+    min-width: 27rem;
+    border-collapse: collapse;
+    font-size: var(--text-sm, 0.9rem);
+}
+
+.profile-grid table th {
+    padding: 0.85rem 0.9rem;
+    background: #f8f7f5;
+    color: #777;
+    font-size: var(--text-xs, 0.8rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.profile-grid table td {
+    padding: 0.85rem 0.9rem;
+    border-top: 1px solid var(--line, #e8e3dc);
+    vertical-align: middle;
+}
+
+.profile-grid table td:first-child {
+    overflow-wrap: anywhere;
+}
+
+.profile-grid .gap-value {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* Training history */
+.profile-history-card {
+    min-width: 0;
+    margin-top: 1.25rem;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.profile-history-card .table-wrap,
+.profile-history-card .table-container,
+.profile-history-card .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Sidebar stack for employee self-profile */
+.profile-side-stack {
+    display: grid;
+    align-content: start;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.profile-competency-card,
+.profile-security-card {
+    padding: 1rem;
+}
+
+.profile-security-card {
+    height: fit-content;
+}
+
+/* Account-security heading */
+.profile-security-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.profile-security-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+}
+
+.profile-security-title>svg {
+    flex: 0 0 auto;
+    margin-top: 0.1rem;
+    color: var(--maroon, #800000);
+}
+
+.profile-security-title h2 {
+    margin: 0;
+    font-family: var(--font-heading, Georgia, serif);
+    font-size: var(--text-sm, 0.9rem);
+}
+
+.profile-security-title p {
+    margin: 0.2rem 0 0;
+    color: var(--muted, #777);
+    font-size: var(--text-xs, 0.8rem);
+    line-height: 1.5;
+}
+
+/* Change-password toggle */
+.profile-password-toggle {
+    width: 100%;
+    min-height: 2.35rem;
+    padding: 0.55rem 0.75rem;
+}
+
+/* Change-password form */
+.profile-password-form {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--line, #e8e3dc);
+}
+
+.profile-password-form[hidden] {
+    display: none !important;
+}
+
+.profile-password-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.65rem;
+}
+
+.profile-password-fields .form-field {
+    min-width: 0;
+}
+
+.profile-password-fields .form-field label {
+    font-size: var(--text-xs, 0.8rem);
+}
+
+/* Password input and icon layout */
+.profile-security-card .profile-password-input-wrap {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0;
+}
+
+.profile-security-card .profile-password-input-wrap>input {
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 3.2rem !important;
+    min-height: 3.2rem !important;
+    max-height: 3.2rem !important;
+    padding: 0 3.2rem !important;
+    border: 1px solid #ded8ce !important;
+    border-radius: 1rem !important;
+    background: #fff !important;
+    font-size: var(--text-sm, 0.9rem) !important;
+}
+
+.profile-security-card .profile-password-field-icon {
+    position: absolute !important;
+    top: 50% !important;
+    left: 1rem !important;
+    z-index: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: translateY(-50%) !important;
+    color: #858585 !important;
+    pointer-events: none !important;
+}
+
+.profile-security-card .profile-password-eye {
+    position: absolute !important;
+    top: 50% !important;
+    right: 0.7rem !important;
+    z-index: 3 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateY(-50%) !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    color: #858585 !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+}
+
+.profile-security-card .profile-password-eye:hover {
+    background: #f4f1ed !important;
+    color: #800000 !important;
+}
+
+.profile-security-card .profile-password-eye:focus-visible {
+    outline: 2px solid #800000 !important;
+    outline-offset: 2px !important;
+}
+
+.profile-password-fields .form-field input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 0.6rem 0.65rem;
+    font-size: var(--text-sm, 0.9rem);
+}
+
+.profile-password-fields .small-muted {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: var(--text-xs, 0.8rem);
+}
+
+/* Form actions */
+.profile-password-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+
+.profile-password-actions .btn {
+    min-height: 2.25rem;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-xs, 0.8rem);
+}
+
+/* Responsive layout */
+@media (max-width: 900px) {
+    .profile-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-grid>.card.span-2 {
+        grid-column: auto;
+    }
+
+    .profile-grid .sample-records {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .profile-hero {
+        flex-wrap: wrap;
+        gap: 0.85rem;
+        padding: 1.1rem;
+    }
+
+    .profile-avatar {
+        flex-basis: 3.8rem;
+        width: 3.8rem;
+        height: 3.8rem;
+        font-size: 1.1rem;
+    }
+
+    .profile-hero>.badge {
+        margin-left: 0;
+    }
+
+    .profile-hero>a.btn {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .profile-grid>.card {
+        padding: 1rem;
+    }
+
+    .profile-grid .sample-records {
+        margin-top: 1rem;
+    }
+
+    .profile-grid .sample-records>div {
+        grid-template-columns: minmax(6.5rem, auto) minmax(0, 1fr);
+        gap: 0.65rem;
+        padding: 0.75rem 0.4rem;
+    }
+
+    .profile-grid .sample-records>div>span:first-child {
+        font-size: var(--text-sm, 0.9rem);
+    }
+
+    .profile-password-actions {
+        justify-content: stretch;
+    }
+
+    .profile-password-actions .btn {
+        flex: 1 1 auto;
+    }
+}
+
+/* Competency summary — card-based layout, no table */
+.profile-competency-list {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.profile-competency-item {
+    min-width: 0;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line, #e8e3dc);
+}
+
+.profile-competency-item:last-child {
+    border-bottom: 0;
+}
+
+.profile-competency-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.7rem;
+}
+
+.profile-competency-name {
+    min-width: 0;
+    font-size: var(--text-sm, 0.9rem);
+    overflow-wrap: anywhere;
+}
+
+.profile-competency-score {
+    flex-shrink: 0;
+    font-size: var(--text-sm, 0.9rem);
+}
+
+.profile-competency-score.is-below-target {
+    color: #dc2626;
+}
+
+.profile-competency-score.is-at-target {
+    color: #15803d;
+}
+
+.profile-competency-track {
+    height: 0.45rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #eee9e2;
+}
+
+.profile-competency-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+}
+
+.profile-competency-fill.is-below-target {
+    background: #dc2626;
+}
+
+.profile-competency-fill.is-at-target {
+    background: #15803d;
+}
+
+.profile-competency-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.55rem;
+    color: var(--muted, #777);
+    font-size: var(--text-xs, 0.8rem);
+}
+
+.profile-competency-gap {
+    color: #dc2626;
+}
+
+.profile-competency-achieved {
+    color: #15803d;
+}
+
+.profile-competency-assessed {
+    display: block;
+    margin-top: 0.45rem;
+    color: var(--muted, #777);
+    font-size: var(--text-xs, 0.8rem);
+}
+
+/* Employee profile: contact details left, two cards stacked right */
+.profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+    align-items: stretch;
+    gap: 1.25rem;
+}
+
+.profile-info-card {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.profile-side-stack {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.profile-side-stack>.card {
+    min-width: 0;
+    margin: 0;
+    align-self: start;
+}
+
+.profile-competency-card,
+.profile-history-card {
+    padding: 1.25rem;
+    border-radius: 1rem;
+}
+
+@media (max-width: 900px) {
+    .profile-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-info-card,
+    .profile-side-stack {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+/* Training history — compact card layout (not a table) */
+.profile-history-card {
+    min-width: 0;
+    margin-top: 0;
+    padding: 1.25rem;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.profile-training-list {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.profile-training-item {
+    min-width: 0;
+    padding: 0.9rem;
+    border: 1px solid var(--line, #e8e3dc);
+    border-radius: 0.8rem;
+    background: var(--surface, #fff);
+}
+
+.profile-training-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.profile-training-heading h4 {
+    min-width: 0;
+    margin: 0;
+    font-size: var(--text-sm, 0.9rem);
+    font-weight: 700;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.profile-training-heading .badge {
+    flex: 0 0 auto;
+}
+
+.profile-training-specialization {
+    margin: 0.4rem 0 0;
+    color: var(--muted, #777);
+    font-size: var(--text-xs, 0.8rem);
+    line-height: 1.45;
+}
+
+.profile-training-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem 0.9rem;
+    margin-top: 0.8rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line, #e8e3dc);
+}
+
+.profile-training-meta>span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.profile-training-meta small {
+    color: var(--muted, #777);
+    font-size: var(--text-xs, 0.8rem);
+}
+
+.profile-training-meta strong {
+    font-size: var(--text-xs, 0.8rem);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .profile-history-card {
+        padding: 1rem;
+    }
+
+    .profile-training-meta {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-training-item {
+        padding: 0.8rem;
+    }
+}

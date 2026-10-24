@@ -1,0 +1,478 @@
+/* ========================================
+   EMPLOYEE DIRECTORY — employees.css
+   Page-specific employee actions and modals
+======================================== */
+
+/* Employee table actions */
+.table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.content .eyebrow {
+    color: var(--muted, #73747a);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.table-actions a,
+.table-actions button {
+    text-decoration: none !important;
+}
+
+.table-actions .inline-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.table-actions .icon-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.table-actions .icon-action i {
+    display: block;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.table-actions a.icon-action {
+    color: var(--green);
+}
+
+.table-actions button.delete-btn,
+.table-actions .delete-btn {
+    color: #dc2626;
+}
+
+.table-actions button.delete-btn:hover,
+.table-actions .delete-btn:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Keep the actions column aligned to the right without affecting other tables. */
+table thead th:last-child {
+    text-align: right;
+}
+
+table tbody td:last-child .table-actions {
+    justify-content: flex-end;
+}
+
+/* ========================================
+   EMPLOYEE MODALS
+   Hidden by default; open with .is-open or :target
+======================================== */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgb(0 0 0 / 55%);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.modal-overlay.is-open,
+.modal-overlay:target {
+    display: flex;
+}
+
+.modal-panel {
+    position: relative;
+    width: min(1000px, 100%);
+    max-height: calc(100dvh - 40px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
+    overscroll-behavior: contain;
+}
+
+.add-employee-title {
+    text-align: center;
+}
+
+/* Prevent background scrolling while a modal is open. */
+body.modal-open {
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .modal-overlay {
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .modal-panel {
+        width: 100%;
+        max-height: calc(100dvh - 20px);
+        padding: 18px;
+        border-radius: 10px;
+    }
+
+    .modal-panel .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Fallback for browsers that do not support dynamic viewport units. */
+@supports not (height: 100dvh) {
+    .modal-panel {
+        max-height: calc(100vh - 40px);
+    }
+
+    @media (max-width: 600px) {
+        .modal-panel {
+            max-height: calc(100vh - 20px);
+        }
+    }
+}
+
+/* Keep the page title and Add employee action on one line. */
+.page-intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .3rem;
+}
+
+.page-intro>a.btn,
+.page-intro>.btn {
+    flex: 0 0 auto;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+    .page-intro {
+        flex-wrap: wrap;
+    }
+
+    .page-intro>a.btn,
+    .page-intro>.btn {
+        margin-left: auto;
+    }
+}
+
+/* ========================================
+   EMPLOYEE DIRECTORY TABLE
+   Five-row scroll + sticky header
+======================================== */
+
+.employee-table-scroll {
+    position: relative;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+}
+
+.employee-table-scroll .table-wrap {
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+    max-height: none;
+}
+
+.employee-table-scroll .table-wrap table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Sticky header */
+.employee-table-scroll thead th,
+.employee-table-scroll .table-wrap thead th {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #fff;
+    box-shadow: 0 1px 0 #e5e7eb;
+}
+
+/* Employee column: avatar, name, and employee ID */
+.employee-table-scroll .person-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 220px;
+}
+
+.employee-table-scroll .person-cell .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 43px;
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    background: #f8ebec;
+    color: #a40000;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.employee-table-scroll .person-cell>span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.employee-table-scroll .person-cell b {
+    color: #172033;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.employee-table-scroll .person-cell small {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+/* Compact three-dot profile action column */
+.employee-table-scroll tbody td:first-child,
+.employee-table-scroll thead th:first-child {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    padding: 8px 4px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Keep the horizontal three-dot icon compact */
+.employee-profile-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    width: 100%;
+    gap: 0;
+}
+
+.employee-profile-action .icon-action {
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0;
+}
+
+.employee-profile-action .icon-action i {
+    font-size: 18px;
+}
+
+/* ========================================
+   EMPLOYEE SEARCH — CLEAR BUTTON
+======================================== */
+
+.employee-search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.employee-search-wrapper .search-input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.employee-search-clear {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.employee-search-clear.is-visible {
+    display: flex;
+}
+
+.employee-search-clear:hover,
+.employee-search-clear:focus-visible {
+    color: #a40000;
+    background: #fef2f2;
+}
+
+.employee-search-clear:focus-visible {
+    outline: 2px solid #a40000;
+    outline-offset: 2px;
+}
+
+
+/* Employee directory filters shown directly below the search field. */
+.employee-filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    gap: 10px;
+    align-items: end;
+    margin-top: 12px;
+}
+
+.employee-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+    color: var(--muted, #64748b);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.employee-filter-field select {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border, #dbe1e8);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text, #1f2937);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.employee-filter-reset {
+    min-height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border, #dbe1e8);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text, #475569);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.employee-filter-reset:hover {
+    border-color: #a40000;
+    color: #a40000;
+    background: #fef2f2;
+}
+
+/* Use a predictable two-column layout on desktop. */
+.modal-panel .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 14px 18px;
+    width: 100%;
+    margin: 0;
+}
+
+/* Prevent long labels and inputs from forcing columns wider. */
+.modal-panel .form-grid>.form-field {
+    min-width: 0;
+    width: 100%;
+}
+
+/* Labels stack above their controls. */
+.modal-panel .form-grid .form-field label {
+    display: block;
+    margin: 0 0 6px;
+    line-height: 1.4;
+}
+
+/* Make controls fill their grid cell without overflowing. */
+.modal-panel .form-grid .form-field input,
+.modal-panel .form-grid .form-field select,
+.modal-panel .form-grid .form-field textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Footer, helper text, and actions span both columns. */
+.modal-panel .form-grid>.form-field.full,
+.modal-panel .form-grid>.modal-footer {
+    grid-column: 1 / -1;
+}
+
+.modal-panel .form-grid .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.modal-panel .form-grid .modal-footer .small-muted {
+    flex: 1 1 100%;
+    min-width: 0;
+    margin: 0 0 4px;
+}
+
+@media (max-width: 760px) {
+    .employee-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .employee-filter-reset {
+        width: 100%;
+    }
+}
+
+@media (max-width: 440px) {
+    .employee-filter-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Red three-dot profile action icon */
+.employee-profile-action .icon-action {
+    color: #dc2626;
+}
+
+.employee-profile-action .icon-action i {
+    color: #dc2626;
+    font-size: 18px;
+}

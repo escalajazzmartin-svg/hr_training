@@ -248,6 +248,13 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
         ? 'Account settings'
         : ($role === 'employee' ? 'My profile' : 'My training programs');
 
+    // Load the shared assessment styles and interactions only on assessment pages.
+    $assessmentPages = [
+        'Assessments & Evaluations',
+        'Training Results',
+    ];
+    $isAssessmentPage = in_array($page, $assessmentPages, true);
+
 ?>
     <!doctype html>
     <html lang="en">
@@ -257,9 +264,57 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#800000">
         <title><?= h($page) ?> | Westmead International School</title>
+
         <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/style.css') ?>">
         <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/header-controls.css') ?>">
+
+        <style>
+            html {
+                overflow-y: scroll;
+                scrollbar-gutter: stable;
+            }
+
+            .table-wrap {
+                min-width: 0;
+                scrollbar-gutter: stable;
+                overscroll-behavior: contain;
+            }
+        </style>
+
+        <?php if ($role === 'admin'): ?>
+            <?php
+            $adminPageCss = [
+                'Dashboard' => 'dashboard.css',
+                'Training Calendar' => 'calendar.css',
+                'Employee Profiles' => 'employee-profile.css',
+                'Employees' => 'employees.css',
+                'Attendance Monitoring' => 'attendance.css',
+                'Certificates' => 'certificates.css',
+                'Competencies' => 'competencies.css',
+                'Create Training' => 'create-training.css',
+                'Assessments & Evaluations' => 'evaluations.css',
+                'Training History' => 'history.css',
+                'Employee Registration' => 'registrations.css',
+                'Reports' => 'reports.css',
+                'Settings' => 'settings.css',
+                'Training Needs Analysis' => 'training-needs.css',
+                'Training Programs' => 'trainings.css',
+                'Tests' => 'tests.css',
+            ];
+            $adminCssFile = $adminPageCss[$page] ?? null;
+            ?>
+            <?php if ($adminCssFile !== null): ?>
+                <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/css/admin/' . $adminCssFile) ?>">
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($isAssessmentPage): ?>
+            <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/css/admin/evaluations.css') ?>">
+        <?php endif; ?>
+
         <link rel="icon" href="<?= h(app_base_url() . '/assets/favicon.svg') ?>" type="image/svg+xml">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
 
     <body>
@@ -279,7 +334,8 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
 
                     <nav>
                         <?php foreach (nav_for($role) as [$label, $ico]): ?>
-                            <a class="<?= $page === $label ? 'active' : '' ?>" href="<?= h(app_page_url($label, $role)) ?>">
+                            <?php if ($role === 'admin' && $label === 'Employee Profiles') continue; ?>
+                            <a class="<?= ($page === $label || ($page === 'Employee Profiles' && $label === 'Employees')) ? 'active' : '' ?>" href="<?= h(app_page_url($label, $role)) ?>">
                                 <?= icon($ico) ?>
                                 <span><?= h($label) ?></span>
                             </a>
@@ -659,6 +715,10 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                 }
             });
         </script>
+        <script src="<?= h(app_base_url() . '/assets/js/table.js') ?>" defer></script>
+        <?php if ($isAssessmentPage): ?>
+            <script src="<?= h(app_base_url() . '/assets/js/admin/assessments.js') ?>" defer></script>
+        <?php endif; ?>
     </body>
 
     </html>

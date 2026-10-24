@@ -1,0 +1,445 @@
+/* ========================================
+   EMPLOYEE REGISTRATION
+   Compact screenshot-style layout
+======================================== */
+
+.registration-page {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    font-size: var(--text-base, 1rem);
+}
+
+.registration-page .eyebrow {
+    color: var(--muted, #73747a);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+/* Page header */
+.registration-page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+}
+
+.registration-page-intro {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.registration-page-intro>* {
+    margin-bottom: 0;
+}
+
+/* Add Registration button */
+.registration-page .registration-add-btn {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 1px solid #8f0000;
+    border-radius: 9px;
+    background: #8f0000;
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.registration-page .registration-add-btn:hover {
+    background: #650000;
+    border-color: #650000;
+}
+
+.registration-page .registration-add-btn:focus-visible {
+    outline: 2px solid var(--gold, #d4af37);
+    outline-offset: 3px;
+}
+
+/* Main registration card */
+.registration-page .registration-history-card {
+    min-width: 0;
+    margin: 0;
+    padding: 16px;
+    border-radius: 16px;
+    background: #fff;
+}
+
+/* Hide redundant section heading if the table card
+   uses the screenshot-style layout */
+.registration-page .registration-history-card>.section-head {
+    margin-bottom: 12px;
+}
+
+/* Search and filters */
+.registration-page .registration-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.registration-page .registration-filters input[type="search"] {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 13px;
+    border: 1px solid #dedbd6;
+    border-radius: 9px;
+    background: #fff;
+    color: var(--ink, #2f3035);
+    font: inherit;
+    font-size: .9rem;
+}
+
+.registration-page .registration-filters input[type="search"]::placeholder {
+    color: #78869c;
+}
+
+.registration-page .registration-filter-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 10px;
+}
+
+.registration-page .registration-filter-row select {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    padding: 8px 11px;
+    border: 1px solid #d8deea;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink, #2f3035);
+    font: inherit;
+    font-size: .84rem;
+    font-weight: 600;
+}
+
+.registration-page .registration-filters input[type="search"]:focus,
+.registration-page .registration-filter-row select:focus {
+    outline: 2px solid rgb(128 0 0 / 18%);
+    border-color: var(--maroon, #800000);
+}
+
+.registration-page .registration-clear-filters {
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid #d8deea;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink, #2f3035);
+    white-space: nowrap;
+    font-size: .82rem;
+    cursor: pointer;
+}
+
+.registration-page .registration-clear-filters:hover {
+    background: #f8f7f5;
+}
+
+/* Scrollable table */
+.registration-page .registration-table-wrap {
+    width: 100%;
+    min-width: 0;
+    max-height: 470px;
+    overflow: auto;
+    margin-top: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #929292 #f5f4f2;
+}
+
+.registration-page .registration-table-wrap::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+.registration-page .registration-table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #929292;
+}
+
+.registration-page .registration-table-wrap::-webkit-scrollbar-track {
+    background: #f5f4f2;
+}
+
+/* Table */
+.registration-page .registration-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-size: .86rem;
+}
+
+.registration-page .registration-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+}
+
+.registration-page .registration-table th {
+    padding: 12px;
+    border-bottom: 1px solid #e8e5e1;
+    background: #fff;
+    color: #85817e;
+    text-align: left;
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .045em;
+    white-space: nowrap;
+}
+
+.registration-page .registration-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #eee9e4;
+    color: #222b3b;
+    line-height: 1.4;
+    vertical-align: middle;
+}
+
+.registration-page .registration-table tbody tr:hover {
+    background: #fcfaf8;
+}
+
+.registration-page .registration-table td strong {
+    font-weight: 700;
+}
+
+.registration-page .registration-table tr[hidden] {
+    display: none;
+}
+
+.registration-page .registration-empty-row td {
+    padding: 24px 12px;
+    color: var(--muted, #73747a);
+    text-align: center;
+}
+
+/* Table record count */
+.registration-page .registration-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    color: var(--muted, #73747a);
+    font-size: .82rem;
+}
+
+/* ========================================
+   ADD REGISTRATION MODAL
+======================================== */
+
+.registration-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.registration-modal.is-open {
+    display: flex;
+}
+
+.registration-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(24 18 18 / 48%);
+    backdrop-filter: blur(2px);
+}
+
+.registration-modal-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 520px);
+    max-height: min(90vh, 620px);
+    overflow-y: auto;
+    padding: 18px;
+    border: 1px solid var(--line, #e9e7e2);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 60px rgb(0 0 0 / 22%);
+}
+
+.registration-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.registration-modal-header h2 {
+    margin: 0;
+    color: var(--ink, #2f3035);
+    font-family: var(--font-heading, Georgia, serif);
+    font-size: 1.2rem;
+    line-height: 1.3;
+}
+
+.registration-modal-header p {
+    margin: 5px 0 0;
+    color: var(--muted, #73747a);
+    font-size: .8rem;
+    line-height: 1.45;
+}
+
+.registration-modal-close {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--maroon-soft, #f8eded);
+    color: var(--maroon, #800000);
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.registration-modal-close:hover {
+    background: var(--gold-soft, #fff8df);
+}
+
+/* Modal form */
+.registration-modal .registration-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin: 0;
+}
+
+.registration-modal .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.registration-modal .form-field label {
+    color: var(--ink, #2f3035);
+    font-size: .82rem;
+    font-weight: 650;
+}
+
+.registration-modal .form-field select {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 1px solid var(--line, #e9e7e2);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ink, #2f3035);
+    font: inherit;
+    font-size: .85rem;
+}
+
+.registration-modal .form-field select:focus {
+    outline: 2px solid var(--maroon, #800000);
+    outline-offset: 1px;
+}
+
+.registration-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.registration-modal-actions .btn {
+    min-height: 33px;
+    padding: 7px 11px;
+    font-size: .82rem;
+}
+
+body.registration-modal-open {
+    overflow: hidden;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 760px) {
+    .registration-page-heading {
+        align-items: flex-start;
+    }
+
+    .registration-page .registration-add-btn {
+        min-height: 36px;
+        padding: 8px 10px;
+        font-size: .8rem;
+    }
+
+    .registration-page .registration-filter-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .registration-page .registration-history-card {
+        padding: 10px;
+    }
+
+    .registration-page .registration-table-wrap {
+        max-height: 400px;
+    }
+
+    .registration-page .registration-table th {
+        padding: 10px;
+    }
+
+    .registration-page .registration-table td {
+        padding: 11px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .registration-page-heading {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .registration-page .registration-add-btn {
+        align-self: stretch;
+    }
+
+    .registration-modal {
+        padding: 10px;
+    }
+
+    .registration-modal-dialog {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .registration-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .registration-modal-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .registration-page .registration-add-btn {
+        transition: none;
+    }
+}

@@ -1,0 +1,210 @@
+.header-actions {
+    position: relative;
+}
+
+.header-profile {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+}
+
+.header-profile:focus-visible,
+.icon-circle:focus-visible {
+    outline: 2px solid #800000;
+    outline-offset: 3px;
+}
+
+.header-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: min(360px, calc(100vw - 2rem));
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 100;
+    background: #fff;
+    border: 1px solid #e7e1dd;
+    border-radius: 14px;
+    box-shadow: 0 14px 40px rgba(35, 20, 20, .15);
+    padding: .85rem 1rem;
+    color: #292929;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+.header-popover[hidden],
+.header-notification-item[hidden],
+.header-notification-count[hidden],
+[data-notification-indicator][hidden],
+[data-no-visible-notifications][hidden] {
+    display: none !important;
+}
+
+.header-popover h3 {
+    margin: 0 0 .2rem;
+    font-size: .95rem;
+    line-height: 1.35;
+}
+
+.header-popover .popover-subtitle {
+    font-size: .78rem;
+    color: #777;
+    margin: 0 0 .65rem;
+}
+
+.header-popover form {
+    margin: 0;
+}
+
+.header-popover .search-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: .55rem;
+    font-size: .85rem;
+}
+
+.header-popover .btn {
+    width: 100%;
+    justify-content: center;
+    font-size: .82rem;
+    padding: .55rem .75rem;
+}
+
+.header-search-result,
+.header-notification-item,
+.header-menu-link {
+    display: block;
+    padding: .65rem .25rem;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: inherit;
+    font-size: .82rem;
+    line-height: 1.45;
+}
+
+.header-search-result:last-child,
+.header-notification-item:last-child,
+.header-menu-link:last-child {
+    border-bottom: 0;
+}
+
+.header-search-result:hover,
+.header-notification-item:hover,
+.header-menu-link:hover {
+    background: #faf6f5;
+}
+
+.header-search-result b,
+.header-notification-item b {
+    font-size: .84rem;
+    font-weight: 650;
+}
+
+.header-search-result small,
+.header-notification-item small {
+    display: block;
+    color: #666;
+    font-size: .76rem;
+    line-height: 1.45;
+    margin-top: .12rem;
+}
+
+.header-result-type {
+    display: inline-block;
+    font-size: .62rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #800000;
+    font-weight: 700;
+    margin-bottom: .12rem;
+}
+
+.header-popover .popover-empty {
+    font-size: .8rem;
+    color: #777;
+    padding: .65rem 0;
+}
+
+.header-search-results {
+    margin-top: .65rem;
+}
+
+.header-profile-menu {
+    width: 240px;
+    max-height: none;
+    overflow: visible;
+}
+
+.header-profile-menu .account-heading {
+    padding: .2rem .25rem .7rem;
+    margin-bottom: .3rem;
+    border-bottom: 1px solid #eee;
+}
+
+.header-profile-menu .account-heading b,
+.header-profile-menu .account-heading small {
+    display: block;
+    font-size: .82rem;
+}
+
+.header-profile-menu .account-heading small {
+    color: #777;
+    margin-top: .15rem;
+    overflow-wrap: anywhere;
+}
+
+.header-menu-link {
+    font-size: .82rem;
+}
+
+.header-menu-link.logout {
+    color: #800000;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    background: #fff;
+    border: 0;
+    cursor: pointer;
+}
+
+.header-notification-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 17px;
+    height: 17px;
+    border-radius: 99px;
+    padding: 0 4px;
+    background: #800000;
+    color: #fff;
+    font-size: .66rem;
+    line-height: 1;
+    margin-left: .25rem;
+    vertical-align: middle;
+}
+
+@media (max-width: 760px) {
+
+    .header-search-panel,
+    .header-notifications-panel {
+        position: fixed;
+        top: 72px;
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+        max-width: none;
+    }
+
+    .header-profile-menu {
+        position: fixed;
+        top: 72px;
+        right: 1rem;
+    }
+}

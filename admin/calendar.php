@@ -1,82 +1,145 @@
 <?php
+
 declare(strict_types=1);
+
 $requiredRole = 'admin';
 require_once __DIR__ . '/../includes/page_bootstrap.php';
 
-function render_calendar(PDO $pdo): string {
-    $month=isset($_GET['month'])?(int)$_GET['month']:(int)date('n');
-    $year=isset($_GET['year'])?(int)$_GET['year']:(int)date('Y');
-    if($month<1){
-        $month=12;
-        $year--;
+function render_calendar(PDO $pdo): string
+{
+    $month = filter_input(INPUT_GET, 'month', FILTER_VALIDATE_INT);
+    $year = filter_input(INPUT_GET, 'year', FILTER_VALIDATE_INT);
+    $month = $month === false || $month === null ? (int) date('n') : $month;
+    $year = $year === false || $year === null ? (int) date('Y') : $year;
+
+    // Normalize arbitrary month values, including URLs such as ?month=13.
+    $date = DateTimeImmutable::createFromFormat('!Y-n-j', sprintf('%d-%d-1', $year, $month));
+    if ($date === false) {
+        $date = new DateTimeImmutable('first day of this month');
     }
-    if($month>12){
-        $month=1;
-        $year++;
+    $date = $date->modify('first day of this month');
+    $month = (int) $date->format('n');
+    $year = (int) $date->format('Y');
+
+    $first = $date->getTimestamp();
+    $start = (int) date('N', $first); // Monday = 1, Sunday = 7
+    $days = (int) $date->format('t');
+    $prevDate = $date->modify('-1 month');
+    $nextDate = $date->modify('+1 month');
+    $today = date('Y-m-d');
+
+    $st = $pdo->prepare(
+        "SELECT id, title, start_date, status
+         FROM training_programs
+         WHERE YEAR(start_date) = ?
+           AND MONTH(start_date) = ?
+           AND status <> 'Cancelled'
+         ORDER BY start_date ASC, title ASC"
+    );
+    $st->execute([$year, $month]);
+    $progs = $st->fetchAll(PDO::FETCH_ASSOC);
+
+    $byDay = [];
+    foreach ($progs as $program) {
+        $programDate = strtotime((string) ($program['start_date'] ?? ''));
+        if ($programDate !== false) {
+            $byDay[(int) date('j', $programDate)][] = $program;
+        }
     }
-    $first=strtotime(sprintf('%04d-%02d-01',$year,$month));
-    $start=(int)date('N',$first);
-    $days=(int)date('t',$first);
-    $prevMonth=$month===1?12:$month-1;
-    $prevYear=$month===1?$year-1:$year;
-    $nextMonth=$month===12?1:$month+1;
-    $nextYear=$month===12?$year+1:$year;
-    $st=$pdo->prepare("SELECT id,title,start_date,status FROM training_programs WHERE YEAR(start_date)=? AND MONTH(start_date)=? AND status<>'Cancelled'");
-    $st->execute([$year,
-        $month]);
-    $progs=$st->fetchAll();
-    $byDay=[];
-    foreach($progs as $p)$byDay[(int)date('j',
-        strtotime($p['start_date']))][]=$p;
-    $html=page_intro('Training Calendar','View upcoming faculty development sessions and scheduled program dates.');
-    $html.='<section class="card calendar-card"><div class="calendar-toolbar"><a class="btn btn-secondary" href="?page=Training Calendar&month='
-    . $prevMonth.'&year='.$prevYear
-    . '" aria-label="Previous month">‹</a><h3>'
-    . h(date('F Y',$first))
-    . '</h3><a class="btn btn-secondary" href="?page=Training Calendar&month='
-    . $nextMonth.'&year='.$nextYear
-    . '" aria-label="Next month">›</a><div class="view-switch"><a class="btn btn-ghost" href="?page=Training Calendar">Today / current month</a>'
-    .  '</div></div><div class="calendar-grid">';
-    foreach(['Mon',
-        'Tue',
-        'Wed',
-        'Thu',
-        'Fri',
-        'Sat',
-        'Sun'] as $d)$html.='<div class="weekday">'
-    . $d
-    . '</div>';
-    $prevDays=(int)date('t',strtotime($year.'-'.$month.'-01 -1 month'));
-    $cellCount=(int)(ceil(($start+$days-1)/7)*7);
-    for($i=1;$i<=$cellCount;$i++){
-        $day=$i-$start+1;
-        $outside=false;
-        if($day<1){
-            $label=$prevDays+$day;
-            $outside=true;
-        }
-        elseif($day>$days){
-            $label=$day-$days;
-            $outside=true;
-        }
-        else{
-            $label=$day;
-        }
-        $html.='<div class="cal-day'.($outside?' outside':'').'">'.(int)$label;
-        if(!$outside&&isset($byDay[$day]))foreach($byDay[$day] as $p){
-            $color=$p['status']==='Completed'?'green':($p['status']==='Ongoing'?'blue':'');
-            $html.='<a class="cal-event '.h($color).'" href="?page=Training Programs" title="'.h($p['title'])
-            . '">'.h($p['title'])
-            . '</a>';
-        }
-        $html.='</div>';
+
+    $html = page_intro(
+        '',
+        ''
+    );
+
+    $html .= '<section class="card calendar-card" aria-label="Training calendar">'
+        . '<div class="calendar-toolbar">'
+        . '<a class="btn btn-secondary calendar-nav" href="?page=Training%20Calendar&amp;month='
+        . $prevDate->format('n') . '&amp;year=' . $prevDate->format('Y')
+        . '" aria-label="Previous month">&#8249;</a>'
+        . '<h2 class="calendar-month-title">' . h($date->format('F Y')) . '</h2>'
+        . '<a class="btn btn-secondary calendar-nav" href="?page=Training%20Calendar&amp;month='
+        . $nextDate->format('n') . '&amp;year=' . $nextDate->format('Y')
+        . '" aria-label="Next month">&#8250;</a>'
+        . '<div class="calendar-view-switch"><a class="btn btn-ghost" href="?page=Training%20Calendar">Today / current month</a></div>'
+        . '</div>'
+        . '<div class="calendar-grid" role="grid" aria-label="' . h($date->format('F Y')) . '">';
+
+    foreach (['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as $dayName) {
+        $html .= '<div class="weekday" role="columnheader">' . h($dayName) . '</div>';
     }
-    return $html
-    . '</div><p class="small-muted" style="margin-top:1rem">'
-    . count($progs)
-    . ' program(s) scheduled in this month. Create or edit training programs from Training Programs.</p></section>';
+
+    $cellCount = (int) (ceil(($start + $days - 1) / 7) * 7);
+    $previousMonthDays = (int) $date->modify('-1 month')->format('t');
+
+    for ($i = 1; $i <= $cellCount; $i++) {
+        $day = $i - $start + 1;
+        $outside = false;
+        $cellDate = '';
+
+        if ($day < 1) {
+            $label = $previousMonthDays + $day;
+            $outside = true;
+            $cellDate = $prevDate->format('Y-m-') . str_pad((string) $label, 2, '0', STR_PAD_LEFT);
+        } elseif ($day > $days) {
+            $label = $day - $days;
+            $outside = true;
+            $cellDate = $nextDate->format('Y-m-') . str_pad((string) $label, 2, '0', STR_PAD_LEFT);
+        } else {
+            $label = $day;
+            $cellDate = $date->format('Y-m-') . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+        }
+
+        $classes = ['cal-day'];
+        if ($outside) {
+            $classes[] = 'outside';
+        }
+        if ($cellDate === $today) {
+            $classes[] = 'is-today';
+        }
+
+        $html .= '<div class="' . h(implode(' ', $classes)) . '" role="gridcell"'
+            . ' aria-label="' . h(date('F j, Y', strtotime($cellDate))) . '">'
+            . '<span class="cal-day-number">' . (int) $label . '</span>';
+
+        if (!$outside && isset($byDay[$day])) {
+            foreach ($byDay[$day] as $program) {
+                $status = (string) ($program['status'] ?? '');
+                $statusClass = match ($status) {
+                    'Completed' => 'green',
+                    'Ongoing' => 'blue',
+                    default => 'maroon',
+                };
+                $title = (string) ($program['title'] ?? 'Training program');
+                $html .= '<a class="cal-event ' . h($statusClass) . '" href="?page=Training%20Programs"'
+                    . ' title="' . h($title) . ' — ' . h($status) . '">'
+                    . '<span class="cal-event-title">' . h($title) . '</span>'
+                    . '<span class="cal-event-status">' . h($status) . '</span>'
+                    . '</a>';
+            }
+        }
+
+        $html .= '</div>';
+    }
+
+    $html .= '</div>'
+        . '<div class="calendar-footer"><p class="small-muted">'
+        . count($progs) . ' program(s) scheduled in ' . h($date->format('F Y'))
+        . '. Create or edit training programs from Training Programs.</p>'
+        . '<div class="calendar-legend" aria-label="Program status legend">'
+        . '<span><i class="legend-dot maroon"></i> Scheduled</span>'
+        . '<span><i class="legend-dot blue"></i> Ongoing</span>'
+        . '<span><i class="legend-dot green"></i> Completed</span>'
+        . '</div></div></section>';
+
+    return $html;
 }
 
 $page = 'Training Calendar';
 $content = render_calendar($pdo);
+
+// page_bootstrap normally provides these; fallbacks prevent undefined-variable notices.
+$user = $user ?? (function_exists('current_user') ? current_user() : []);
+$flash = $flash ?? ($_SESSION['flash'] ?? null);
+
 render_app($pdo, $user, $page, $flash, $content);
