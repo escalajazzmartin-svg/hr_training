@@ -40,6 +40,38 @@ CREATE TABLE users (
   CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+CREATE TABLE pending_employee_verifications (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(160) NOT NULL,
+  token_hash CHAR(64) NOT NULL,
+  payload_json JSON NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_pending_verification_email (email),
+  KEY idx_pending_verification_token (token_hash),
+  KEY idx_pending_verification_expires (expires_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE employee_code_counters (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  role_prefix VARCHAR(10) NOT NULL,
+  registration_year YEAR NOT NULL,
+  last_number INT UNSIGNED NOT NULL DEFAULT 0,
+  UNIQUE KEY uq_employee_code_counter (role_prefix, registration_year)
+) ENGINE=InnoDB;
+
+CREATE TABLE employee_password_setup_tokens (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  token_hash CHAR(64) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_password_setup_token_hash (token_hash),
+  KEY idx_password_setup_user (user_id),
+  KEY idx_password_setup_expires (expires_at),
+  CONSTRAINT fk_setup_token_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE competencies (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(140) NOT NULL UNIQUE,

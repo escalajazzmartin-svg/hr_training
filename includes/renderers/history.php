@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-function render_history(PDO $pdo, array $user, bool $report = false): string
+function render_history(PDO $pdo, array $user): string
 {
     $where = '';
     $params = [];
-    $isEmployee = $user['role'] === 'employee';
+
+    $isEmployee = ($user['role'] ?? '') === 'employee';
 
     if ($isEmployee) {
         $where = ' WHERE r.employee_id = ?';
-        $params[] = (int)$user['employee_id'];
+        $params[] = (int) $user['employee_id'];
     }
 
     $sql = 'SELECT r.id, r.status AS reg_status,
@@ -28,15 +29,83 @@ function render_history(PDO $pdo, array $user, bool $report = false): string
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $records = $stmt->fetchAll();
+    $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // History filters
+    $historySearch = trim((string) ($_GET['q'] ?? ''));
+    $historyDepartment = trim((string) ($_GET['department'] ?? ''));
+    $historyStatus = (string) ($_GET['status'] ?? '');
+
+    if (!in_array(
+        $historyStatus,
+        ['', 'Registered', 'Completed', 'Withdrawn'],
+        true
+    )) {
+        $historyStatus = '';
+    }
+
+    // Collect available departments before filtering records.
+    $historyDepartments = [];
+
+    foreach ($records as $record) {
+        $department = trim((string) ($record['department'] ?? ''));
+
+        if ($department !== '') {
+            $historyDepartments[$department] = $department;
+        }
+    }
+
+    natcasesort($historyDepartments);
+
+    // Apply search, department, and status filters.
+    $records = array_values(array_filter(
+        $records,
+        function (array $record) use (
+            $historySearch,
+            $historyDepartment,
+            $historyStatus
+        ): bool {
+            if (
+                $historyDepartment !== ''
+                && ($record['department'] ?? '') !== $historyDepartment
+            ) {
+                return false;
+            }
+
+            if (
+                $historyStatus !== ''
+                && ($record['reg_status'] ?? '') !== $historyStatus
+            ) {
+                return false;
+            }
+
+            if ($historySearch !== '') {
+                $searchable = implode(' ', [
+                    (string) ($record['employee_code'] ?? ''),
+                    (string) ($record['first_name'] ?? ''),
+                    (string) ($record['last_name'] ?? ''),
+                    (string) ($record['department'] ?? ''),
+                    (string) ($record['title'] ?? ''),
+                    (string) ($record['specialization'] ?? ''),
+                ]);
+
+                if (stripos($searchable, $historySearch) === false) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    ));
 
     $today = date('Y-m-d');
     $rows = [];
 
-    foreach ($records as $r) {
-        $attendance = (string)$r['attendance_status'];
+    foreach ($records as $record) {
+        $attendance = (string) ($record['attendance_status'] ?? '');
+        $startDate = (string) ($record['start_date'] ?? '');
 
-        if ((string)$r['start_date'] > $today) {
+        if ($startDate > $today) {
             $attendanceLabel = 'Not due';
         } elseif ($attendance === '') {
             $attendanceLabel = 'Not recorded';
@@ -44,390 +113,115 @@ function render_history(PDO $pdo, array $user, bool $report = false): string
             $attendanceLabel = $attendance;
         }
 
+        $firstName = trim((string) ($record['first_name'] ?? ''));
+        $lastName = trim((string) ($record['last_name'] ?? ''));
+        $fullName = trim($firstName . ' ' . $lastName);
+
+        // Generate initials safely from the employee's name.
+        $initials = '';
+        if ($firstName !== '') {
+            $initials .= function_exists('mb_substr')
+                ? mb_strtoupper(mb_substr($firstName, 0, 1, 'UTF-8'), 'UTF-8')
+                : strtoupper(substr($firstName, 0, 1));
+        }
+        if ($lastName !== '') {
+            $initials .= function_exists('mb_substr')
+                ? mb_strtoupper(mb_substr($lastName, 0, 1, 'UTF-8'), 'UTF-8')
+                : strtoupper(substr($lastName, 0, 1));
+        }
+
+        $facultyMember = '<div class="history-faculty-member">'
+            . '<span class="history-faculty-avatar" aria-hidden="true">'
+            . h($initials !== '' ? $initials : '?')
+            . '</span>'
+            . '<span class="history-faculty-details">'
+            . '<strong>' . h($fullName !== '' ? $fullName : 'Unknown employee') . '</strong>'
+            . '<small>' . h((string) ($record['employee_code'] ?? '')) . '</small>'
+            . '</span>'
+            . '</div>';
+
         $rows[] = [
-            '<span style="white-space:nowrap">'
-                . h($r['employee_code'])
-                . '</span>',
-            h($r['first_name'] . ' ' . $r['last_name']),
-            h($r['title']),
-            h($r['specialization']),
-            h(date('M j, Y', strtotime($r['start_date']))),
-            badge($r['reg_status']),
-            h($attendanceLabel),
-            $r['score'] !== null
-                ? h(number_format((float)$r['score'], 1) . '%')
+            $facultyMember,
+            h($record['title'] ?? ''),
+            h($record['specialization'] ?? ''),
+            $startDate !== ''
+                ? h(date('M j, Y', strtotime($startDate)))
                 : '—',
-            !empty($r['certificate_code'])
+            badge($record['reg_status'] ?? ''),
+            h($attendanceLabel),
+            ($record['score'] ?? null) !== null
+                ? h(number_format((float) $record['score'], 1) . '%')
+                : '—',
+            !empty($record['certificate_code'])
                 ? '<span class="badge badge-success">'
-                . h($r['certificate_code'])
-                . '</span>'
-                : '—'
+                    . h($record['certificate_code'])
+                    . '</span>'
+                : '—',
         ];
     }
 
-    if ($report) {
-        $metricFilter = (string)($_GET['metric'] ?? 'all');
+    // Automatically submit filters when changed.
+    $currentPage = (string) ($_GET['page'] ?? 'History');
 
-        if (!in_array(
-            $metricFilter,
-            ['all', 'completed', 'assessed', 'certificates'],
-            true
-        )) {
-            $metricFilter = 'all';
-        }
+    $historyFilters = '<form class="history-filter-form" method="get" action="">'
+        . '<input type="hidden" name="page" value="' . h($currentPage) . '">'
+        . '<div class="history-search-row">'
+        . '<input class="search-input" type="search" name="q" value="'
+        . h($historySearch)
+        . '" placeholder="Search employee, ID, department, or training program..."'
+        . ' oninput="clearTimeout(this.form.searchTimer);'
+        . ' this.form.searchTimer=setTimeout(() => this.form.requestSubmit(), 350)">'
+        . '</div>'
+        . '<div class="history-controls-row">'
+        . '<select name="department" aria-label="Filter by department" onchange="this.form.requestSubmit()">'
+        . '<option value="">All Departments</option>';
 
-        $search = trim((string)($_GET['q'] ?? ''));
-        $department = trim((string)($_GET['department'] ?? ''));
-        $status = (string)($_GET['status'] ?? '');
-        $from = (string)($_GET['from'] ?? '');
-        $to = (string)($_GET['to'] ?? '');
-
-        if (!in_array($status, ['', 'Registered', 'Completed', 'Withdrawn'], true)) {
-            $status = '';
-        }
-
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $from)) {
-            $from = '';
-        }
-
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $to)) {
-            $to = '';
-        }
-
-        $complete = count(array_filter(
-            $records,
-            fn($r) => $r['reg_status'] === 'Completed'
-        ));
-
-        $certificateCount = count(array_filter(
-            $records,
-            fn($r) => !empty($r['certificate_code'])
-        ));
-
-        $scores = [];
-
-        foreach ($records as $r) {
-            if ($r['score'] !== null) {
-                $scores[] = (float)$r['score'];
-            }
-        }
-
-        $scoreCount = count($scores);
-        $average = $scoreCount > 0
-            ? array_sum($scores) / $scoreCount
-            : null;
-
-        $averageLabel = $average !== null
-            ? number_format($average, 1) . '%'
-            : '—';
-
-        $departments = [];
-
-        foreach ($records as $r) {
-            $name = trim((string)$r['department']);
-
-            if ($name !== '') {
-                $departments[$name] = $name;
-            }
-        }
-
-        natcasesort($departments);
-
-        $dueRecords = array_filter(
-            $records,
-            fn($r) => (string)$r['start_date'] <= $today
-        );
-
-        $recordedAttendance = array_filter(
-            $dueRecords,
-            fn($r) => $r['attendance_status'] !== null
-                && $r['attendance_status'] !== ''
-        );
-
-        $present = count(array_filter(
-            $recordedAttendance,
-            fn($r) => $r['attendance_status'] === 'Present'
-        ));
-
-        $attendanceCount = count($recordedAttendance);
-
-        $displayRecords = [];
-
-        foreach ($records as $r) {
-            if (
-                $metricFilter === 'completed' &&
-                $r['reg_status'] !== 'Completed'
-            ) {
-                continue;
-            }
-
-            if (
-                $metricFilter === 'assessed' &&
-                $r['score'] === null
-            ) {
-                continue;
-            }
-
-            if (
-                $metricFilter === 'certificates' &&
-                empty($r['certificate_code'])
-            ) {
-                continue;
-            }
-
-            if (
-                $status !== '' &&
-                $r['reg_status'] !== $status
-            ) {
-                continue;
-            }
-
-            if (
-                $department !== '' &&
-                $r['department'] !== $department
-            ) {
-                continue;
-            }
-
-            $date = (string)$r['start_date'];
-
-            if ($from !== '' && $date < $from) {
-                continue;
-            }
-
-            if ($to !== '' && $date > $to) {
-                continue;
-            }
-
-            if ($search !== '') {
-                $searchable = implode(' ', [
-                    (string)$r['employee_code'],
-                    (string)$r['first_name'],
-                    (string)$r['last_name'],
-                    (string)$r['department'],
-                    (string)$r['title'],
-                    (string)$r['specialization']
-                ]);
-
-                if (stripos($searchable, $search) === false) {
-                    continue;
-                }
-            }
-
-            $displayRecords[] = $r;
-        }
-
-        $filteredRows = [];
-
-        foreach ($displayRecords as $r) {
-            $attendance = (string)$r['attendance_status'];
-
-            if ((string)$r['start_date'] > $today) {
-                $attendanceLabel = 'Not due';
-            } elseif ($attendance === '') {
-                $attendanceLabel = 'Not recorded';
-            } else {
-                $attendanceLabel = $attendance;
-            }
-
-            $filteredRows[] = [
-                '<span style="white-space:nowrap">'
-                    . h($r['employee_code'])
-                    . '</span>',
-                h($r['first_name'] . ' ' . $r['last_name']),
-                h($r['title']),
-                h($r['specialization']),
-                h(date('M j, Y', strtotime($r['start_date']))),
-                badge($r['reg_status']),
-                h($attendanceLabel),
-                $r['score'] !== null
-                    ? h(number_format((float)$r['score'], 1) . '%')
-                    : '—',
-                !empty($r['certificate_code'])
-                    ? '<span class="badge badge-success">'
-                    . h($r['certificate_code'])
-                    . '</span>'
-                    : '—'
-            ];
-        }
-
-        $html = page_intro(
-            'Reports & Analytics',
-            'Review training participation, attendance, assessments, and certification outcomes.',
-            '<a class="btn" href="?page=Reports&export=training">'
-                . icon('download')
-                . ' Export CSV</a>'
-        );
-
-        $html .= '<form class="report-tiles" method="get" action="?page=Reports">'
-            . '<button type="submit" name="metric" value="all" class="'
-            . ($metricFilter === 'all' ? 'active' : '')
-            . '"><span class="report-icon">'
-            . icon('users')
-            . '</span><b>Total registrations</b><small>'
-            . count($records)
-            . ' training enrollments</small></button>'
-
-            . '<button type="submit" name="metric" value="completed" class="'
-            . ($metricFilter === 'completed' ? 'active' : '')
-            . '"><span class="report-icon">'
-            . icon('check')
-            . '</span><b>Completed training</b><small>'
-            . $complete
-            . ' marked complete</small></button>'
-
-            . '<button type="submit" name="metric" value="assessed" class="'
-            . ($metricFilter === 'assessed' ? 'active' : '')
-            . '"><span class="report-icon">'
-            . icon('chart')
-            . '</span><b>Average assessment</b><small>'
-            . h($averageLabel)
-            . ' · '
-            . $scoreCount
-            . ' scored record(s)</small></button>'
-
-            . '<button type="submit" name="metric" value="certificates" class="'
-            . ($metricFilter === 'certificates' ? 'active' : '')
-            . '"><span class="report-icon">'
-            . icon('award')
-            . '</span><b>Certificates issued</b><small>'
-            . $certificateCount
-            . ' certificate(s)</small></button>'
-            . '</form>';
-
-        $completionPercent = count($records) > 0
-            ? (int)round($complete / count($records) * 100)
-            : 0;
-
-        $attendancePercent = $attendanceCount > 0
-            ? (int)round($present / $attendanceCount * 100)
-            : 0;
-
-        $certificatePercent = count($records) > 0
-            ? (int)round($certificateCount / count($records) * 100)
-            : 0;
-
-        $html .= '<div class="dashboard-grid">'
-            . '<section class="card span-2">'
-            . section_head(
-                'Training participation',
-                'Registration records with attendance and assessment results'
-            )
-            . '<form class="filter-row" method="get" action="?page=Reports">'
-            . '<input type="hidden" name="metric" value="'
-            . h($metricFilter)
-            . '">'
-            . '<input class="search-input" type="search" name="q" value="'
-            . h($search)
-            . '" placeholder="Search employee, ID, program, or specialization...">'
-            . '<select name="department">'
-            . '<option value="">All departments</option>';
-
-        foreach ($departments as $item) {
-            $html .= '<option value="'
-                . h($item)
-                . '"'
-                . ($department === $item ? ' selected' : '')
-                . '>'
-                . h($item)
-                . '</option>';
-        }
-
-        $html .= '</select><select name="status">'
-            . '<option value="">All statuses</option>';
-
-        foreach (['Registered', 'Completed', 'Withdrawn'] as $item) {
-            $html .= '<option value="'
-                . h($item)
-                . '"'
-                . ($status === $item ? ' selected' : '')
-                . '>'
-                . h($item)
-                . '</option>';
-        }
-
-        $html .= '</select>'
-            . '<label class="small-muted">From <input type="date" name="from" value="'
-            . h($from)
-            . '"></label>'
-            . '<label class="small-muted">To <input type="date" name="to" value="'
-            . h($to)
-            . '"></label>'
-            . '<button class="btn btn-secondary" type="submit">'
-            . icon('search')
-            . ' Filter</button>'
-            . '<a class="btn btn-ghost" href="?page=Reports">Clear</a>'
-            . '</form>'
-            . '<p class="small-muted">Showing '
-            . count($displayRecords)
-            . ' of '
-            . count($records)
-            . ' registration record(s). Average assessment uses '
-            . $scoreCount
-            . ' record(s) with a saved score.</p>'
-            . '<div style="width:100%;max-width:100%;overflow-x:auto">'
-            . '<div style="min-width:1050px">'
-            . render_table(
-                [
-                    'Employee ID',
-                    'Faculty member',
-                    'Training program',
-                    'Specialization',
-                    'Date',
-                    'Status',
-                    'Attendance',
-                    'Score',
-                    'Certificate'
-                ],
-                $filteredRows,
-                'No training records match your current filters.'
-            )
-            . '</div></div></section>'
-
-            . '<section class="card">'
-            . section_head(
-                'Outcome summary',
-                'Completion, recorded attendance, and certification'
-            )
-            . '<div class="bar-list">'
-            . '<div><span><b>Completed</b><small>'
-            . $complete . ' / ' . count($records)
-            . '</small></span><span class="progress"><i style="width:'
-            . $completionPercent
-            . '%"></i></span></div>'
-
-            . '<div><span><b>Present attendance</b><small>'
-            . $present . ' / ' . $attendanceCount
-            . ' recorded</small></span><span class="progress"><i class="warn" style="width:'
-            . $attendancePercent
-            . '%"></i></span></div>'
-
-            . '<div><span><b>Certificates issued</b><small>'
-            . $certificateCount
-            . ' total</small></span><span class="progress"><i style="width:'
-            . $certificatePercent
-            . '%"></i></span></div>'
-            . '</div>'
-            . '<p class="small-muted" style="margin-top:1rem">Future training sessions are excluded from the attendance percentage. Sessions without a saved attendance status are not counted as present or absent.</p>'
-            . '</section></div>';
-
-        return $html;
+    foreach ($historyDepartments as $department) {
+        $historyFilters .= '<option value="'
+            . h($department)
+            . '"'
+            . ($historyDepartment === $department ? ' selected' : '')
+            . '>'
+            . h($department)
+            . '</option>';
     }
 
-    return page_intro(
-        $isEmployee ? 'My Training History' : 'Training History',
-        'A record of training participation, completion, attendance, assessments, and certificates.'
-    )
+    $historyFilters .= '</select><select name="status" aria-label="Filter by status" onchange="this.form.requestSubmit()">';
+
+    foreach (
+        [
+            '' => 'All Statuses',
+            'Registered' => 'Registered',
+            'Completed' => 'Completed',
+            'Withdrawn' => 'Withdrawn',
+        ] as $value => $label
+    ) {
+        $historyFilters .= '<option value="'
+            . h($value)
+            . '"'
+            . ($historyStatus === $value ? ' selected' : '')
+            . '>'
+            . h($label)
+            . '</option>';
+    }
+
+    $historyFilters .= '</select>'
+        . '<a class="clear-filters" href="?page='
+        . rawurlencode($currentPage)
+        . '">Clear filters</a>'
+        . '</div></form>';
+
+    return '<div class="history-page">'
+        . page_intro('', '')
         . '<section class="card">'
-        . section_head(
-            'Training records',
-            'Records are based on saved training registrations.'
-        )
-        . '<div style="width:100%;max-width:100%;overflow-x:auto">'
-        . '<div style="min-width:1050px">'
+        . $historyFilters
+        . '<p class="small-muted">Showing '
+        . count($rows)
+        . ' registration record(s).</p>'
+        . '<div class="history-table-scroll">'
+        . '<div class="history-table-inner">'
         . render_table(
             [
-                'Employee ID',
                 'Faculty member',
                 'Training program',
                 'Specialization',
@@ -435,10 +229,10 @@ function render_history(PDO $pdo, array $user, bool $report = false): string
                 'Status',
                 'Attendance',
                 'Score',
-                'Certificate'
+                'Certificate',
             ],
             $rows,
             'No training history is available yet.'
         )
-        . '</div></div></section>';
+        . '</div></div></section></div>';
 }

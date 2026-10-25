@@ -43,6 +43,13 @@ function process_post_request(PDO $pdo): void
         redirect('Dashboard');
     }
 
+    if ($action === 'add_employee') {
+        // The admin employee registration page handles this route with email verification.
+        // Do not run the legacy direct-create employee flow here, as it conflicts with
+        // the verified registration sequence and requires different fields.
+        return;
+    }
+
     verify_csrf();
 
     if ($action === 'logout') {
@@ -518,6 +525,431 @@ function process_post_request(PDO $pdo): void
                 $stmt->execute([$reg, $code, $user['id']]);
 
                 flash('Certificate issued.');
+                redirect('Certificates');
+
+            case 'send_certificate_email':
+                signed_in_user($pdo, 'admin');
+
+                $reg = (int)($_POST['registration_id'] ?? 0);
+                if ($reg < 1) {
+                    throw new RuntimeException('Choose a valid certificate to send.');
+                }
+
+                // Only send certificates that have been issued for a completed,
+                // passing training registration.
+                $stmt = $pdo->prepare(
+                    "SELECT
+                        r.id AS registration_id,
+                        e.first_name,
+                        e.last_name,
+                        e.employee_code,
+                        e.email AS employee_email,
+                        p.title AS program_title,
+                        ev.score,
+                        c.certificate_code,
+                        c.issued_at
+                    FROM registrations r
+                    JOIN employees e ON e.id = r.employee_id
+                    JOIN training_programs p ON p.id = r.program_id
+                    JOIN evaluations ev ON ev.registration_id = r.id
+                    JOIN certificates c ON c.registration_id = r.id
+                    WHERE r.id = ?
+                      AND r.status = 'Completed'
+                      AND ev.score >= 75
+                    LIMIT 1"
+                );
+                $stmt->execute([$reg]);
+                $certificate = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$certificate) {
+                    throw new RuntimeException(
+                        'No issued certificate was found for this completed training registration.'
+                    );
+                }
+
+                $recipient = trim((string)($certificate['employee_email'] ?? ''));
+                if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+                    throw new RuntimeException(
+                        'The employee does not have a valid email address. Update the employee record first.'
+                    );
+                }
+
+                $fullName = trim(
+                    (string)$certificate['first_name'] . ' ' .
+                        (string)$certificate['last_name']
+                );
+                $programTitle = (string)$certificate['program_title'];
+                $certificateCode = (string)$certificate['certificate_code'];
+                $score = number_format((float)$certificate['score'], 1);
+                $issuedAt = !empty($certificate['issued_at'])
+                    ? date('F j, Y', strtotime((string)$certificate['issued_at']))
+                    : date('F j, Y');
+
+                $escape = static function ($value): string {
+                    return htmlspecialchars(
+                        (string)$value,
+                        ENT_QUOTES | ENT_SUBSTITUTE,
+                        'UTF-8'
+                    );
+                };
+
+                // Create a portable HTML certificate attachment. This does not
+                // claim to be a PDF; the recipient can open and print the HTML.
+                $certificateHtml = $html = '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Certificate of Completion - ' . $escape($fullName) . '</title>
+<style>
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 297mm;
+    height: 210mm;
+    font-family: Georgia, "Times New Roman", serif;
+    color: #262626;
+    background: #ffffff;
+}
+
+body {
+    position: relative;
+}
+
+.certificate {
+    position: absolute;
+
+    margin: 6mm 0 0 5mm;
+    width: 260mm;
+    height: 170mm;
+    padding: 12mm;
+
+    border: 1.2mm double #8B1E1E;
+    text-align: center;
+    overflow: hidden;
+}
+
+.certificate::before {
+    content: "";
+    position: absolute;
+    left: 3mm;
+    top: 3mm;
+    right: 3mm;
+    bottom: 3mm;
+    border: 0.45mm solid #F2C300;
+    pointer-events: none;
+}
+
+.organization {
+    margin: 1mm 0 0;
+    color: #8B1E1E;
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    font-weight: bold;
+    letter-spacing: 2.5pt;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 7mm 0 4mm;
+    color: #8B1E1E;
+    font-size: 25pt;
+    line-height: 1.15;
+    letter-spacing: 1.3pt;
+    text-transform: uppercase;
+}
+
+.intro {
+    margin: 0;
+    font-size: 12pt;
+}
+
+.recipient {
+    width: 82%;
+    margin: 4mm auto;
+    padding: 0 0 2.5mm;
+    border-bottom: 0.3mm solid #999999;
+    font-size: 23pt;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.description {
+    margin: 3.5mm auto 0;
+    font-size: 12pt;
+    line-height: 1.35;
+}
+
+.program {
+    margin: 3mm 0 0;
+    color: #8B1E1E;
+    font-size: 19pt;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.score {
+    margin: 3mm 0 0;
+    font-size: 11pt;
+}
+
+.details {
+    width: 78%;
+    margin: 8mm auto 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+}
+
+.details td {
+    width: 50%;
+    padding: 0 8mm;
+    text-align: center;
+    vertical-align: top;
+}
+
+.label {
+    display: block;
+    margin-bottom: 1.5mm;
+    color: #666666;
+    font-size: 8pt;
+    letter-spacing: 1pt;
+    text-transform: uppercase;
+}
+
+.value {
+    display: block;
+    font-size: 9pt;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.code {
+    margin-top: 6mm;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+    overflow-wrap: anywhere;
+}
+
+/* Shift all certificate content downward slightly */
+.certificate > .organization,
+.certificate > h1,
+.certificate > .intro,
+.certificate > .recipient,
+.certificate > .description,
+.certificate > .program,
+.certificate > .score,
+.certificate > .details,
+.certificate > .code {
+    position: relative;
+    top: 30mm;
+}
+
+@media print {
+    html, body {
+        width: 297mm;
+        height: 210mm;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .certificate {
+        position: absolute;
+        left: 10mm;
+        top: 10mm;
+        width: 277mm;
+        height: 190mm;
+        margin: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+</style>
+</head>
+<body>
+<main class="certificate">
+
+<div class="organization">WIS HR Training and Development</div>
+
+<h1>Certificate of Completion</h1>
+
+<p class="intro">This certificate is proudly presented to</p>
+
+<div class="recipient">' . $escape($fullName) . '</div>
+
+<p class="description">
+In recognition of successfully completing the training program
+</p>
+
+<div class="program">' . $escape($programTitle) . '</div>
+
+<p class="score">
+with an assessment score of <strong>' . $escape($score) . '%</strong>.
+</p>
+
+<table class="details" cellspacing="0" cellpadding="0">
+<tr>
+<td>
+<span class="label">Employee ID</span>
+<span class="value">' . $escape($certificate['employee_code']) . '</span>
+</td>
+<td>
+<span class="label">Date Issued</span>
+<span class="value">' . $escape($issuedAt) . '</span>
+</td>
+</tr>
+</table>
+
+<div class="code">
+Certificate Code: <strong>' . $escape($certificateCode) . '</strong>
+</div>
+
+</main>
+</body>
+</html>';
+
+                // Send through Gmail SMTP using PHPMailer.
+                $autoloadPath = __DIR__ . '/../vendor/autoload.php';
+                $mailConfigPath = __DIR__ . '/mail_config.php';
+
+                if (!is_file($autoloadPath)) {
+                    throw new RuntimeException(
+                        'PHPMailer is not installed. Run composer require phpmailer/phpmailer in the project root.'
+                    );
+                }
+
+                if (!is_file($mailConfigPath)) {
+                    throw new RuntimeException(
+                        'Mail configuration was not found at includes/mail_config.php.'
+                    );
+                }
+
+                require_once $autoloadPath;
+                $mailConfig = require $mailConfigPath;
+
+                if (!is_array($mailConfig)) {
+                    throw new RuntimeException('The mail configuration is invalid.');
+                }
+
+                $smtpHost = trim((string)($mailConfig['host'] ?? ''));
+                $smtpUsername = trim((string)($mailConfig['username'] ?? ''));
+                $smtpPassword = trim((string)($mailConfig['password'] ?? ''));
+                $fromAddress = trim((string)($mailConfig['from_email'] ?? ''));
+                $fromName = trim((string)($mailConfig['from_name'] ?? 'HR Training System'));
+                $smtpPort = (int)($mailConfig['port'] ?? 587);
+                $encryption = strtolower(trim((string)($mailConfig['encryption'] ?? 'tls')));
+
+                if (
+                    $smtpHost === '' ||
+                    !filter_var($smtpUsername, FILTER_VALIDATE_EMAIL) ||
+                    $smtpPassword === '' ||
+                    !filter_var($fromAddress, FILTER_VALIDATE_EMAIL) ||
+                    !in_array($encryption, ['tls', 'ssl', ''], true) ||
+                    $smtpPort < 1 ||
+                    $smtpPort > 65535
+                ) {
+                    throw new RuntimeException(
+                        'Mail configuration is incomplete. Check host, port, encryption, username, password, and from_email in includes/mail_config.php.'
+                    );
+                }
+
+                if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class)) {
+                    throw new RuntimeException(
+                        'PHPMailer could not be loaded. Run composer require phpmailer/phpmailer in the project root.'
+                    );
+                }
+
+                $subject = 'Your Certificate of Completion - ' . $programTitle;
+                $bodyHtml = '<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;padding:24px;background:#f5f5f5;font-family:Arial,sans-serif;color:#262626">
+  <div style="max-width:640px;margin:0 auto;padding:28px;background:#ffffff;border-top:5px solid #8B1E1E">
+    <h2 style="margin-top:0;color:#8B1E1E">Congratulations, ' . $escape($fullName) . '!</h2>
+    <p>You have successfully completed the training program <strong>' . $escape($programTitle) . '</strong>.</p>
+    <p><strong>Assessment score:</strong> ' . $escape($score) . '%<br>
+       <strong>Certificate code:</strong> ' . $escape($certificateCode) . '<br>
+       <strong>Date issued:</strong> ' . $escape($issuedAt) . '</p>
+    <p>Your Certificate of Completion is attached to this email as a PDF document.</p>
+    <p>Thank you,<br><strong>Training and Development</strong></p>
+  </div>
+</body>
+</html>';
+                if (!class_exists(\Dompdf\Dompdf::class)) {
+                    throw new RuntimeException(
+                        'PDF generator is not installed. Run composer require dompdf/dompdf in the project root.'
+                    );
+                }
+
+                $pdfOptions = new \Dompdf\Options();
+                $pdfOptions->set('isRemoteEnabled', false);
+                $pdfOptions->set('isPhpEnabled', false);
+
+                $dompdf = new \Dompdf\Dompdf($pdfOptions);
+                $dompdf->loadHtml($certificateHtml, 'UTF-8');
+                $dompdf->setPaper('A4', 'landscape');
+                $dompdf->render();
+                $certificatePdf = $dompdf->output();
+
+                $safeCertificateCode = preg_replace('/[^A-Za-z0-9_-]/', '-', $certificateCode);
+                $attachmentName = 'certificate-' . $safeCertificateCode . '.pdf';
+
+                $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = $smtpHost;
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $smtpUsername;
+                    $mail->Password = $smtpPassword;
+                    $mail->Port = $smtpPort;
+
+                    if ($encryption === 'ssl') {
+                        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                    } elseif ($encryption === 'tls') {
+                        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                    } else {
+                        $mail->SMTPSecure = '';
+                        $mail->SMTPAutoTLS = false;
+                    }
+
+                    $mail->CharSet = 'UTF-8';
+                    $mail->setFrom($fromAddress, $fromName);
+                    $mail->addAddress($recipient, $fullName);
+                    $mail->Subject = $subject;
+                    $mail->isHTML(true);
+                    $mail->Body = $bodyHtml;
+                    $mail->AltBody = "Hello {$fullName},\n\n"
+                        . "Congratulations on completing {$programTitle}.\n"
+                        . "Assessment score: {$score}%\n"
+                        . "Certificate code: {$certificateCode}\n"
+                        . "Date issued: {$issuedAt}\n\n"
+                        . "Your Certificate of Completion is attached as a PDF document.\n";
+
+                    $mail->addStringAttachment(
+                        $certificatePdf,
+                        $attachmentName,
+                        \PHPMailer\PHPMailer\PHPMailer::ENCODING_BASE64,
+                        'application/pdf'
+                    );
+
+                    $mail->send();
+                } catch (\PHPMailer\PHPMailer\Exception $mailException) {
+                    error_log('Certificate email failed: ' . $mailException->getMessage());
+                    throw new RuntimeException(
+                        'The certificate email could not be sent. Check your Gmail SMTP settings and App Password, then try again.'
+                    );
+                }
+
+                flash('Certificate email sent successfully to ' . $recipient . '.');
                 redirect('Certificates');
 
             case 'change_password':

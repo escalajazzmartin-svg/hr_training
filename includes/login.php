@@ -11,7 +11,7 @@ function render_login(?array $flash): void
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Sign in | Training & Development</title>
+        <title>Sign in | WIS HR Training and Development</title>
         <link rel="stylesheet" href="assets/style.css">
         <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     </head>

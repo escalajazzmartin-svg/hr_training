@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '.table-wrap[data-max-rows], ' +
         '.employee-table-scroll[data-max-rows], ' +
         '.competency-table-scroll[data-max-rows], ' +
-        '.attendance-table-wrap[data-max-rows]'
+        '.attendance-table-wrap[data-max-rows], ' +
+        '.certificates-table-wrap[data-max-rows]'
     );
 
     wrappers.forEach((wrapper) => {

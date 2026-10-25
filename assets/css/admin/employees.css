@@ -476,3 +476,22 @@ body.modal-open {
     color: #dc2626;
     font-size: 18px;
 }
+
+
+/* Keep notifications visible above modals */
+.toast,
+.toast-container,
+.toast-notification,
+.notification,
+.notification-container,
+.alert,
+.flash-message,
+.flash-notice {
+    position: relative;
+    z-index: 100000 !important;
+}
+
+/* Modal stays below notifications */
+.modal-overlay {
+    z-index: 1000;
+}

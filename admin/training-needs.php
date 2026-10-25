@@ -127,7 +127,7 @@ function render_needs_analysis(PDO $pdo): string
     $html = '<link rel="stylesheet" href="/hr_training/assets/css/admin/training-needs.css">';
 
     $html .= page_intro(
-        'Training & Development',
+        't',
         '',
         '<div class="tna-header-actions">
             <button type="button"

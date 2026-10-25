@@ -295,7 +295,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                 'Assessments & Evaluations' => 'evaluations.css',
                 'Training History' => 'history.css',
                 'Employee Registration' => 'registrations.css',
-                'Reports' => 'reports.css',
+                'Reports' => 'report.css',
                 'Settings' => 'settings.css',
                 'Training Needs Analysis' => 'training-needs.css',
                 'Training Programs' => 'trainings.css',
@@ -393,21 +393,6 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                             <?php endif; ?>
                         </button>
 
-                        <button
-                            class="header-profile"
-                            type="button"
-                            id="profile-toggle"
-                            aria-label="Open account menu"
-                            aria-expanded="false"
-                            aria-controls="profile-menu">
-                            <span class="avatar"><?= h($initial) ?></span>
-                            <span>
-                                <?= h($name) ?>
-                                <small><?= h(role_label($role)) ?></small>
-                            </span>
-                            <?= icon('chevron', 14) ?>
-                        </button>
-
                         <div id="global-search-panel" class="header-popover header-search-panel" <?= $globalSearch === '' ? 'hidden' : '' ?>>
                             <h3>Search workspace</h3>
                             <p class="popover-subtitle">Find pages, employees, and training programs.</p>
@@ -481,24 +466,6 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                                 </p>
                             <?php endif; ?>
                         </div>
-
-                        <div id="profile-menu" class="header-popover header-profile-menu" hidden>
-                            <div class="account-heading">
-                                <b><?= h($name) ?></b>
-                                <small><?= h($user['email'] ?? '') ?></small>
-                                <small><?= h(role_label($role)) ?></small>
-                            </div>
-
-                            <a class="header-menu-link" href="<?= h(app_page_url($accountPage, $role)) ?>">
-                                <?= h($accountLabel) ?>
-                            </a>
-
-                            <form method="post">
-                                <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
-                                <input type="hidden" name="action" value="logout">
-                                <button class="header-menu-link logout" type="submit">Sign out <?= icon('logout', 14) ?></button>
-                            </form>
-                        </div>
                     </div>
                 </header>
 
@@ -525,8 +492,6 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
             const searchInput = searchPanel.querySelector('input[name="global_search"]');
             const notificationsToggle = document.getElementById('notifications-toggle');
             const notificationsPanel = document.getElementById('notifications');
-            const profileToggle = document.getElementById('profile-toggle');
-            const profileMenu = document.getElementById('profile-menu');
 
             document.querySelectorAll('form[method=post]').forEach(form => {
                 if (!form.querySelector('[name=return_page]')) {
@@ -541,11 +506,9 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
             function closeHeaderPanels() {
                 searchPanel.hidden = true;
                 notificationsPanel.hidden = true;
-                profileMenu.hidden = true;
 
                 searchToggle.setAttribute('aria-expanded', 'false');
                 notificationsToggle.setAttribute('aria-expanded', 'false');
-                profileToggle.setAttribute('aria-expanded', 'false');
             }
 
             searchToggle.addEventListener('click', () => {
@@ -568,22 +531,12 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                 notificationsToggle.setAttribute('aria-expanded', String(shouldOpen));
             });
 
-            profileToggle.addEventListener('click', () => {
-                const shouldOpen = profileMenu.hidden;
-
-                closeHeaderPanels();
-                profileMenu.hidden = !shouldOpen;
-                profileToggle.setAttribute('aria-expanded', String(shouldOpen));
-            });
-
             document.addEventListener('click', event => {
                 if (
                     !event.target.closest('#global-search-panel') &&
                     !event.target.closest('#search-toggle') &&
                     !event.target.closest('#notifications') &&
-                    !event.target.closest('#notifications-toggle') &&
-                    !event.target.closest('#profile-menu') &&
-                    !event.target.closest('#profile-toggle')
+                    !event.target.closest('#notifications-toggle')
                 ) {
                     closeHeaderPanels();
                 }
@@ -716,8 +669,13 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
             });
         </script>
         <script src="<?= h(app_base_url() . '/assets/js/table.js') ?>" defer></script>
+
         <?php if ($isAssessmentPage): ?>
             <script src="<?= h(app_base_url() . '/assets/js/admin/assessments.js') ?>" defer></script>
+        <?php endif; ?>
+
+        <?php if ($page === 'Certificates' && $role === 'admin'): ?>
+            <script src="<?= h(app_base_url() . '/assets/js/admin/certificate-print.js') ?>" defer></script>
         <?php endif; ?>
     </body>
 

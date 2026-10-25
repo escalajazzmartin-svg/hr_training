@@ -109,6 +109,7 @@
     letter-spacing: .045em;
     text-transform: uppercase;
     white-space: nowrap;
+    background: white;
 }
 
 .assessment-table td {
@@ -161,7 +162,7 @@
 
 .assessment-actions-heading,
 .assessment-actions-cell {
-    text-align: right;
+    text-align: left;
 }
 
 .assessment-row-action {
@@ -185,6 +186,7 @@
 .assessment-row-action svg {
     width: 21px;
     height: 21px;
+    color: #800000
 }
 
 .assessment-table-footer {
@@ -280,8 +282,12 @@
     font: inherit;
 }
 
-.assessment-form-field textarea {
-    resize: vertical;
+.assessment-feedback-field textarea {
+    height: 104px;
+    min-height: 104px;
+    max-height: 104px;
+    resize: none;
+    overflow-y: auto;
 }
 
 .assessment-details-footer {

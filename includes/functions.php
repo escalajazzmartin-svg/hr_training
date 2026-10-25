@@ -151,6 +151,12 @@ function verify_csrf(): void
         exit('Your session expired. Go back, refresh the page, and try again.');
     }
 }
+function write_app_log(string $message): void
+{
+    $logFile = dirname(__DIR__) . '/employee_registration_errors.log';
+    $timestamp = date('Y-m-d H:i:s');
+    error_log("[{$timestamp}] {$message}" . PHP_EOL, 3, $logFile);
+}
 function flash(string $message, string $type = 'success'): void
 {
     $_SESSION['flash'] = ['message' => $message, 'type' => $type];

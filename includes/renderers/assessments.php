@@ -153,13 +153,13 @@ function render_assessments(PDO $pdo, array $user): string
         . '<div class="assessment-table-wrap">'
         . '<table class="assessment-table">'
         . '<thead><tr>'
+        . '<th class="assessment-actions-heading">Actions</th>'
         . '<th>Employee ID</th>'
         . '<th>Faculty Member</th>'
         . '<th>Department</th>'
         . '<th>Training Program</th>'
         . '<th>Training Date</th>'
         . '<th>Status</th>'
-        . '<th class="assessment-actions-heading">Actions</th>'
         . '</tr></thead><tbody>';
 
     foreach ($data as $r) {
@@ -189,16 +189,7 @@ function render_assessments(PDO $pdo, array $user): string
             . 'data-department="' . h($department) . '" '
             . 'data-status="' . $statusKey . '">';
 
-        $html .= '<td>' . h($employeeCode) . '</td>';
-        $html .= '<td><strong class="assessment-faculty-name">'
-            . h($fullName !== '' ? $fullName : 'Unknown employee') . '</strong></td>';
-        $html .= '<td>' . h($department) . '</td>';
-        $html .= '<td><span class="assessment-program-title">' . h($title) . '</span></td>';
-        $html .= '<td>' . h($startDate) . '</td>';
-        $html .= '<td><span class="assessment-status '
-            . ($hasScore ? 'is-scored' : 'is-pending') . '">'
-            . ($hasScore ? 'Scored' : 'Pending') . '</span></td>';
-
+        // First column: Actions icon
         $html .= '<td class="assessment-actions-cell">'
             . '<button type="button" class="assessment-row-action" '
             . 'aria-label="Toggle assessment details for ' . h($fullName) . '" '
@@ -208,7 +199,24 @@ function render_assessments(PDO $pdo, array $user): string
             . '<circle cx="5" cy="12" r="1.7" fill="currentColor"/>'
             . '<circle cx="12" cy="12" r="1.7" fill="currentColor"/>'
             . '<circle cx="19" cy="12" r="1.7" fill="currentColor"/>'
-            . '</svg></button></td></tr>';
+            . '</svg></button></td>';
+
+        // Remaining columns
+        $html .= '<td>' . h($employeeCode) . '</td>';
+
+        $html .= '<td><strong class="assessment-faculty-name">'
+            . h($fullName !== '' ? $fullName : 'Unknown employee') . '</strong></td>';
+
+        $html .= '<td>' . h($department) . '</td>';
+
+        $html .= '<td><span class="assessment-program-title">'
+            . h($title) . '</span></td>';
+
+        $html .= '<td>' . h($startDate) . '</td>';
+
+        $html .= '<td><span class="assessment-status '
+            . ($hasScore ? 'is-scored' : 'is-pending') . '">'
+            . ($hasScore ? 'Scored' : 'Pending') . '</span></td></tr>';
 
         $html .= '<tr class="assessment-details-row" id="' . $detailsId . '" hidden>'
             . '<td colspan="7"><div class="assessment-details-panel">'
@@ -292,26 +300,6 @@ function render_assessments(PDO $pdo, array $user): string
         department.value = '';
         status.value = '';
         filterRows();
-    });
-
-    root.addEventListener('click', function (event) {
-        const button = event.target.closest('[data-assessment-toggle]');
-        if (!button) return;
-        const details = document.getElementById(button.dataset.assessmentToggle);
-        if (!details) return;
-        const opening = details.hidden;
-
-        root.querySelectorAll('.assessment-details-row').forEach(function (row) {
-            row.hidden = true;
-        });
-        root.querySelectorAll('[data-assessment-toggle][aria-expanded]').forEach(function (toggle) {
-            toggle.setAttribute('aria-expanded', 'false');
-        });
-
-        details.hidden = !opening;
-        root.querySelectorAll('[data-assessment-toggle="' + button.dataset.assessmentToggle + '"]').forEach(function (toggle) {
-            if (toggle.hasAttribute('aria-expanded')) toggle.setAttribute('aria-expanded', String(opening));
-        });
     });
 })();
 </script>

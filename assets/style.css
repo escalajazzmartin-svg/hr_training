@@ -1502,12 +1502,13 @@ Page-specific calendar/dashboard layouts remain in their own files. */
 }
 
 .eyebrow {
-    color: var(--maroon);
+    color: var(--muted, #73747a);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
     text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 0.13em;
-    font-size: var(--text-xs);
 }
+
 
 .eyebrow.light {
     color: var(--gold);

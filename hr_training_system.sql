@@ -251,6 +251,45 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+--
+-- Table structure for table `pending_employee_verifications`
+--
+
+CREATE TABLE `pending_employee_verifications` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `email` varchar(160) NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `payload_json` longtext NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `employee_code_counters`
+--
+
+CREATE TABLE `employee_code_counters` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `role_prefix` varchar(10) NOT NULL,
+  `registration_year` year NOT NULL,
+  `last_number` int(10) UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `employee_password_setup_tokens`
+--
+
+CREATE TABLE `employee_password_setup_tokens` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Dumping data for table `users`
 --

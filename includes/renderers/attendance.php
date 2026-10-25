@@ -53,7 +53,6 @@ function render_attendance(PDO $pdo, array $user): string
         . '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">'
         . '<input type="hidden" name="action" value="mark_attendance">'
         . '<section class="card attendance-card">'
-        . section_head('Participant attendance', 'Use the status selector for each participant.')
         . '<div class="session-banner">'
         . '<div class="date-tile light"><b>' . h(strtoupper(date('M'))) . '</b>'
         . '<strong>' . h(date('d')) . '</strong></div>'

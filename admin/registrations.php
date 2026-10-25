@@ -90,7 +90,6 @@ function render_registration(PDO $pdo): string
     $html .= '<div class="table-wrap registration-table-wrap" data-max-rows="5">'
         . '<table class="registration-table" id="registrationTable">'
         . '<thead><tr>'
-        . '<th>EMPLOYEE ID</th>'
         . '<th>FACULTY MEMBER</th>'
         . '<th>DEPARTMENT</th>'
         . '<th>TRAINING PROGRAM</th>'
@@ -103,6 +102,12 @@ function render_registration(PDO $pdo): string
         $employeeName = trim(
             (string)($r['first_name'] ?? '') . ' '
                 . (string)($r['last_name'] ?? '')
+        );
+        $firstName = trim((string)($r['first_name'] ?? ''));
+        $lastName = trim((string)($r['last_name'] ?? ''));
+        $initials = strtoupper(
+            (function_exists('mb_substr') ? mb_substr($firstName, 0, 1) : substr($firstName, 0, 1))
+                . (function_exists('mb_substr') ? mb_substr($lastName, 0, 1) : substr($lastName, 0, 1))
         );
         $department = (string)($r['department'] ?? '');
         $programTitle = (string)($r['title'] ?? '');
@@ -120,8 +125,17 @@ function render_registration(PDO $pdo): string
             . 'data-department="' . h($department) . '" '
             . 'data-status="' . h($status) . '">';
 
-        $html .= '<td>' . h($employeeCode) . '</td>'
-            . '<td><strong>' . h($employeeName) . '</strong></td>'
+        $html .= '<td>'
+            . '<div class="registration-faculty-member">'
+            . '<span class="registration-faculty-avatar" aria-hidden="true">'
+            . h($initials !== '' ? $initials : '?')
+            . '</span>'
+            . '<span class="registration-faculty-details">'
+            . '<strong>' . h($employeeName !== '' ? $employeeName : 'Unknown employee') . '</strong>'
+            . '<small>' . h($employeeCode) . '</small>'
+            . '</span>'
+            . '</div>'
+            . '</td>'
             . '<td>' . h($department !== '' ? $department : '—') . '</td>'
             . '<td>' . h($programTitle) . '</td>'
             . '<td>' . ($trainingDate !== ''
@@ -133,7 +147,7 @@ function render_registration(PDO $pdo): string
 
     if (!$joined) {
         $html .= '<tr class="registration-empty-row">'
-            . '<td colspan="6">No registrations have been created yet.</td>'
+            . '<td colspan="5">No registrations have been created yet.</td>'
             . '</tr>';
     }
 
@@ -262,7 +276,7 @@ function render_registration(PDO $pdo): string
                 emptyRow = document.createElement('tr');
                 emptyRow.className = 'registration-empty-row registration-filter-empty';
                 emptyRow.innerHTML =
-                    '<td colspan="6">No matching registrations found.</td>';
+                    '<td colspan="5">No matching registrations found.</td>';
                 table.tBodies[0].appendChild(emptyRow);
             }
             emptyRow.hidden = false;
