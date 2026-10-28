@@ -57,13 +57,13 @@
 
 .table-actions button.delete-btn,
 .table-actions .delete-btn {
-    color: #dc2626;
+    color: var(--red, #dc2626);
 }
 
 .table-actions button.delete-btn:hover,
 .table-actions .delete-btn:hover {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--red-soft, #fee2e2);
+    color: var(--red, #b91c1c);
 }
 
 /* Keep the actions column aligned to the right without affecting other tables. */
@@ -106,9 +106,9 @@ table tbody td:last-child .table-actions {
     overflow-x: hidden;
     overflow-y: auto;
     padding: 24px;
-    background: #fff;
+    background: var(--surface, #fff);
     border-radius: 14px;
-    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
+    box-shadow: var(--shadow, 0 20px 60px rgb(0 0 0 / 20%));
     overscroll-behavior: contain;
 }
 

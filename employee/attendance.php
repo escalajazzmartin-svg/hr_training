@@ -13,7 +13,7 @@ function render_my_attendance(PDO $pdo, array $user): string
     foreach ($stmt->fetchAll() as $row) {
         $rows[] = [h($row['title']), h(date('M j, Y', strtotime($row['start_date']))), badge($row['attendance_status'] ?: 'Not marked'), h($row['remarks'] ?: '—')];
     }
-    return page_intro('My Attendance', 'Review the attendance saved for your training sessions.')
+    return page_intro('', '')
         . '<section class="card">' . render_table(['Training program', 'Date', 'Attendance', 'Remarks'], $rows, 'No attendance details are available yet.') . '</section>';
 }
 $page = 'My Attendance';

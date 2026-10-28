@@ -25,5 +25,5 @@ return [
 
     // Sender information — must match your Gmail account
     'from_email' => 'escalajazzmartin@gmail.com',
-    'from_name'  => 'HR Training System',
+    'from_name'  => 'WIS HR Training System',
 ];

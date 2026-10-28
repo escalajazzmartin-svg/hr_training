@@ -2,6 +2,72 @@
 
 declare(strict_types=1);
 
+function send_employee_credentials_notification(
+    string $firstName,
+    string $lastName,
+    string $newEmail,
+    string $employeeCode = '',
+    string $accountRole = 'employee',
+    string $subject = 'Your HR Training System account email was updated'
+): void {
+    $mailConfig = require __DIR__ . '/mail_config.php';
+    require_once __DIR__ . '/../vendor/autoload.php';
+
+    if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class)) {
+        throw new RuntimeException('PHPMailer is not installed.');
+    }
+
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host = (string) ($mailConfig['host'] ?? 'smtp.gmail.com');
+    $mail->SMTPAuth = true;
+    $mail->Username = (string) ($mailConfig['username'] ?? '');
+    $mail->Password = (string) ($mailConfig['password'] ?? '');
+    $mail->Port = (int) ($mailConfig['port'] ?? 587);
+    $encryption = strtolower((string) ($mailConfig['encryption'] ?? 'tls'));
+    $mail->SMTPSecure = $encryption === 'ssl'
+        ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+        : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->CharSet = 'UTF-8';
+    $mail->setFrom(
+        (string) ($mailConfig['from_email'] ?? $mailConfig['username'] ?? ''),
+        (string) ($mailConfig['from_name'] ?? 'HR Training System')
+    );
+    $mail->addAddress($newEmail, $firstName . ' ' . $lastName);
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+
+    $roleLabel = strtolower($accountRole) === 'trainer' ? 'Trainer' : 'Faculty Member';
+    $bodyPassword = $employeeCode !== '' ? $employeeCode : 'Your existing password';
+    $mail->Body = '<p>Greetings ' . htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8') . ',</p>'
+        . '<p>Welcome to the HR Training System.</p>'
+        . '<p>Your account details have been updated successfully.</p>'
+        . '<p><strong>Email:</strong> ' . htmlspecialchars($newEmail, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p><strong>Faculty ID / Password:</strong> ' . htmlspecialchars($bodyPassword, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p><strong>Role:</strong> ' . htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p>Your password remains unchanged. Please continue using the same password you already use to sign in.</p>';
+    $mail->AltBody = "Greetings {$firstName},\n\nWelcome to the HR Training System.\n\nYour account details have been updated successfully.\n\nEmail: {$newEmail}\nFaculty ID / Password: {$bodyPassword}\nRole: {$roleLabel}\n\nYour password remains unchanged. Please continue using the same password you already use to sign in.";
+    $mail->send();
+}
+
+function send_profile_email_change_notification(
+    string $firstName,
+    string $lastName,
+    string $newEmail,
+    string $employeeCode = '',
+    string $accountRole = 'employee',
+    string $subject = 'Your HR Training System account email was updated'
+): void {
+    send_employee_credentials_notification(
+        $firstName,
+        $lastName,
+        $newEmail,
+        $employeeCode,
+        $accountRole,
+        $subject
+    );
+}
+
 function process_post_request(PDO $pdo): void
 {
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
@@ -164,6 +230,18 @@ function process_post_request(PDO $pdo): void
                     throw new RuntimeException('Enter a valid email address.');
                 }
 
+                $currentEmployee = $pdo->prepare(
+                    'SELECT e.first_name, e.last_name, e.email, e.employee_code, u.role
+                     FROM employees e
+                     LEFT JOIN users u ON u.employee_id = e.id
+                     WHERE e.id = ?
+                     LIMIT 1'
+                );
+                $currentEmployee->execute([$id]);
+                $currentEmployeeRow = $currentEmployee->fetch(PDO::FETCH_ASSOC) ?: [];
+                $previousEmail = strtolower((string)($currentEmployeeRow['email'] ?? ''));
+                $emailChanged = $previousEmail !== $email;
+
                 $pdo->beginTransaction();
 
                 $stmt = $pdo->prepare(
@@ -198,6 +276,21 @@ function process_post_request(PDO $pdo): void
                 ]);
 
                 $pdo->commit();
+
+                if ($emailChanged && $email !== '') {
+                    $firstName = (string)($_POST['first_name'] ?? $currentEmployeeRow['first_name'] ?? '');
+                    $lastName = (string)($_POST['last_name'] ?? $currentEmployeeRow['last_name'] ?? '');
+                    $employeeCode = (string)($currentEmployeeRow['employee_code'] ?? '');
+                    $role = (string)($currentEmployeeRow['role'] ?? 'employee');
+                    send_employee_credentials_notification(
+                        $firstName,
+                        $lastName,
+                        $email,
+                        $employeeCode !== '' ? $employeeCode : $previousEmail,
+                        $role,
+                        'Your HR Training System account email was updated'
+                    );
+                }
 
                 flash('Employee details updated.');
                 redirect('Employees');
@@ -268,7 +361,22 @@ function process_post_request(PDO $pdo): void
                 $programId = (int)($_POST['program_id'] ?? 0);
 
                 if ($user['role'] === 'employee') {
-                    $employeeId = (int)$user['employee_id'];
+                    $employeeStmt = $pdo->prepare(
+                        'SELECT employee_id
+                         FROM users
+                         WHERE id = ? AND role = \'employee\' AND active = 1
+                         LIMIT 1'
+                    );
+                    $employeeStmt->execute([(int)$user['id']]);
+                    $employeeId = (int)($employeeStmt->fetchColumn() ?: 0);
+
+                    if ($employeeId <= 0) {
+                        throw new RuntimeException(
+                            'Your employee profile is not linked to this account. Contact an administrator.'
+                        );
+                    }
+
+                    $_SESSION['user']['employee_id'] = $employeeId;
                 } else {
                     signed_in_user($pdo, 'admin');
                     $employeeId = (int)($_POST['employee_id'] ?? 0);
@@ -346,10 +454,69 @@ function process_post_request(PDO $pdo): void
                         : 'Employee Registration'
                 );
 
+            case 'generate_qr_code':
+                signed_in_user($pdo, 'trainer');
+
+                require_once __DIR__ . '/../vendor/autoload.php';
+                $programId = (int)($_POST['program_id'] ?? 0);
+                $qrAction = strtolower(trim((string)($_POST['qr_action'] ?? 'time_in')));
+                if (!in_array($qrAction, attendance_qr_valid_actions(), true)) {
+                    throw new RuntimeException('Choose a valid attendance action.');
+                }
+
+                $code = attendance_qr_generate($pdo, (int)$user['id'], $programId, $qrAction);
+                $qrImage = (new \chillerlan\QRCode\QRCode())->render($code['qr_payload']);
+
+                $_SESSION['qr_attendance'] = [
+                    'image' => $qrImage,
+                    'program_id' => $programId,
+                    'action' => $code['action'],
+                    'expires_at' => $code['expires_at'],
+                    'token' => $code['token'],
+                ];
+
+                flash('A new ' . strtoupper(str_replace('_', '-', $code['action'])) . ' QR code has been generated for the selected session.');
+                redirect('Attendance Monitoring');
+
+            case 'record_qr_attendance':
+                signed_in_user($pdo, 'employee');
+
+                $rawQr = trim((string)($_POST['qr_token'] ?? ''));
+                if ($rawQr === '') {
+                    throw new RuntimeException('Scan a valid QR code or paste the token before submitting.');
+                }
+
+                $decoded = attendance_qr_decode($rawQr);
+                $programId = (int)($_POST['program_id'] ?? 0);
+                if ($programId <= 0 || $programId !== (int)$decoded['program_id']) {
+                    $programId = (int)$decoded['program_id'];
+                }
+                $employeeId = (int)($user['employee_id'] ?? 0);
+                if ($employeeId <= 0) {
+                    throw new RuntimeException('Your employee record is unavailable.');
+                }
+
+                $result = attendance_qr_record(
+                    $pdo,
+                    (int)$user['id'],
+                    $employeeId,
+                    $programId,
+                    $decoded['token'],
+                    $decoded['action']
+                );
+
+                flash($result['message']);
+                redirect('My Attendance');
+
             case 'mark_attendance':
                 if (!in_array($user['role'], ['admin', 'trainer'], true)) {
                     http_response_code(403);
                     exit('Permission denied.');
+                }
+
+                if ($user['role'] === 'admin') {
+                    flash('Admin accounts cannot edit attendance records.');
+                    redirect('Attendance Monitoring');
                 }
 
                 foreach (($_POST['attendance_status'] ?? []) as $registrationId => $status) {
@@ -480,7 +647,7 @@ function process_post_request(PDO $pdo): void
                 flash('Assessment saved.');
                 redirect(
                     $user['role'] === 'trainer'
-                        ? 'Training Results'
+                        ? 'Assessments'
                         : 'Assessments & Evaluations'
                 );
 
@@ -870,16 +1037,34 @@ Certificate Code: <strong>' . $escape($certificateCode) . '</strong>
                 $subject = 'Your Certificate of Completion - ' . $programTitle;
                 $bodyHtml = '<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
-<body style="margin:0;padding:24px;background:#f5f5f5;font-family:Arial,sans-serif;color:#262626">
-  <div style="max-width:640px;margin:0 auto;padding:28px;background:#ffffff;border-top:5px solid #8B1E1E">
-    <h2 style="margin-top:0;color:#8B1E1E">Congratulations, ' . $escape($fullName) . '!</h2>
-    <p>You have successfully completed the training program <strong>' . $escape($programTitle) . '</strong>.</p>
-    <p><strong>Assessment score:</strong> ' . $escape($score) . '%<br>
-       <strong>Certificate code:</strong> ' . $escape($certificateCode) . '<br>
-       <strong>Date issued:</strong> ' . $escape($issuedAt) . '</p>
-    <p>Your Certificate of Completion is attached to this email as a PDF document.</p>
-    <p>Thank you,<br><strong>Training and Development</strong></p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:24px;background:#f2f2f2;font-family:Arial,Helvetica,sans-serif;color:#1f1f1f;">
+  <div style="max-width:900px;margin:0 auto;background:#ffffff;border:1px solid #d6d6d6;border-top:4px solid #8B1E1E;padding:36px 28px 28px 28px;box-sizing:border-box;">
+    <h1 style="margin:0 0 24px 0;font-size:28px;line-height:1.3;color:#8B1E1E;font-weight:700;">Congratulations, ' . $escape($fullName) . '!</h1>
+
+    <p style="margin:0 0 24px 0;font-size:18px;line-height:1.5;color:#1f1f1f;">
+      You have successfully completed the training program <strong>' . $escape($programTitle) . '</strong>.
+    </p>
+
+    <p style="margin:0 0 10px 0;font-size:18px;line-height:1.6;color:#1f1f1f;">
+      <strong style="color:#1f1f1f;">Assessment score:</strong> ' . $escape($score) . '%
+    </p>
+    <p style="margin:0 0 10px 0;font-size:18px;line-height:1.6;color:#1f1f1f;">
+      <strong style="color:#1f1f1f;">Certificate code:</strong> ' . $escape($certificateCode) . '
+    </p>
+    <p style="margin:0 0 28px 0;font-size:18px;line-height:1.6;color:#1f1f1f;">
+      <strong style="color:#1f1f1f;">Date issued:</strong> ' . $escape($issuedAt) . '
+    </p>
+
+    <p style="margin:0 0 28px 0;font-size:18px;line-height:1.5;color:#1f1f1f;">
+      Your Certificate of Completion is attached to this email as a PDF document.
+    </p>
+
+    <p style="margin:0 0 8px 0;font-size:18px;line-height:1.5;color:#1f1f1f;">Thank you,</p>
+    <p style="margin:0;font-size:20px;font-weight:700;color:#1f1f1f;">Training and Development</p>
   </div>
 </body>
 </html>';
@@ -1013,6 +1198,8 @@ Certificate Code: <strong>' . $escape($certificateCode) . '</strong>
                 $email = strtolower(trim(
                     post_string('email', (string)$user['email'])
                 ));
+                $previousEmail = strtolower((string)($user['email'] ?? ''));
+                $emailChanged = $previousEmail !== $email;
 
                 if (!$first || !$last) {
                     throw new RuntimeException(
@@ -1057,6 +1244,10 @@ Certificate Code: <strong>' . $escape($certificateCode) . '</strong>
                         'UPDATE employees SET email = ? WHERE id = ?'
                     );
                     $stmt->execute([$email, $employeeId]);
+                }
+
+                if ($emailChanged) {
+                    send_profile_email_change_notification($first, $last, $email);
                 }
 
                 $_SESSION['user']['first_name'] = $first;

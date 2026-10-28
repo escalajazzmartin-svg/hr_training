@@ -2,6 +2,35 @@
 
 declare(strict_types=1);
 
+function dashboard_program_status(?string $startDate, ?string $endDate, ?string $storedStatus = null): string
+{
+    $status = trim((string) ($storedStatus ?? ''));
+
+    if (in_array($status, ['Cancelled', 'Draft'], true)) {
+        return $status;
+    }
+
+    if ($startDate === null || $startDate === '' || $startDate === '0000-00-00') {
+        return $status !== '' ? $status : 'Upcoming';
+    }
+
+    $today = new DateTimeImmutable('today');
+    $start = new DateTimeImmutable((string) $startDate);
+    $end = $endDate !== null && $endDate !== '' && $endDate !== '0000-00-00'
+        ? new DateTimeImmutable((string) $endDate)
+        : null;
+
+    if ($end !== null && $today > $end) {
+        return 'Completed';
+    }
+
+    if ($today >= $start) {
+        return 'Ongoing';
+    }
+
+    return 'Upcoming';
+}
+
 /**
  * Compact role-specific dashboards.
  * Detailed management features remain available from the sidebar pages.
@@ -25,9 +54,10 @@ function render_dashboard(PDO $pdo, array $user): string
                 <a class="btn" href="?page=Training Programs"><?= icon('plus') ?> Create training</a>
             <?php elseif ($role === 'employee'): ?>
                 <a class="btn btn-secondary" href="?page=My Training History"><?= icon('history') ?> My history</a>
-                <a class="btn" href="?page=Available Training"><?= icon('plus') ?> Find training</a>
+                <a class="btn" href="?page=Recommended Training"><?= icon('plus') ?> Find training</a>
+                <a class="btn btn-secondary" href="?page=Scan QR Attendance"><?= icon('qrcode') ?> Scan QR</a>
             <?php else: ?>
-                <a class="btn btn-secondary" href="?page=Training Results"><?= icon('chart') ?> Results</a>
+                <a class="btn btn-secondary" href="?page=Assessments"><?= icon('chart') ?> Assessments</a>
                 <a class="btn" href="?page=Attendance Monitoring"><?= icon('check') ?> Take attendance</a>
             <?php endif; ?>
         </div>
@@ -36,7 +66,14 @@ function render_dashboard(PDO $pdo, array $user): string
     <?php if ($role === 'admin'): ?>
         <?php
         $employees = (int) $pdo->query("SELECT COUNT(*) FROM employees WHERE employment_status = 'Active'")->fetchColumn();
-        $programs = (int) $pdo->query("SELECT COUNT(*) FROM training_programs WHERE status IN ('Upcoming', 'Ongoing')")->fetchColumn();
+        $programRows = $pdo->query("SELECT id, title, status, start_date, end_date FROM training_programs")->fetchAll();
+        $programs = 0;
+        foreach ($programRows as $program) {
+            $status = dashboard_program_status((string) ($program['start_date'] ?? ''), (string) ($program['end_date'] ?? ''), (string) ($program['status'] ?? ''));
+            if ($status === 'Upcoming') {
+                $programs++;
+            }
+        }
         $gaps = (int) $pdo->query('SELECT COUNT(*) FROM employee_competencies WHERE current_score < target_score')->fetchColumn();
         $completed = (int) $pdo->query("SELECT COUNT(*) FROM registrations WHERE status = 'Completed'")->fetchColumn();
         ?>
@@ -81,14 +118,23 @@ function render_dashboard(PDO $pdo, array $user): string
                 <?= section_head('Upcoming training', 'Next scheduled programs', '<a class="text-action" href="?page=Training Calendar">Calendar ' . icon('arrow', 13) . '</a>') ?>
                 <div class="event-list dashboard-event-list">
                     <?php
-                    $upcoming = $pdo->query(
-                        "SELECT p.id, p.title, p.start_date, p.start_time, p.venue, p.status,
+                    $upcomingPrograms = $pdo->query(
+                        "SELECT p.id, p.title, p.start_date, p.start_time, p.venue, p.status, p.end_date,
                                 (SELECT COUNT(*) FROM registrations r WHERE r.program_id = p.id AND r.status <> 'Withdrawn') AS registered
                          FROM training_programs p
-                         WHERE p.status IN ('Upcoming', 'Ongoing')
-                         ORDER BY p.start_date ASC
-                         LIMIT 3"
+                         ORDER BY p.start_date ASC"
                     )->fetchAll();
+                    $upcoming = [];
+                    foreach ($upcomingPrograms as $program) {
+                        $status = dashboard_program_status((string) ($program['start_date'] ?? ''), (string) ($program['end_date'] ?? ''), (string) ($program['status'] ?? ''));
+                        if ($status === 'Upcoming') {
+                            $program['computed_status'] = $status;
+                            $upcoming[] = $program;
+                        }
+                        if (count($upcoming) >= 3) {
+                            break;
+                        }
+                    }
                     foreach ($upcoming as $program):
                         $date = strtotime((string) $program['start_date']);
                     ?>
@@ -99,7 +145,7 @@ function render_dashboard(PDO $pdo, array $user): string
                                 <span><?= icon('clock', 12) ?> <?= h($program['start_time'] ? date('g:i A', strtotime($program['start_time'])) : 'Time TBA') ?></span>
                                 <small><?= (int) $program['registered'] ?> registered</small>
                             </div>
-                            <?= badge((string) $program['status']) ?>
+                            <?= badge((string) $program['computed_status']) ?>
                         </div>
                     <?php endforeach; ?>
                     <?php if (!$upcoming): ?><p class="muted">No upcoming programs yet.</p><?php endif; ?>
@@ -157,22 +203,26 @@ function render_dashboard(PDO $pdo, array $user): string
                 <?= section_head('My upcoming training', 'Your next registered sessions', '<a class="text-action" href="?page=My Training">All training ' . icon('arrow', 13) . '</a>') ?>
                 <?php
                 $stmt = $pdo->prepare(
-                    "SELECT p.title, p.specialization, p.start_date, r.status
+                    "SELECT p.title, p.specialization, p.start_date, p.end_date, p.status
                      FROM registrations r
                      JOIN training_programs p ON p.id = r.program_id
                      WHERE r.employee_id = ?
                        AND r.status <> 'Withdrawn'
-                       AND p.status IN ('Upcoming', 'Ongoing')
                      ORDER BY p.start_date ASC
-                     LIMIT 4"
+                     LIMIT 10"
                 );
                 $stmt->execute([$employeeId]);
                 $trainingRows = [];
                 foreach ($stmt->fetchAll() as $record) {
+                    $computedStatus = dashboard_program_status((string) ($record['start_date'] ?? ''), (string) ($record['end_date'] ?? ''), (string) ($record['status'] ?? ''));
+                    if ($computedStatus !== 'Upcoming') {
+                        continue;
+                    }
+
                     $trainingRows[] = [
                         h($record['title']),
                         h(date('M j, Y', strtotime($record['start_date']))),
-                        badge((string) $record['status']),
+                        badge($computedStatus),
                     ];
                 }
                 echo render_table(['Training program', 'Date', 'Status'], $trainingRows, 'You have no upcoming registered training.');
@@ -184,7 +234,7 @@ function render_dashboard(PDO $pdo, array $user): string
                 <div class="dashboard-competency-summary">
                     <div
                         class="dashboard-competency-donut<?= $competencyTotal === 0 ? ' is-empty' : '' ?>"
-                        style="--target-percent: <?= $competencyTargetPercent ?>%; width:4.6rem; height:4.6rem; min-width:4.6rem; min-height:4.6rem; flex:0 0 4.6rem; display:grid; place-items:center; position:relative; border-radius:50%; background:<?= $competencyTotal > 0 ? 'conic-gradient(#237a57 0 ' . $competencyTargetPercent . '%, #d4af37 ' . $competencyTargetPercent . '% 100%)' : '#e9e7e2' ?>;"
+                        style="--target-percent: <?= $competencyTargetPercent ?>%;"
                         role="img"
                         aria-label="<?= $competencyTargetPercent ?> percent of assessed competencies are at target">
                         <span aria-hidden="true" style="position:absolute; inset:.62rem; border-radius:50%; background:#fff;"></span>
@@ -207,29 +257,8 @@ function render_dashboard(PDO $pdo, array $user): string
                         <small><?= $competencyTotal ?> competency assessment<?= $competencyTotal === 1 ? '' : 's' ?></small>
                     </div>
                 </div>
-                <div class="bar-list dashboard-competency-list">
-                    <?php
-                    $stmt = $pdo->prepare(
-                        'SELECT c.name, ec.current_score, ec.target_score
-                         FROM employee_competencies ec
-                         JOIN competencies c ON c.id = ec.competency_id
-                         WHERE ec.employee_id = ? AND ec.current_score < ec.target_score
-                         ORDER BY (ec.target_score - ec.current_score) DESC
-                         LIMIT 3'
-                    );
-                    $stmt->execute([$employeeId]);
-                    $gaps = $stmt->fetchAll();
-                    foreach ($gaps as $gap):
-                    ?>
-                        <div>
-                            <span><b><?= h($gap['name']) ?></b><small><?= (int) $gap['current_score'] ?>% / <?= (int) $gap['target_score'] ?>% target</small></span>
-                            <span class="progress"><i class="warn" style="width: <?= (int) $gap['current_score'] ?>%"></i></span>
-                        </div>
-                    <?php endforeach; ?>
-                    <?php if (!$gaps): ?><p class="muted">No competency gaps are recorded for your profile.</p><?php endif; ?>
-                </div>
                 <div class="dashboard-quick-links">
-                    <a href="?page=Available Training"><?= icon('book', 15) ?><span>Find available training</span><?= icon('arrow', 13) ?></a>
+                    <a href="?page=Recommended Training"><?= icon('book', 15) ?><span>Find recommended training</span><?= icon('arrow', 13) ?></a>
                     <a href="?page=My Training History"><?= icon('history', 15) ?><span>View training history</span><?= icon('arrow', 13) ?></a>
                     <a href="?page=My Certificates"><?= icon('award', 15) ?><span>View certificates</span><?= icon('arrow', 13) ?></a>
                 </div>
@@ -239,9 +268,15 @@ function render_dashboard(PDO $pdo, array $user): string
     <?php else: ?>
         <?php
         $trainerId = (int) $user['id'];
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM training_programs WHERE trainer_user_id = ? AND status IN ('Upcoming', 'Ongoing')");
-        $stmt->execute([$trainerId]);
-        $myPrograms = (int) $stmt->fetchColumn();
+        $programs = $pdo->prepare('SELECT id, status, start_date, end_date FROM training_programs WHERE trainer_user_id = ?');
+        $programs->execute([$trainerId]);
+        $myPrograms = 0;
+        foreach ($programs->fetchAll() as $program) {
+            $status = dashboard_program_status((string) ($program['start_date'] ?? ''), (string) ($program['end_date'] ?? ''), (string) ($program['status'] ?? ''));
+            if ($status === 'Upcoming') {
+                $myPrograms++;
+            }
+        }
         $stmt = $pdo->prepare('SELECT COUNT(*) FROM registrations r JOIN training_programs p ON p.id = r.program_id WHERE p.trainer_user_id = ? AND r.status <> \'Withdrawn\'');
         $stmt->execute([$trainerId]);
         $participants = (int) $stmt->fetchColumn();
@@ -264,22 +299,27 @@ function render_dashboard(PDO $pdo, array $user): string
                 <?= section_head('My upcoming sessions', 'Programs assigned to you', '<a class="text-action" href="?page=My Training Programs">All programs ' . icon('arrow', 13) . '</a>') ?>
                 <?php
                 $stmt = $pdo->prepare(
-                    "SELECT p.title, p.specialization, p.start_date, p.start_time, p.status,
+                    "SELECT p.title, p.specialization, p.start_date, p.end_date, p.start_time, p.status,
                             (SELECT COUNT(*) FROM registrations r WHERE r.program_id = p.id AND r.status <> 'Withdrawn') AS participants
                      FROM training_programs p
-                     WHERE p.trainer_user_id = ? AND p.status IN ('Upcoming', 'Ongoing')
+                     WHERE p.trainer_user_id = ?
                      ORDER BY p.start_date ASC
-                     LIMIT 4"
+                     LIMIT 10"
                 );
                 $stmt->execute([$trainerId]);
                 $sessions = $stmt->fetchAll();
                 $sessionRows = [];
                 foreach ($sessions as $session) {
+                    $computedStatus = dashboard_program_status((string) ($session['start_date'] ?? ''), (string) ($session['end_date'] ?? ''), (string) ($session['status'] ?? ''));
+                    if ($computedStatus !== 'Upcoming') {
+                        continue;
+                    }
+
                     $sessionRows[] = [
                         h($session['title']),
                         h(date('M j, Y', strtotime($session['start_date']))),
                         h((string) $session['participants']),
-                        badge((string) $session['status']),
+                        badge($computedStatus),
                     ];
                 }
                 echo render_table(['Program', 'Date', 'Participants', 'Status'], $sessionRows, 'No upcoming sessions are assigned to you.');

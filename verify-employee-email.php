@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+if (!function_exists('write_app_log')) {
+    function write_app_log(string $message): void
+    {
+        $logFile = __DIR__ . '/employee_registration_errors.log';
+        $timestamp = date('Y-m-d H:i:s');
+        error_log("[{$timestamp}] {$message}" . PHP_EOL, 3, $logFile);
+    }
+}
+
 require_once __DIR__ . '/includes/page_bootstrap.php';
 
 function verification_page(string $title, string $message, bool $success = false): never
@@ -112,31 +121,22 @@ try {
     ]);
     $employeeId = (int)$pdo->lastInsertId();
 
-    // Random, unusable temporary password; the employee must set a real one using the emailed link.
-    $temporarySecret = bin2hex(random_bytes(32));
+    $initialPassword = $employeeCode;
     $pdo->prepare(
         'INSERT INTO users (employee_id, email, password_hash, role, first_name, last_name, active)
          VALUES (?, ?, ?, ?, ?, ?, 1)'
     )->execute([
         $employeeId,
         $email,
-        password_hash($temporarySecret, PASSWORD_DEFAULT),
+        password_hash($initialPassword, PASSWORD_DEFAULT),
         $data['account_role'],
         $data['first_name'],
         $data['last_name']
     ]);
-    $userId = (int)$pdo->lastInsertId();
-
-    $setupToken = bin2hex(random_bytes(32));
-    $pdo->prepare(
-        'INSERT INTO employee_password_setup_tokens (user_id, token_hash, expires_at)
-         VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 60 MINUTE))'
-    )->execute([$userId, hash('sha256', $setupToken)]);
 
     $pdo->prepare('DELETE FROM pending_employee_verifications WHERE id = ?')->execute([(int)$pending['id']]);
     $pdo->commit();
 
-    $setupUrl = rtrim(app_base_url(), '/') . '/set-initial-password.php?token=' . urlencode($setupToken);
     $mailConfig = require __DIR__ . '/includes/mail_config.php';
     require_once __DIR__ . '/vendor/autoload.php';
 
@@ -158,18 +158,20 @@ try {
     $mail->setFrom((string)($mailConfig['from_email'] ?? $mailConfig['username']), (string)($mailConfig['from_name'] ?? 'HR Training System'));
     $mail->addAddress($email, (string)$data['first_name'] . ' ' . (string)$data['last_name']);
     $mail->isHTML(true);
-    $mail->Subject = 'Your HR Training System account is ready';
+    $mail->Subject = 'Your HR Training System login credentials';
     $safeName = htmlspecialchars((string)$data['first_name'], ENT_QUOTES, 'UTF-8');
-    $safeUrl = htmlspecialchars($setupUrl, ENT_QUOTES, 'UTF-8');
-    $mail->Body = '<p>Hello ' . $safeName . ',</p>'
-        . '<p>Your email has been verified and your HR Training System account has been created.</p>'
-        . '<p>Use the secure link below within 60 minutes to set your initial password:</p>'
-        . '<p><a href="' . $safeUrl . '">Set my initial password</a></p>'
-        . '<p>Never share your password. If you did not expect this account, contact HR.</p>';
-    $mail->AltBody = "Hello {$data['first_name']},\nYour email is verified and your HR Training System account is ready.\nSet your initial password within 60 minutes: {$setupUrl}\nIf you did not expect this account, contact HR.";
+    $mail->Body = '<p>Greetings ' . $safeName . ',</p>'
+        . '<p>Welcome to the HR Training System.</p>'
+        . '<p>Your account has been created successfully.</p>'
+        . '<p><strong>Email:</strong> ' . htmlspecialchars($email, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p><strong>Initial password:</strong> ' . htmlspecialchars($initialPassword, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p><strong>Faculty ID:</strong> ' . htmlspecialchars($initialPassword, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p><strong>Role:</strong> ' . htmlspecialchars((string) ($data['account_role'] === 'employee' ? 'Faculty Member' : 'Trainer'), ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p>Use the password above to sign in. We recommend changing it after your first login.</p>';
+    $mail->AltBody = "Greetings {$data['first_name']},\n\nWelcome to the HR Training System.\n\nYour account has been created successfully.\n\nEmail: {$email}\nInitial password: {$initialPassword}\nFaculty ID: {$initialPassword}\nRole: " . ($data['account_role'] === 'employee' ? 'Faculty Member' : 'Trainer') . "\n\nUse the password above to sign in. We recommend changing it after your first login.";
     $mail->send();
 
-    verification_page('Email verified', 'Your email address is verified. A separate email has been sent with a secure link to set your initial password.', true);
+    verification_page('Email verified', 'Your email address is verified. The employee credentials email has been sent.', true);
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
     write_app_log('Employee email verification failed: ' . $e->getMessage() . ' | request_uri=' . ($_SERVER['REQUEST_URI'] ?? ''));

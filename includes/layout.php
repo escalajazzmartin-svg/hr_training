@@ -90,7 +90,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                  LIMIT 6"
             );
             $stmt->execute([$like, $like]);
-            $programPage = 'Available Training';
+            $programPage = 'Recommended Training';
         }
 
         foreach ($stmt->fetchAll() as $program) {
@@ -177,7 +177,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
             'Assessments pending',
             'Training participants without a recorded evaluation',
             app_page_url(
-                $role === 'trainer' ? 'Training Results' : 'Assessments & Evaluations',
+                $role === 'trainer' ? 'Assessments' : 'Assessments & Evaluations',
                 $role
             )
         );
@@ -250,8 +250,8 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
 
     // Load the shared assessment styles and interactions only on assessment pages.
     $assessmentPages = [
+        'Assessments',
         'Assessments & Evaluations',
-        'Training Results',
     ];
     $isAssessmentPage = in_array($page, $assessmentPages, true);
 
@@ -308,6 +308,35 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
             <?php endif; ?>
         <?php endif; ?>
 
+        <?php if ($role === 'employee' || $role === 'trainer'): ?>
+            <?php
+            $rolePageCss = [
+                'employee' => [
+                    'Dashboard' => 'dashboard.css',
+                    'My Profile' => 'profile.css',
+                    'Recommended Training' => 'training.css',
+                    'My Training' => 'training.css',
+                    'My Attendance' => 'attendance.css',
+                    'My Assessments' => 'assessment.css',
+                    'My Certificates' => 'certificates.css',
+                    'My Training History' => 'history.css',
+                ],
+                'trainer' => [
+                    'Dashboard' => 'dashboard.css',
+                    'My Training Programs' => 'programs.css',
+                    'Attendees' => 'attendees.css',
+                    'Attendance Monitoring' => 'attendance.css',
+                    'Assessments' => 'assessment.css',
+                ],
+            ];
+            $roleCssFile = $rolePageCss[$role][$page] ?? null;
+            $roleCssDir = $role === 'employee' ? 'employee' : 'trainer';
+            ?>
+            <?php if ($roleCssFile !== null): ?>
+                <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/css/' . $roleCssDir . '/' . $roleCssFile) ?>">
+            <?php endif; ?>
+        <?php endif; ?>
+
         <?php if ($isAssessmentPage): ?>
             <link rel="stylesheet" href="<?= h(app_base_url() . '/assets/css/admin/evaluations.css') ?>">
         <?php endif; ?>
@@ -324,8 +353,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                     <div class="side-brand">
                         <div class="brand-seal"><span>WIS</span></div>
                         <div>
-                            <b>Westmead International School</b>
-                            <small>Training &amp; Development</small>
+                            <small>HR Training and Development Management System</small>
                         </div>
                         <button class="mobile-close" type="button" id="mobile-close" aria-label="Close menu"><?= icon('close') ?></button>
                     </div>
@@ -477,7 +505,7 @@ function render_app(PDO $pdo, array $user, string $page, ?array $flash, string $
                     <?= rewrite_page_links($content, $role) ?>
 
                     <footer>
-                        <span>Westmead International School · HR Training &amp; Development System</span>
+                        <span>Westmead International School · HR Training &amp; Development Management System</span>
                         <span>Academic year 2026–2027 </span>
                     </footer>
                 </main>

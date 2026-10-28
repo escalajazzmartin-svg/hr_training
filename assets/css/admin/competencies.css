@@ -45,7 +45,7 @@ html {
     padding: 10px 16px;
     border: 1px solid var(--maroon);
     border-radius: 10px;
-    color: #fff;
+    color: var(--surface, #fff);
     background: var(--maroon);
     font-size: var(--text-sm);
     font-weight: 700;
@@ -55,8 +55,8 @@ html {
 }
 
 .competency-add-button:hover {
-    border-color: #7f0000;
-    background: #7f0000;
+    border-color: var(--maroon-dark, #7f0000);
+    background: var(--maroon-dark, #7f0000);
 }
 
 /* Main white directory panel */
@@ -80,21 +80,21 @@ html {
     width: 100%;
     min-height: 40px;
     padding: 9px 11px;
-    border: 1px solid #dedbd5;
+    border: 1px solid var(--card-border, #dedbd5);
     border-radius: 8px;
     color: var(--ink);
-    background: #fff;
+    background: var(--surface, #fff);
 }
 
 #competency-search::placeholder {
-    color: #718096;
+    color: var(--muted, #718096);
     opacity: 1;
 }
 
 #competency-search:focus {
     outline: none;
-    border-color: #d8b8b8;
-    box-shadow: 0 0 0 3px rgba(151, 0, 0, .07);
+    border-color: var(--maroon, #d8b8b8);
+    box-shadow: 0 0 0 3px var(--maroon-soft, rgba(151, 0, 0, .07));
 }
 
 #competency-department-filter {
@@ -170,17 +170,17 @@ html {
     height: 42px;
     margin: 0;
     padding: 0 14px;
-    border: 1px solid #d7dfeb;
+    border: 1px solid var(--card-border, #d7dfeb);
     border-radius: 11px;
-    background-color: #fff;
-    color: #18243a;
+    background-color: var(--surface, #fff);
+    color: var(--ink-strong, #18243a);
     font: inherit;
 }
 
 .competency-filter-row select:focus {
     outline: none;
-    border-color: #970000;
-    box-shadow: 0 0 0 2px rgba(151, 0, 0, .06);
+    border-color: var(--maroon, #970000);
+    box-shadow: 0 0 0 2px var(--maroon-soft, rgba(151, 0, 0, .06));
 }
 
 .competency-clear-filters {
@@ -190,10 +190,10 @@ html {
     min-height: 42px;
     margin: 0;
     padding: 0 16px;
-    border: 1px solid #d7dfeb;
+    border: 1px solid var(--line, #d7dfeb);
     border-radius: 10px;
-    background: #fff;
-    color: #334155;
+    background: var(--surface, #fff);
+    color: var(--ink, #334155);
     font: inherit;
     font-size: 13px;
     white-space: nowrap;

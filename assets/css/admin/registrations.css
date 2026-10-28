@@ -46,10 +46,10 @@
   gap: 7px;
   min-height: 40px;
   padding: 9px 14px;
-  border: 1px solid #8f0000;
+  border: 1px solid var(--maroon, #8f0000);
   border-radius: 9px;
-  background: #8f0000;
-  color: #fff;
+  background: var(--maroon, #8f0000);
+  color: var(--surface, #fff);
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
@@ -57,8 +57,8 @@
 }
 
 .registration-page .registration-add-btn:hover {
-  background: #650000;
-  border-color: #650000;
+  background: var(--maroon-dark, #650000);
+  border-color: var(--maroon-dark, #650000);
 }
 
 .registration-page .registration-add-btn:focus-visible {
@@ -72,7 +72,7 @@
   margin: 0;
   padding: 16px;
   border-radius: 16px;
-  background: #fff;
+  background: var(--surface, #fff);
 }
 
 /* Hide redundant section heading if the table card
@@ -94,16 +94,16 @@
   min-width: 0;
   min-height: 42px;
   padding: 10px 13px;
-  border: 1px solid #dedbd6;
+  border: 1px solid var(--card-border, #dedbd6);
   border-radius: 9px;
-  background: #fff;
+  background: var(--surface, #fff);
   color: var(--ink, #2f3035);
   font: inherit;
   font-size: 0.9rem;
 }
 
 .registration-page .registration-filters input[type="search"]::placeholder {
-  color: #78869c;
+  color: var(--muted, #78869c);
 }
 
 .registration-page .registration-filter-row {
@@ -117,9 +117,9 @@
   min-width: 0;
   min-height: 38px;
   padding: 8px 11px;
-  border: 1px solid #d8deea;
+  border: 1px solid var(--line, #d8deea);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface, #fff);
   color: var(--ink, #2f3035);
   font: inherit;
   font-size: 0.84rem;
@@ -128,16 +128,16 @@
 
 .registration-page .registration-filters input[type="search"]:focus,
 .registration-page .registration-filter-row select:focus {
-  outline: 2px solid rgb(128 0 0 / 18%);
+  outline: 2px solid var(--maroon-soft, rgb(128 0 0 / 18%));
   border-color: var(--maroon, #800000);
 }
 
 .registration-page .registration-clear-filters {
   min-height: 38px;
   padding: 8px 13px;
-  border: 1px solid #d8deea;
+  border: 1px solid var(--line, #d8deea);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface, #fff);
   color: var(--ink, #2f3035);
   white-space: nowrap;
   font-size: 0.82rem;
@@ -145,7 +145,7 @@
 }
 
 .registration-page .registration-clear-filters:hover {
-  background: #f8f7f5;
+  background: var(--page, #f8f7f5);
 }
 
 /* Scrollable table */

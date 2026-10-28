@@ -20,7 +20,7 @@
     margin: 0;
     padding: 16px;
     border-radius: 16px;
-    background: #fff;
+    background: var(--surface, #fff);
 }
 
 .assessment-toolbar {
@@ -42,22 +42,22 @@
     min-width: 0;
     min-height: 42px;
     padding: 10px 13px;
-    border: 1px solid #dedbd6;
+    border: 1px solid var(--card-border, #dedbd6);
     border-radius: 9px;
-    background: #fff;
+    background: var(--surface, #fff);
     color: var(--ink, #2f3035);
     font: inherit;
     font-size: .8rem;
 }
 
 .assessment-search::placeholder {
-    color: #78839a;
+    color: var(--muted, #78839a);
 }
 
 .assessment-search:focus,
 .assessment-filter-row select:focus {
-    border-color: #9a1a1a;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, .08);
+    border-color: var(--maroon, #800000);
+    box-shadow: 0 0 0 3px var(--maroon-soft, rgba(128, 0, 0, .08));
 }
 
 .assessment-filter-row {
@@ -69,9 +69,9 @@
 .assessment-clear-filters {
     min-height: 42px;
     padding: 0 17px;
-    border: 1px solid #d8dff0;
+    border: 1px solid var(--line, #d8dff0);
     border-radius: 12px;
-    background: #fff;
+    background: var(--surface, #fff);
     color: var(--ink, #172033);
     font: inherit;
     cursor: pointer;
@@ -80,8 +80,8 @@
 }
 
 .assessment-clear-filters:hover {
-    background: #f8f8fb;
-    border-color: #c4cde1;
+    background: var(--maroon-soft, #f8f8fb);
+    border-color: var(--card-border, #c4cde1);
 }
 
 .assessment-table-wrap {
@@ -103,24 +103,24 @@
 .assessment-table th {
     padding: 15px 15px;
     border-bottom: 1px solid var(--line, #e8e3df);
-    color: #827b76;
+    color: var(--muted-soft, #827b76);
     font-size: 13px;
     font-weight: 800;
     letter-spacing: .045em;
     text-transform: uppercase;
     white-space: nowrap;
-    background: white;
+    background: var(--surface, white);
 }
 
 .assessment-table td {
     padding: 10px 11px;
-    border-bottom: 1px solid #efede9;
+    border-bottom: 1px solid var(--line, #efede9);
     line-height: 1.4;
     vertical-align: middle;
 }
 
 .assessment-table tbody tr.assessment-data-row:hover {
-    background: #fcfaf9;
+    background: var(--maroon-soft, #fcfaf9);
 }
 
 .assessment-table tbody tr[hidden],
@@ -130,12 +130,12 @@
 
 .assessment-faculty-name {
     font-weight: 750;
-    color: #18233a;
+    color: var(--ink-strong, #18233a);
 }
 
 .assessment-program-title {
     display: inline-block;
-    color: #18233a;
+    color: var(--ink-strong, #18233a);
 }
 
 .assessment-status {
@@ -151,13 +151,13 @@
 }
 
 .assessment-status.is-scored {
-    color: #08734e;
-    background: #e3f5ec;
+    color: var(--green, #08734e);
+    background: var(--green-soft, #e3f5ec);
 }
 
 .assessment-status.is-pending {
-    color: #69645f;
-    background: #f0efee;
+    color: var(--muted-soft, #69645f);
+    background: var(--line, #f0efee);
 }
 
 .assessment-actions-heading,
@@ -173,20 +173,20 @@
     border: 1px solid transparent;
     border-radius: 10px;
     background: transparent;
-    color: #6c7280;
+    color: var(--muted, #6c7280);
     cursor: pointer;
 }
 
 .assessment-row-action:hover,
 .assessment-row-action[aria-expanded="true"] {
-    background: #f7eeee;
-    color: #800000;
+    background: var(--maroon-soft, #f7eeee);
+    color: var(--maroon, #800000);
 }
 
 .assessment-row-action svg {
     width: 21px;
     height: 21px;
-    color: #800000
+    color: var(--maroon, #800000);
 }
 
 .assessment-table-footer {
@@ -196,28 +196,28 @@
     flex-wrap: wrap;
     gap: 8px 18px;
     padding-top: 16px;
-    color: #777f90;
+    color: var(--muted, #777f90);
     font-size: 14px;
 }
 
 .assessment-summary-inline {
-    color: #777f90;
+    color: var(--muted, #777f90);
 }
 
 .assessment-no-results td {
     padding: 28px 15px;
     text-align: center;
-    color: #777f90;
+    color: var(--muted, #777f90);
 }
 
-.assessment-details-row>td {
+.assessment-details-row > td {
     padding: 0 !important;
-    background: #faf8f7;
+    background: var(--page, #faf8f7);
 }
 
 .assessment-details-panel {
     padding: 22px;
-    border-bottom: 1px solid #eee9e5;
+    border-bottom: 1px solid var(--line, #eee9e5);
 }
 
 .assessment-details-heading {
@@ -235,12 +235,12 @@
 
 .assessment-details-heading p {
     margin: 0;
-    color: #777f90;
+    color: var(--muted, #777f90);
     font-size: 14px;
 }
 
 .assessment-details-current-status {
-    color: #777f90;
+    color: var(--muted, #777f90);
     font-size: 13px;
     white-space: nowrap;
 }
@@ -261,7 +261,7 @@
 .assessment-form-field label {
     font-size: 13px;
     font-weight: 700;
-    color: #4c5566;
+    color: var(--muted, #4c5566);
 }
 
 .assessment-score-input {
@@ -274,9 +274,9 @@
 .assessment-form-field textarea {
     width: 100%;
     min-width: 0;
-    border: 1px solid #ddd8d3;
+    border: 1px solid var(--card-border, #ddd8d3);
     border-radius: 10px;
-    background: #fff;
+    background: var(--surface, #fff);
     padding: 11px 12px;
     color: var(--ink, #172033);
     font: inherit;
@@ -312,19 +312,19 @@
 }
 
 .assessment-cancel-button {
-    border: 1px solid #ddd8d3;
-    background: #fff;
-    color: #343b4a;
+    border: 1px solid var(--card-border, #ddd8d3);
+    background: var(--surface, #fff);
+    color: var(--ink-strong, #343b4a);
 }
 
 .assessment-save-button {
-    border: 1px solid #800000;
-    background: #800000;
-    color: #fff;
+    border: 1px solid var(--maroon, #800000);
+    background: var(--maroon, #800000);
+    color: var(--surface, #fff);
 }
 
 .assessment-save-button:hover {
-    background: #690000;
+    background: var(--maroon-dark, #690000);
 }
 
 .assessment-empty-card {

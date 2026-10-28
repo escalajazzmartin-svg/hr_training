@@ -70,21 +70,34 @@ function render_profile(PDO $pdo, array $user): string
         }
 
         $html .= '</div></section><div class="profile-side-stack"><section class="card profile-competency-card">'
-            . section_head('Competency summary', 'Your latest assessed competencies')
-            . '<div class="skill-list">';
+            . section_head('Competency summary', 'Current scores compared with target levels')
+            . '<div class="profile-competency-list">';
 
         foreach ($skills as $skill) {
             $score = (int)$skill['current_score'];
             $target = (int)$skill['target_score'];
+            $gap = max(0, $target - $score);
+            $percentage = max(0, min(100, $score));
 
-            $html .= '<div><span><b>'
-                . h($skill['name'])
-                . '</b><small>'
-                . $score . '% / ' . $target . '% target'
-                . '</small></span><span class="progress"><i class="'
-                . ($score < $target ? 'warn' : '')
-                . '" style="width:' . max(0, min(100, $score))
-                . '%"></i></span></div>';
+            $html .= '<article class="profile-competency-item">'
+                . '<div class="profile-competency-top">'
+                . '<span class="profile-competency-name">' . h($skill['name']) . '</span>'
+                . '<strong class="profile-competency-score ' . ($score < $target ? 'is-below-target' : 'is-at-target') . '">'
+                . $score . '%</strong>'
+                . '</div>'
+                . '<div class="profile-competency-track">'
+                . '<span class="profile-competency-fill ' . ($score < $target ? 'is-below-target' : 'is-at-target') . '" style="width:' . $percentage . '%"></span>'
+                . '</div>'
+                . '<div class="profile-competency-meta">'
+                . '<span>Target: ' . $target . '%</span>'
+                . ($gap > 0
+                    ? '<span class="profile-competency-gap">' . $gap . ' points to target</span>'
+                    : '<span class="profile-competency-achieved">Target achieved</span>')
+                . '</div>'
+                . '<small class="profile-competency-assessed">Last assessed: '
+                . h($skill['last_assessed'] ?: 'Not assessed')
+                . '</small>'
+                . '</article>';
         }
 
         if (!$skills) {
@@ -214,8 +227,8 @@ function render_profile(PDO $pdo, array $user): string
 
         if (!$employee) {
             return page_intro(
-                'Employee Profiles',
-                'The selected employee could not be found.',
+                '',
+                '',
                 '<a class="btn btn-secondary" href="employees.php">Back to directory</a>'
             ) . '<div class="empty-module"><h3>No matching employee profile was found.</h3></div>';
         }
@@ -430,7 +443,7 @@ function render_profile(PDO $pdo, array $user): string
     $accountRole = trim((string)($_GET['account_role'] ?? ''));
 
     $html = page_intro(
-        'Employee Profiles',
+        '',
         '',
         '<a class="btn" href="employees.php#add-employee">'
             . icon('plus')

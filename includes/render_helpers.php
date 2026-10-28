@@ -58,9 +58,7 @@ function page_intro(string $title, string $description, string $action = ''): st
 {
     return '<div class="page-intro">'
         . '<div class="page-intro-copy">'
-        . '<span class="eyebrow">WIS HR Training & Development</span>'
-        . '<h2>' . h($title) . '</h2>'
-        . '<p>' . h($description) . '</p>'
+        . '<span class="eyebrow">WIS HR Training & Development Management System</span>'
         . '</div>'
         . ($action !== '' ? '<div class="page-intro-actions">' . $action . '</div>' : '')
         . '</div>';

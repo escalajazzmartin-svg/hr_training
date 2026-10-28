@@ -22,7 +22,7 @@ function render_employee_training(PDO $pdo, array $user): string
         $r['score'] !== null ? h((string)$r['score'] . '%') : '—',
         $r['certificate_code'] ? h($r['certificate_code']) : '—'
     ];
-    return page_intro('My Training', 'Manage your program registrations and review training progress.', '<a class="btn" href="?page=Available Training">'
+    return page_intro('', '', '<a class="btn" href="?page=Recommended Training">'
         . icon('plus')
         . ' Find training</a>')
         . '<section class="card">'

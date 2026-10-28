@@ -94,7 +94,7 @@ function render_programs(PDO $pdo, array $user): string
         foreach ($programs as $p) {
             $programId = (int) ($p['id'] ?? 0);
             $title = trim((string) ($p['title'] ?? ''));
-            $status = trim((string) ($p['status'] ?? 'Upcoming'));
+            $storedStatus = trim((string) ($p['status'] ?? 'Upcoming'));
             $category = trim((string) ($p['category'] ?? 'General'));
             $specialization = trim((string) ($p['specialization'] ?? 'Not specified'));
             $description = trim((string) ($p['description'] ?? ''));
@@ -105,6 +105,27 @@ function render_programs(PDO $pdo, array $user): string
             $startDate = !empty($p['start_date'])
                 ? strtotime((string) $p['start_date'])
                 : false;
+            $endDate = !empty($p['end_date'])
+                ? strtotime((string) $p['end_date'])
+                : false;
+
+            if (in_array($storedStatus, ['Cancelled', 'Draft'], true)) {
+                $status = $storedStatus;
+            } elseif ($startDate === false) {
+                $status = $storedStatus !== '' ? $storedStatus : 'Upcoming';
+            } else {
+                $today = new DateTimeImmutable('today');
+                $start = new DateTimeImmutable(date('Y-m-d', $startDate));
+                $end = $endDate !== false ? new DateTimeImmutable(date('Y-m-d', $endDate)) : null;
+
+                if ($end !== null && $today > $end) {
+                    $status = 'Completed';
+                } elseif ($today >= $start) {
+                    $status = 'Ongoing';
+                } else {
+                    $status = 'Upcoming';
+                }
+            }
 
             $formattedDate = $startDate !== false
                 ? date('M j, Y', $startDate)
@@ -206,7 +227,7 @@ function render_programs(PDO $pdo, array $user): string
             // Attendance link.
             $html .= '<div class="program-card-actions">'
                 . '<a class="btn btn-secondary program-attendance-btn"'
-                . ' href="?page=Attendance%20Monitoring">'
+                . ' href="' . app_page_url('Attendance Monitoring', $user['role']) . '">'
                 . 'View attendance '
                 . icon('arrow', 14)
                 . '</a>'

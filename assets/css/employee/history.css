@@ -1,0 +1,152 @@
+/* ========================================
+   HISTORY — FILTER LAYOUT
+======================================== */
+
+.history-page .history-filter-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.history-page .history-search-row {
+  width: 100%;
+  min-width: 0;
+}
+
+.history-page .history-search-row .search-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d9d5cf;
+  border-radius: 9px;
+  background: #fff;
+  color: #303039;
+  font: inherit;
+}
+
+.history-page .history-controls-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.history-page .history-controls-row select {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d9d5cf;
+  border-radius: 9px;
+  background: #fff;
+  color: #303039;
+  font: inherit;
+}
+
+.history-page .history-controls-row .clear-filters {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid #d9d5cf;
+  border-radius: 9px;
+  background: #fff;
+  color: #303039;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.history-page .history-controls-row .clear-filters:hover {
+  background: #f7f5f0;
+  border-color: #b8b1a7;
+}
+
+/* ========================================
+   HISTORY — COMPACT FACULTY MEMBER CELL
+======================================== */
+
+.history-page .history-faculty-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+  padding: 2px 0;
+}
+
+.history-page .history-faculty-avatar {
+  display: inline-flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #f8e9eb;
+  color: #a00016;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.history-page .history-faculty-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.history-page .history-faculty-details strong {
+  color: #171717;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.history-page .history-faculty-details small {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* Remove excess table width after removing Employee ID */
+.history-page .history-table-inner {
+  min-width: 900px;
+}
+
+@media (max-width: 640px) {
+  .history-page .history-controls-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .history-page .history-controls-row .clear-filters {
+    width: 100%;
+  }
+
+  .history-page .history-faculty-member {
+    gap: 9px;
+    min-width: 155px;
+  }
+
+  .history-page .history-faculty-avatar {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .history-page .history-faculty-details strong {
+    font-size: 13px;
+  }
+
+  .history-page .history-faculty-details small {
+    font-size: 11px;
+  }
+}

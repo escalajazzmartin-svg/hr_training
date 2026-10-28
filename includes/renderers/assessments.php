@@ -81,10 +81,6 @@ function render_assessments(PDO $pdo, array $user): string
         }
 
         $html .= '<section class="card assessment-results-card">'
-            . section_head(
-                'My assessment results',
-                'Scores and feedback recorded by your trainer.'
-            )
             . '<div class="assessment-table-wrap">'
             . render_table(
                 ['Training program', 'Status', 'Score', 'Feedback'],

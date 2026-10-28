@@ -1,5 +1,138 @@
 <?php
 declare(strict_types=1);
+
+if (!function_exists('write_app_log')) {
+    function write_app_log(string $message): void
+    {
+        $logFile = dirname(__DIR__) . '/employee_registration_errors.log';
+        $timestamp = date('Y-m-d H:i:s');
+        error_log("[{$timestamp}] {$message}" . PHP_EOL, 3, $logFile);
+    }
+}
+
+function normalize_employee_name(string $value): string
+{
+    $value = preg_replace('/\s+/', ' ', trim((string) $value));
+    $value = preg_replace('/[^\p{L}\s\'\-\.]/u', '', $value ?? '');
+    $value = preg_replace('/\s{2,}/', ' ', trim((string) $value));
+
+    return trim((string) $value);
+}
+
+function is_valid_employee_name(string $value): bool
+{
+    $value = preg_replace('/\s+/', ' ', trim($value));
+
+    return $value !== ''
+        && preg_match(
+            '/^(?!.*\s{2,})[A-Za-z]+(?:[\'\-.][A-Za-z]+)*(?: [A-Za-z]+(?:[\'\-.][A-Za-z]+)*)*$/',
+            $value
+        ) === 1;
+}
+
+function generate_employee_code(PDO $pdo, string $accountRole): string
+{
+    $rolePrefix = match ($accountRole) {
+        'employee' => 'FAC',
+        'trainer' => 'TRN',
+        default => throw new InvalidArgumentException('Invalid account role.'),
+    };
+
+    $registrationYear = (int) date('Y');
+    $pdo->prepare(
+        'INSERT IGNORE INTO employee_code_counters (role_prefix, registration_year, last_number) VALUES (?, ?, 0)'
+    )->execute([$rolePrefix, $registrationYear]);
+
+    $counter = $pdo->prepare(
+        'SELECT last_number FROM employee_code_counters WHERE role_prefix = ? AND registration_year = ? FOR UPDATE'
+    );
+    $counter->execute([$rolePrefix, $registrationYear]);
+    $lastNumber = (int) $counter->fetchColumn();
+
+    if ($lastNumber === 0) {
+        $like = $rolePrefix . '-' . $registrationYear . '-%';
+        $maxStmt = $pdo->prepare(
+            "SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(employee_code, '-', -1) AS UNSIGNED)), 0) FROM employees WHERE employee_code LIKE ?"
+        );
+        $maxStmt->execute([$like]);
+        $lastNumber = (int) $maxStmt->fetchColumn();
+    }
+
+    $sequenceNumber = $lastNumber + 1;
+    $employeeCode = sprintf('%s-%d-%03d', $rolePrefix, $registrationYear, $sequenceNumber);
+    $pdo->prepare(
+        'UPDATE employee_code_counters SET last_number = ? WHERE role_prefix = ? AND registration_year = ?'
+    )->execute([$sequenceNumber, $rolePrefix, $registrationYear]);
+
+    $check = $pdo->prepare('SELECT id FROM employees WHERE employee_code = ? LIMIT 1');
+    $check->execute([$employeeCode]);
+    if ($check->fetchColumn()) {
+        throw new RuntimeException('The generated Faculty ID already exists. Please try again.');
+    }
+
+    return $employeeCode;
+}
+
+function send_employee_credentials_email(
+    string $firstName,
+    string $lastName,
+    string $email,
+    string $employeeCode,
+    string $messageSubject = 'Your HR Training System login credentials',
+    string $accountRole = 'employee'
+): void {
+    $mailConfig = require __DIR__ . '/../includes/mail_config.php';
+    require_once __DIR__ . '/../vendor/autoload.php';
+
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+    $mail->isSMTP();
+    $mail->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_SERVER;
+    $mail->Debugoutput = static function (string $str, int $level): void {
+        write_app_log('PHPMailer [' . $level . ']: ' . trim($str));
+    };
+    $mail->Host = (string) ($mailConfig['host'] ?? 'smtp.gmail.com');
+    $mail->SMTPAuth = true;
+    $mail->Username = (string) ($mailConfig['username'] ?? '');
+    $mail->Password = (string) ($mailConfig['password'] ?? '');
+    $mail->Port = (int) ($mailConfig['port'] ?? 587);
+    $encryption = strtolower((string) ($mailConfig['encryption'] ?? 'tls'));
+    $mail->SMTPSecure = $encryption === 'ssl'
+        ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+        : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->CharSet = 'UTF-8';
+    $mail->setFrom(
+        (string) ($mailConfig['from_email'] ?? $mailConfig['username'] ?? ''),
+        (string) ($mailConfig['from_name'] ?? 'HR Training System')
+    );
+    $mail->addAddress($email, $firstName . ' ' . $lastName);
+    $mail->isHTML(true);
+    $mail->Subject = $messageSubject;
+
+    $roleLabel = strtolower($accountRole) === 'trainer' ? 'Trainer' : 'Faculty Member';
+    $safeEmail = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+    $safePassword = htmlspecialchars($employeeCode, ENT_QUOTES, 'UTF-8');
+    $mail->Body = '<p>Greetings ' . htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8') . ',</p>'
+        . '<p>Welcome to the HR Training System.</p>'
+        . '<p>Your account has been created successfully.</p>'
+        . '<p><strong>Email:</strong> ' . $safeEmail . '</p>'
+        . '<p><strong>Initial password:</strong> ' . $safePassword . '</p>'
+        . '<p><strong>Faculty ID:</strong> ' . htmlspecialchars($employeeCode, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p><strong>Role:</strong> ' . htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p>Use the password above to sign in. We recommend changing it after your first login.</p>';
+    $mail->AltBody = "Greetings {$firstName},\n\nWelcome to the HR Training System.\n\nYour account has been created successfully.\n\nEmail: {$email}\nInitial password: {$employeeCode}\nFaculty ID: {$employeeCode}\nRole: {$roleLabel}\n\nUse the password above to sign in. We recommend changing it after your first login.";
+    $mail->send();
+}
+
+function normalize_employee_phone(string $value): string
+{
+    $digits = preg_replace('/\D+/', '', (string) $value);
+    if (!preg_match('/^09\d{9}$/', $digits)) {
+        return '';
+    }
+
+    return preg_replace('/^(\d{4})(\d{3})(\d{4})$/', '$1 $2 $3', $digits);
+}
+
 $requiredRole = 'admin';
 require_once __DIR__ . '/../includes/page_bootstrap.php';
 /*
@@ -20,10 +153,13 @@ if (
         http_response_code(403);
         exit('Invalid security token. Reload the page and try again.');
     }
-    $firstName = trim((string)($_POST['first_name'] ?? ''));
-    $lastName = trim((string)($_POST['last_name'] ?? ''));
+    $firstNameRaw = trim((string)($_POST['first_name'] ?? ''));
+    $lastNameRaw = trim((string)($_POST['last_name'] ?? ''));
+    $firstName = normalize_employee_name($firstNameRaw);
+    $lastName = normalize_employee_name($lastNameRaw);
     $email = strtolower(trim((string)($_POST['email'] ?? '')));
-    $phone = trim((string)($_POST['phone'] ?? ''));
+    $phoneRaw = trim((string)($_POST['phone'] ?? ''));
+    $phone = normalize_employee_phone($phoneRaw);
     $accountRole = trim((string)($_POST['account_role'] ?? 'employee'));
     $department = trim((string)($_POST['department'] ?? ''));
     $jobTitle = trim((string)($_POST['job_title'] ?? ''));
@@ -33,9 +169,18 @@ if (
         (string)($_POST['employment_status'] ?? 'Active')
     );
     if (
-        $firstName === ''
+        $firstNameRaw === ''
+        || !is_valid_employee_name($firstNameRaw)
+        || $firstName === ''
+        || $lastNameRaw === ''
+        || !is_valid_employee_name($lastNameRaw)
         || $lastName === ''
-        || !filter_var($email, FILTER_VALIDATE_EMAIL)
+        || !preg_match(
+            '/^[A-Za-z0-9._%+\-]+@(?:[A-Za-z0-9-]+\.)+com$/i',
+            $email
+        )
+        || ($phoneRaw !== '' && !preg_match('/^09\d{2} \d{3} \d{4}$/', $phoneRaw))
+        || ($phoneRaw !== '' && $phone === '')
         || $department === ''
         || $jobTitle === ''
         || $specialization === ''
@@ -54,7 +199,6 @@ if (
         exit;
     }
     try {
-        // Prevent duplicate employee or user email addresses.
         $check = $pdo->prepare(
             'SELECT email
              FROM employees
@@ -72,129 +216,66 @@ if (
             );
             exit;
         }
-        // Remove expired verification requests.
-        $pdo->exec(
-            'DELETE FROM pending_employee_verifications
-             WHERE expires_at <= NOW()'
-        );
-        // Generate a secure, single-use verification token.
-        $token = bin2hex(random_bytes(32));
-        $tokenHash = hash('sha256', $token);
-        $payload = [
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email' => $email,
-            'phone' => $phone !== '' ? $phone : null,
-            'account_role' => $accountRole,
-            'department' => $department,
-            'job_title' => $jobTitle,
-            'specialization' => $specialization,
-            'hire_date' => $hireDate !== '' ? $hireDate : null,
-            'employment_status' => $employmentStatus,
-        ];
-        // Replace any previous pending request for this email.
-        $deletePending = $pdo->prepare(
-            'DELETE FROM pending_employee_verifications
-             WHERE email = ?'
-        );
-        $deletePending->execute([$email]);
-        $insertPending = $pdo->prepare(
-            'INSERT INTO pending_employee_verifications
-                (email, token_hash, payload_json, expires_at)
+
+        $employeeCode = generate_employee_code($pdo, $accountRole);
+        $initialPassword = $employeeCode;
+
+        $pdo->beginTransaction();
+
+        $employeeInsert = $pdo->prepare(
+            'INSERT INTO employees
+                (employee_code, first_name, last_name, email, phone, department, job_title, specialization, hire_date, employment_status)
              VALUES
-                (?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 MINUTE))'
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
-        $insertPending->execute([
-            $email,
-            $tokenHash,
-            json_encode($payload, JSON_THROW_ON_ERROR),
-        ]);
-        // Determine the application URL.
-        $baseUrl = function_exists('app_base_url')
-            ? rtrim((string) app_base_url(), '/')
-            : '';
-        if ($baseUrl === '') {
-            $scriptDir = str_replace(
-                '\\\\',
-                '/',
-                dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))
-            );
-            $scriptDir = preg_replace('~/admin$~', '', $scriptDir);
-            $baseUrl = rtrim(
-                (string) ($_SERVER['REQUEST_SCHEME'] ?? 'http')
-                    . '://'
-                    . (string) ($_SERVER['HTTP_HOST'] ?? 'localhost')
-                    . $scriptDir,
-                '/'
-            );
-        }
-        $verifyUrl = $baseUrl
-            . '/verify-employee-email.php?token='
-            . urlencode($token);
-        // Load SMTP configuration and PHPMailer.
-        $mailConfig = require __DIR__ . '/../includes/mail_config.php';
-        require_once __DIR__ . '/../vendor/autoload.php';
-        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-        $mail->isSMTP();
-        $mail->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_SERVER;
-        $mail->Debugoutput = static function (string $str, int $level): void {
-            write_app_log('PHPMailer [' . $level . ']: ' . trim($str));
-        };
-        $mail->Host = (string) ($mailConfig['host'] ?? 'smtp.gmail.com');
-        $mail->SMTPAuth = true;
-        $mail->Username = (string) ($mailConfig['username'] ?? '');
-        $mail->Password = (string) ($mailConfig['password'] ?? '');
-        $mail->Port = (int) ($mailConfig['port'] ?? 587);
-        $encryption = strtolower(
-            (string) ($mailConfig['encryption'] ?? 'tls')
-        );
-        $mail->SMTPSecure = $encryption === 'ssl'
-            ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
-            : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->CharSet = 'UTF-8';
-        $mail->setFrom(
-            (string) (
-                $mailConfig['from_email']
-                ?? $mailConfig['username']
-                ?? ''
-            ),
-            (string) (
-                $mailConfig['from_name']
-                ?? 'HR Training System'
-            )
-        );
-        $mail->addAddress($email, $firstName . ' ' . $lastName);
-        $safeName = htmlspecialchars(
+        $employeeInsert->execute([
+            $employeeCode,
             $firstName,
-            ENT_QUOTES,
-            'UTF-8'
+            $lastName,
+            $email,
+            $phone !== '' ? $phone : null,
+            $department,
+            $jobTitle,
+            $specialization,
+            $hireDate !== '' ? $hireDate : null,
+            $employmentStatus,
+        ]);
+        $employeeId = (int) $pdo->lastInsertId();
+
+        $userInsert = $pdo->prepare(
+            'INSERT INTO users
+                (employee_id, email, password_hash, role, first_name, last_name, active)
+             VALUES
+                (?, ?, ?, ?, ?, ?, 1)'
         );
-        $safeUrl = htmlspecialchars(
-            $verifyUrl,
-            ENT_QUOTES,
-            'UTF-8'
+        $userInsert->execute([
+            $employeeId,
+            $email,
+            password_hash($initialPassword, PASSWORD_DEFAULT),
+            $accountRole,
+            $firstName,
+            $lastName,
+        ]);
+
+        $pdo->commit();
+
+        send_employee_credentials_email(
+            $firstName,
+            $lastName,
+            $email,
+            $initialPassword,
+            'Your HR Training System login credentials',
+            $accountRole
         );
-        $mail->isHTML(true);
-        $mail->Subject = 'Verify your HR Training System email';
-        $mail->Body =
-            '<p>Hello ' . $safeName . ',</p>'
-            . '<p>An administrator has started creating your HR Training System account.</p>'
-            . '<p>Click the link below to verify your email address. '
-            . 'The link expires in 30 minutes.</p>'
-            . '<p><a href="' . $safeUrl . '">Verify my email address</a></p>'
-            . '<p>Your employee account will be created after verification.</p>'
-            . '<p>If you were not expecting this email, you can ignore it.</p>';
-        $mail->AltBody =
-            "Hello {$firstName},\n\n"
-            . "Verify your email address using this link:\n"
-            . "{$verifyUrl}\n\n"
-            . "This link expires in 30 minutes.";
-        $mail->send();
-        header('Location: employees.php?verification_sent=1');
+
+        header('Location: employees.php?credentials_sent=1');
         exit;
     } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         write_app_log(
-            'Employee registration verification failed: '
+            'Employee registration failed: '
                 . $e->getMessage()
                 . ' | request_uri=' . ($_SERVER['REQUEST_URI'] ?? '')
         );
@@ -224,24 +305,55 @@ if (
         http_response_code(403);
         exit('Invalid security token. Please reload the page and try again.');
     }
-    $firstName = trim((string)($_POST['first_name'] ?? ''));
-    $lastName = trim((string)($_POST['last_name'] ?? ''));
-    $email = trim((string)($_POST['email'] ?? ''));
-    $phone = trim((string)($_POST['phone'] ?? ''));
+    $firstNameRaw = trim((string)($_POST['first_name'] ?? ''));
+    $lastNameRaw = trim((string)($_POST['last_name'] ?? ''));
+    $firstName = normalize_employee_name($firstNameRaw);
+    $lastName = normalize_employee_name($lastNameRaw);
+    $email = strtolower(trim((string)($_POST['email'] ?? '')));
+    $phoneRaw = trim((string)($_POST['phone'] ?? ''));
+    $phone = normalize_employee_phone($phoneRaw);
     $department = trim((string)($_POST['department'] ?? ''));
     $jobTitle = trim((string)($_POST['job_title'] ?? ''));
     $specialization = trim((string)($_POST['specialization'] ?? ''));
     $employmentStatus = trim((string)($_POST['employment_status'] ?? 'Active'));
     if (
-        $firstName === '' || $lastName === '' || $department === ''
-        || $jobTitle === '' || $specialization === ''
-        || !filter_var($email, FILTER_VALIDATE_EMAIL)
+        $firstNameRaw === '' || !is_valid_employee_name($firstNameRaw)
+        || $firstName === ''
+        || $lastNameRaw === '' || !is_valid_employee_name($lastNameRaw)
+        || $lastName === ''
+        || $department === '' || $jobTitle === '' || $specialization === ''
+        || !preg_match(
+            '/^[A-Za-z0-9._%+\-]+@(?:[A-Za-z0-9-]+\.)+com$/i',
+            $email
+        )
+        || ($phoneRaw !== '' && !preg_match('/^09\d{2} \d{3} \d{4}$/', $phoneRaw))
+        || ($phoneRaw !== '' && $phone === '')
         || !in_array($employmentStatus, ['Active', 'On Leave', 'Inactive'], true)
     ) {
         header('Location: employees.php?edit=' . $employeeId . '&error=invalid_fields');
         exit;
     }
     try {
+        $current = $pdo->prepare(
+            'SELECT e.email AS employee_email,
+                    e.employee_code,
+                    u.email AS user_email,
+                    u.role AS user_role
+             FROM employees e
+             LEFT JOIN users u ON u.employee_id = e.id
+             WHERE e.id = ?
+             LIMIT 1'
+        );
+        $current->execute([$employeeId]);
+        $currentRow = $current->fetch(PDO::FETCH_ASSOC) ?: [];
+        $previousEmail = strtolower(
+            (string) (($currentRow['employee_email'] ?? $currentRow['user_email'] ?? '') ?: '')
+        );
+        $currentEmployeeCode = (string) ($currentRow['employee_code'] ?? '');
+        $currentRole = strtolower((string) ($currentRow['user_role'] ?? 'employee'));
+        $emailChanged = $previousEmail !== $email;
+
+        $pdo->beginTransaction();
         $pdo->prepare(
             'UPDATE employees
              SET first_name = :first_name,
@@ -264,11 +376,40 @@ if (
             ':employment_status' => $employmentStatus,
             ':id' => $employeeId,
         ]);
+        $pdo->prepare(
+            'UPDATE users
+             SET email = ?, first_name = ?, last_name = ?
+             WHERE employee_id = ?'
+        )->execute([$email, $firstName, $lastName, $employeeId]);
+        $pdo->commit();
+
+        if ($emailChanged && $email !== '') {
+            $subject = 'Your HR Training System account email was updated';
+            $employeeCodeForNotification = $currentEmployeeCode !== '' ? $currentEmployeeCode : $email;
+            send_employee_credentials_email(
+                $firstName,
+                $lastName,
+                $email,
+                $employeeCodeForNotification,
+                $subject,
+                $currentRole
+            );
+        }
         header('Location: employees.php?updated=1');
         exit;
     } catch (PDOException $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         error_log('Employee update failed: ' . $e->getMessage());
         header('Location: employees.php?edit=' . $employeeId . '&error=update_failed');
+        exit;
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        error_log('Employee email update notification failed: ' . $e->getMessage());
+        header('Location: employees.php?updated=1');
         exit;
     }
 }
@@ -320,13 +461,27 @@ function render_employee_directory(PDO $pdo): string
                 'specialization' => 'Specialization'
             ] as $key => $label
         ) {
+            $required = $key !== 'phone' ? 'required' : '';
+            $inputType = $key === 'phone' ? 'tel' : 'text';
+            $pattern = $key === 'phone'
+                ? ' pattern="^09\\d{2} \\d{3} \\d{4}$"'
+                : '';
+            $maxlength = in_array($key, ['first_name', 'last_name'], true)
+                ? ' maxlength="50"'
+                : '';
+            $dataAttr = in_array($key, ['first_name', 'last_name'], true)
+                ? ' data-name-input="1"'
+                : ($key === 'phone' ? ' data-phone-input="1"' : '');
             $html .= '<div class="form-field">'
                 . '<label for="edit_' . h($key) . '">'
                 . h($label) . '</label>'
                 . '<input id="edit_' . h($key) . '" '
+                . 'type="' . h($inputType) . '" '
                 . 'name="' . h($key) . '" '
                 . 'value="' . h($edit[$key] ?? '') . '" '
-                . ($key !== 'phone' ? 'required' : '')
+                . 'title="' . ($key === 'phone' ? 'Use format 09XX XXX XXXX' : 'Use letters only with a single space between words') . '" '
+                . $pattern . $maxlength . $dataAttr . ' '
+                . $required
                 . '></div>';
         }
         $html .= '<div class="form-field">'
@@ -637,22 +792,29 @@ HTML;
         . '<label for="add_first_name">First name *</label>'
         . '<input id="add_first_name" name="first_name" '
         . 'placeholder="Enter first name" required '
-        . 'autocomplete="given-name"></div>'
+        . 'autocomplete="given-name" maxlength="50" '
+        . 'pattern="[A-Za-z]+(?: [A-Za-z]+)*" '
+        . 'data-name-input="1" title="Use letters only with a single space between words"></div>'
         . '<div class="form-field">'
         . '<label for="add_last_name">Last name *</label>'
         . '<input id="add_last_name" name="last_name" '
         . 'placeholder="Enter last name" required '
-        . 'autocomplete="family-name"></div>'
+        . 'autocomplete="family-name" maxlength="50" '
+        . 'pattern="[A-Za-z]+(?: [A-Za-z]+)*" '
+        . 'data-name-input="1" title="Use letters only with a single space between words"></div>'
         . '<div class="form-field">'
         . '<label for="add_email">Email address *</label>'
         . '<input id="add_email" name="email" type="email" '
         . 'placeholder="Enter email address" required '
-        . 'autocomplete="email"></div>'
+        . 'autocomplete="email" pattern="[A-Za-z0-9._%+\-]+@(?:[A-Za-z0-9-]+\.)+com" '
+        . 'title="Enter a valid email address ending in .com"></div>'
         . '<div class="form-field">'
         . '<label for="add_phone">Phone number</label>'
         . '<input id="add_phone" name="phone" type="tel" '
-        . 'placeholder="Enter phone number" '
-        . 'autocomplete="tel"></div>'
+        . 'placeholder="09XX XXX XXXX" '
+        . 'autocomplete="tel" inputmode="numeric" maxlength="14" '
+        . 'pattern="^09\\d{2} \\d{3} \\d{4}$" '
+        . 'data-phone-input="1" title="Use format 09XX XXX XXXX"></div>'
         . '<div class="form-field">'
         . '<label for="add_account_role">Account type *</label>'
         . '<select id="add_account_role" name="account_role" required>'
@@ -684,7 +846,7 @@ HTML;
         . '<label for="add_job_title">Job title *</label>'
         . '<input id="add_job_title" name="job_title" '
         . 'placeholder="e.g., Faculty Instructor" required></div>'
-        . '<div class="form-field full">'
+        . '<div class="form-field">'
         . '<label for="add_specialization">Specialization *</label>'
         . '<input id="add_specialization" name="specialization" '
         . 'placeholder="e.g., Web Development, Mathematics, or Biology" required></div>'
@@ -699,7 +861,7 @@ HTML;
         . '<option value="Inactive">Inactive</option>'
         . '</select></div>'
         . '<div class="form-field full">'
-        . '<p class="small-muted">A verification link will be emailed to the employee. After verifying the address, the employee will receive a secure link to set their initial password.</p>'
+        . '<p class="small-muted">A verification link will be emailed to the employee. After verification, the employee will receive their login credentials with the Faculty ID as the initial password.</p>'
         . '</div>'
         . '<div class="form-field full modal-footer">'
         . '<a class="btn btn-secondary" href="employees.php">Cancel</a>'
@@ -711,6 +873,48 @@ HTML;
     $html .= <<<'HTML'
 <script>
 (function () {
+    function sanitizeNameInput(value) {
+        return value
+            .replace(/[^A-Za-z\s'-.]/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .replace(/([\'\-.]){2,}/g, '$1')
+            .replace(/^\s+|\s+$/g, '');
+    }
+
+    function formatPhoneInput(value) {
+        const digits = value.replace(/\D/g, '').slice(0, 11);
+        if (digits.length <= 4) {
+            return digits;
+        }
+        if (digits.length <= 7) {
+            return digits.replace(/^(\d{4})(\d{0,3})$/, '$1 $2');
+        }
+        return digits.replace(/^(\d{4})(\d{3})(\d{0,4})$/, '$1 $2 $3');
+    }
+
+    document.querySelectorAll('[data-name-input]').forEach(function (input) {
+        input.addEventListener('input', function () {
+            input.value = sanitizeNameInput(input.value);
+        });
+    });
+
+    document.querySelectorAll('[data-phone-input]').forEach(function (input) {
+        input.addEventListener('input', function () {
+            input.value = formatPhoneInput(input.value);
+            if (/^09\d{2} \d{3} \d{4}$/.test(input.value)) {
+                input.setCustomValidity('');
+                return;
+            }
+            input.setCustomValidity('Use format 09XX XXX XXXX');
+        });
+    });
+
+    document.querySelectorAll('input[type="email"]').forEach(function (input) {
+        input.addEventListener('input', function () {
+            input.value = input.value.replace(/\s+/g, '').toLowerCase();
+        });
+    });
+
     function initializeEmployeeModals() {
         const addModal = document.getElementById('add-employee-modal');
         if (!addModal) return;

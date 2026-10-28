@@ -38,11 +38,10 @@ function render_login(?array $flash): void
                         <div class="brand-seal">
                             <span>WIS</span>
                         </div>
-                        <b>Westmead International School</b>
+                        <b>HR Training and Development Management System</b>
                     </div>
                     <span class="eyebrow">Welcome back</span>
                     <h2>Sign in to your workspace</h2>
-                    <p class="muted">Enter your credentials to access the Training & Development Management System.</p>
 
                     <?php if ($flash): ?>
                         <div class="notice <?= $flash['type'] === 'error' ? 'error' : '' ?>">
@@ -55,21 +54,19 @@ function render_login(?array $flash): void
                         <input type="hidden" name="action" value="login">
 
                         <label class="field-label" for="login-email">Email address</label>
-                        <div class="input-wrap">
-                            <?= icon('user') ?>
-                            <input
-                                id="login-email"
-                                name="email"
-                                type="email"
-                                required
-                                autocomplete="username"
-                                aria-label="Email address">
-                        </div>
+                        <input
+                            class="login-field"
+                            id="login-email"
+                            name="email"
+                            type="email"
+                            required
+                            autocomplete="username"
+                            aria-label="Email address">
 
                         <label class="field-label" for="login-password">Password</label>
-                        <div class="input-wrap">
-                            <?= icon('shield') ?>
+                        <div class="password-field">
                             <input
+                                class="login-field"
                                 id="login-password"
                                 name="password"
                                 type="password"

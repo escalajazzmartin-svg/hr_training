@@ -1,0 +1,632 @@
+/* ========================================
+   CERTIFICATES MODULE
+======================================== */
+
+.certificates-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  font-size: var(--text-base, 1rem);
+}
+
+/* ========================================
+   CERTIFICATE REGISTRY
+======================================== */
+
+.certificates-page .certificates-registry-card {
+  min-width: 0;
+  padding: 22px;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 14px;
+  background: var(--card-background, #ffffff);
+  box-shadow: var(--card-shadow, 0 4px 16px rgba(0, 0, 0, 0.04));
+}
+
+.certificates-page .certificates-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.certificates-page .certificates-table-wrap table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.certificates-page .certificates-table-wrap thead th {
+  padding: 14px 16px;
+  background: white;
+  color: var(--text-secondary, #686875);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.certificates-page .certificates-table-wrap tbody td {
+  padding: 15px 16px;
+  color: var(--text-primary, #252525);
+  font-size: 14px;
+  line-height: 1.5;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color, #eeeeef);
+}
+
+.certificates-page .certificates-table-wrap tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.certificates-page .certificates-table-wrap tbody tr {
+  transition: background-color 160ms ease;
+}
+
+.certificates-page .certificates-table-wrap tbody tr:hover {
+  background: var(--table-hover-background, #faf9f7);
+}
+
+/* ========================================
+   CERTIFICATE STATUS
+======================================== */
+
+.certificates-page .certificate-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.certificates-page .certificate-status-dot {
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.certificates-page .badge-success.certificate-status {
+  color: #18794e;
+  background: #e8f7ee;
+  border: 1px solid #c9ecd7;
+}
+
+.certificates-page .badge-warn.certificate-status {
+  color: #946200;
+  background: #fff5d6;
+  border: 1px solid #f2df9e;
+}
+
+/* ========================================
+   ISSUE CERTIFICATE BUTTON
+======================================== */
+
+.certificates-page .certificate-issue-form {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+}
+
+.certificates-page .certificate-issue-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid var(--primary-color, #8b1e1e);
+  border-radius: 8px;
+  background: var(--primary-color, #8b1e1e);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.certificates-page .certificate-issue-btn svg {
+  display: block;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.certificates-page .certificate-issue-btn:hover {
+  background: var(--primary-hover, #641414);
+  border-color: var(--primary-hover, #641414);
+  box-shadow: 0 3px 8px rgba(100, 20, 20, 0.16);
+}
+
+.certificates-page .certificate-issue-btn:active {
+  transform: translateY(1px);
+}
+
+.certificates-page .certificate-issue-btn:focus-visible {
+  outline: 3px solid rgba(139, 30, 30, 0.25);
+  outline-offset: 3px;
+}
+
+/* ========================================
+   ISSUED DATE / HR REVIEW
+======================================== */
+
+.certificates-page .certificate-issued-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary, #686875);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.certificates-page .certificate-issued-date svg,
+.certificates-page .certificate-review-status svg {
+  display: block;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.certificates-page .certificate-date-unknown {
+  color: #946200;
+}
+
+.certificates-page .certificate-review-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #946200;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.certificates-page .certificate-review-status svg {
+  color: #b58105;
+}
+
+/* ========================================
+   EMPTY STATE
+======================================== */
+
+.certificates-page .certificate-empty-message {
+  margin: 0;
+  padding: 24px 16px;
+  color: var(--text-secondary, #686875);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT
+======================================== */
+
+@media (max-width: 768px) {
+  .certificates-page {
+    gap: 16px;
+  }
+
+  .certificates-page .certificates-registry-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .certificates-page .certificates-table-wrap thead th,
+  .certificates-page .certificates-table-wrap tbody td {
+    padding: 12px;
+  }
+
+  .certificates-page .certificate-issue-btn {
+    min-height: 34px;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .certificates-page .certificates-registry-card {
+    padding: 12px;
+  }
+
+  .certificates-page .certificate-issue-btn {
+    gap: 6px;
+    font-size: 12px;
+  }
+}
+
+/* ========================================
+   CERTIFICATES — FIX METRIC CARD LAYOUT
+======================================== */
+
+.metrics.four {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  width: 100%;
+  margin: 0;
+}
+
+.metrics.four > * {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #e8e5e1;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+/* Icons */
+.metrics.four > * svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* Metric title */
+.metrics.four > * h3,
+.metrics.four > * h4 {
+  margin: 0;
+  color: #686875;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Metric number */
+.metrics.four > * strong {
+  display: block;
+  margin: 0;
+  color: #303039;
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+/* Supporting description */
+.metrics.four > * p,
+.metrics.four > * small {
+  display: block;
+  margin: 0;
+  color: #777782;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   RESPONSIVE METRIC GRID
+======================================== */
+
+@media (max-width: 1100px) {
+  .metrics.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .metrics.four {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .metrics.four > * {
+    padding: 18px;
+  }
+}
+
+/* ========================================
+   CERTIFICATE REGISTRY HEADER & COUNT
+======================================== */
+
+.certificate-registry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.certificate-registry-heading {
+  min-width: 0;
+}
+
+.certificate-registry-heading h2 {
+  margin: 0;
+  color: var(--text-primary, #303039);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.certificate-registry-heading p {
+  margin: 5px 0 0;
+  color: var(--text-secondary, #777782);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.certificate-registry-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid #ead5d5;
+  border-radius: 999px;
+  background: #fbf0f0;
+  color: #8b1e1e;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.certificate-registry-count-number {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ========================================
+   CERTIFICATE SEARCH & FILTERS
+======================================== */
+
+.certificate-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 0.42fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.certificate-search,
+.certificate-status-filter {
+  display: flex;
+  min-width: 0;
+}
+
+.certificate-search input,
+.certificate-status-filter select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid #dedbd6;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-primary, #303039);
+  font: inherit;
+  font-size: 14px;
+}
+
+.certificate-search input::placeholder {
+  color: #858591;
+}
+
+.certificate-search input:focus,
+.certificate-status-filter select:focus {
+  border-color: var(--primary-color, #8b1e1e);
+  outline: 3px solid rgb(139 30 30 / 10%);
+}
+
+.certificate-visible-count {
+  margin: 14px 0 0;
+  color: var(--text-secondary, #777782);
+  font-size: 12px;
+}
+
+/* Accessible text that remains available to screen readers. */
+.certificates-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ========================================
+   CERTIFICATE ACTION ICONS
+   Requires Font Awesome 6 Free to be loaded
+======================================== */
+
+.certificate-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.certificate-send-form {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+}
+
+.certificate-action-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #e5e5e7;
+  border-radius: 10px;
+  background: #fff;
+  color: #555560;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+/* Font Awesome 4.7 icon compatibility */
+.certificates-page .certificate-action-btn i,
+.certificates-page .certificate-send-unavailable i {
+  display: inline-block;
+  font-family: FontAwesome !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.certificate-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.certificate-print-btn {
+  border-color: var(--primary-color, #8b1e1e);
+  background: var(--primary-color, #8b1e1e);
+  color: #fff;
+}
+
+.certificate-print-btn:hover:not(:disabled) {
+  border-color: var(--primary-hover, #641414);
+  background: var(--primary-hover, #641414);
+  color: #fff;
+}
+
+.certificate-send-btn {
+  border-color: var(--primary-color, #8b1e1e);
+  background: var(--primary-color, #8b1e1e);
+  color: #fff;
+}
+
+.certificate-send-btn:hover:not(:disabled) {
+  border-color: var(--primary-hover, #641414);
+  background: var(--primary-hover, #641414);
+  color: #fff;
+}
+
+.certificate-action-btn:disabled {
+  background: #f4f4f5;
+  color: #b7b7bd;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.certificate-action-btn:focus-visible {
+  outline: 3px solid rgb(139 30 30 / 20%);
+  outline-offset: 2px;
+}
+
+.certificate-send-unavailable {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: 38px;
+  color: #9999a2;
+  font-size: 14px;
+}
+
+/* ========================================
+   RESPONSIVE CERTIFICATE LAYOUT
+======================================== */
+
+@media (max-width: 1100px) {
+  .metrics.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .certificates-page {
+    gap: 16px;
+  }
+
+  .certificates-page .certificates-registry-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .certificates-page .certificates-table-wrap thead th,
+  .certificates-page .certificates-table-wrap tbody td {
+    padding: 12px;
+  }
+
+  .certificates-page .certificate-issue-btn {
+    min-height: 34px;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .metrics.four {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .metrics.four > * {
+    padding: 18px;
+  }
+
+  .certificate-registry-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .certificate-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .certificates-page .certificates-registry-card {
+    padding: 12px;
+  }
+
+  .certificates-page .certificate-issue-btn {
+    gap: 6px;
+    font-size: 12px;
+  }
+}

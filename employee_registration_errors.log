@@ -6,3 +6,487 @@
 [2026-10-25 23:09:09] Test log entry from check_mail.php
 [2026-10-25 23:11:56] Test log entry from check_mail.php
 [2026-10-25 23:11:57] Test log entry from check_mail.php
+[2026-10-25 23:24:16] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5a478bee46e88-369f27d5bf8sm16590045eec.4 - gsmtp
+[2026-10-25 23:24:16] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-25 23:24:17] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [223.25.19.49]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-25 23:24:17] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-25 23:24:17] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-25 23:24:17] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-25 23:24:18] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [223.25.19.49]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-25 23:24:18] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-25 23:24:18] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-25 23:24:18] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-25 23:24:18] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-25 23:24:18] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-25 23:24:18] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-25 23:24:18] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-25 23:24:18] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK 5a478bee46e88-369f27d5bf8sm16590045eec.4 - gsmtp
+[2026-10-25 23:24:18] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<shadowsyntax67@gmail.com>
+[2026-10-25 23:24:19] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK 5a478bee46e88-369f27d5bf8sm16590045eec.4 - gsmtp
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-25 23:24:19] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead 5a478bee46e88-369f27d5bf8sm16590045eec.4 - gsmtp
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Date: Sun, 25 Oct 2026 23:24:16 +0100
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: To: shadow syntax <shadowsyntax67@gmail.com>
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Subject: Verify your HR Training System email
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <zfRbJelmUJZunovsFWOuTXcflNf3zFI8sPVDL0WLE@localhost>
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_zfRbJelmUJZunovsFWOuTXcflNf3zFI8sPVDL0WLE"
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: --b1=_zfRbJelmUJZunovsFWOuTXcflNf3zFI8sPVDL0WLE
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Hello shadow,
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Verify your email address using this link:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: /hr_training/verify-employee-email.php?token=44a3343cbefaff2d23cecfad80e66dccff3732a0285252daa31950ce6ab7cd30
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: This link expires in 30 minutes.
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: --b1=_zfRbJelmUJZunovsFWOuTXcflNf3zFI8sPVDL0WLE
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: <p>Hello shadow,</p><p>An administrator has started creating your HR Training System account.</p><p>Click the link below to verify your email address. The link expires in 30 minutes.</p><p><a href="/hr_training/verify-employee-email.php?token=44a3343cbefaff2d23cecfad80e66dccff3732a0285252daa31950ce6ab7cd30">Verify my email address</a></p><p>Your employee account will be created after verification.</p><p>If you were not expecting this email, you can ignore it.</p>
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: --b1=_zfRbJelmUJZunovsFWOuTXcflNf3zFI8sPVDL0WLE--
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:19] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-25 23:24:20] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1792967060 5a478bee46e88-369f27d5bf8sm16590045eec.4 - gsmtp
+[2026-10-25 23:24:20] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-25 23:24:20] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection 5a478bee46e88-369f27d5bf8sm16590045eec.4 - gsmtp
+[2026-10-25 23:24:48] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5a478bee46e88-369e8daf444sm18976643eec.18 - gsmtp
+[2026-10-25 23:24:48] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-25 23:24:48] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [223.25.19.49]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-25 23:24:48] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-25 23:24:49] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-25 23:24:49] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-25 23:24:50] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [223.25.19.49]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-25 23:24:50] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-25 23:24:50] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-25 23:24:50] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-25 23:24:50] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-25 23:24:50] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-25 23:24:50] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-25 23:24:50] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-25 23:24:50] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK 5a478bee46e88-369e8daf444sm18976643eec.18 - gsmtp
+[2026-10-25 23:24:50] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<shadowsyntax67@gmail.com>
+[2026-10-25 23:24:51] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK 5a478bee46e88-369e8daf444sm18976643eec.18 - gsmtp
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-25 23:24:51] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead 5a478bee46e88-369e8daf444sm18976643eec.18 - gsmtp
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Date: Sun, 25 Oct 2026 23:24:48 +0100
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: To: shadow syntax <shadowsyntax67@gmail.com>
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Subject: Verify your HR Training System email
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <UNwAL7xo5922cv287v40gP3fN9srBSx24NfeAUbi2do@localhost>
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_UNwAL7xo5922cv287v40gP3fN9srBSx24NfeAUbi2do"
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: --b1=_UNwAL7xo5922cv287v40gP3fN9srBSx24NfeAUbi2do
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Hello shadow,
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Verify your email address using this link:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: /hr_training/verify-employee-email.php?token=94ccc2949c356fb841c50934870a3ead485ef9f7b12e0637eb0ced48816a2dc8
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: This link expires in 30 minutes.
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: --b1=_UNwAL7xo5922cv287v40gP3fN9srBSx24NfeAUbi2do
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: <p>Hello shadow,</p><p>An administrator has started creating your HR Training System account.</p><p>Click the link below to verify your email address. The link expires in 30 minutes.</p><p><a href="/hr_training/verify-employee-email.php?token=94ccc2949c356fb841c50934870a3ead485ef9f7b12e0637eb0ced48816a2dc8">Verify my email address</a></p><p>Your employee account will be created after verification.</p><p>If you were not expecting this email, you can ignore it.</p>
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: --b1=_UNwAL7xo5922cv287v40gP3fN9srBSx24NfeAUbi2do--
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:24:51] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-25 23:24:52] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1792967092 5a478bee46e88-369e8daf444sm18976643eec.18 - gsmtp
+[2026-10-25 23:24:52] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-25 23:24:52] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection 5a478bee46e88-369e8daf444sm18976643eec.18 - gsmtp
+[2026-10-25 23:25:50] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5a478bee46e88-36a026e04a0sm1908254eec.1 - gsmtp
+[2026-10-25 23:25:50] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-25 23:25:51] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [223.25.19.49]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-25 23:25:51] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-25 23:25:51] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-25 23:25:52] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-25 23:25:52] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [223.25.19.49]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-25 23:25:52] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-25 23:25:52] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-25 23:25:52] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-25 23:25:52] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-25 23:25:52] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-25 23:25:52] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-25 23:25:52] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-25 23:25:53] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK 5a478bee46e88-36a026e04a0sm1908254eec.1 - gsmtp
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<shadowsyntax67@gmail.com>
+[2026-10-25 23:25:53] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK 5a478bee46e88-36a026e04a0sm1908254eec.1 - gsmtp
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-25 23:25:53] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead 5a478bee46e88-36a026e04a0sm1908254eec.1 - gsmtp
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Date: Sun, 25 Oct 2026 23:25:50 +0100
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: To: shadow syntax <shadowsyntax67@gmail.com>
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Subject: Verify your HR Training System email
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <cC6025z4m1OgLAAvB2zEN4HznmYukn1TpNH9snkEA@localhost>
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_cC6025z4m1OgLAAvB2zEN4HznmYukn1TpNH9snkEA"
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: --b1=_cC6025z4m1OgLAAvB2zEN4HznmYukn1TpNH9snkEA
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Hello shadow,
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Verify your email address using this link:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: /hr_training/verify-employee-email.php?token=2ec96845917298900f00722639b42ea6a18c234975cfdb0a9e4b46aa0d1d1418
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: This link expires in 30 minutes.
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: --b1=_cC6025z4m1OgLAAvB2zEN4HznmYukn1TpNH9snkEA
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: <p>Hello shadow,</p><p>An administrator has started creating your HR Training System account.</p><p>Click the link below to verify your email address. The link expires in 30 minutes.</p><p><a href="/hr_training/verify-employee-email.php?token=2ec96845917298900f00722639b42ea6a18c234975cfdb0a9e4b46aa0d1d1418">Verify my email address</a></p><p>Your employee account will be created after verification.</p><p>If you were not expecting this email, you can ignore it.</p>
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: --b1=_cC6025z4m1OgLAAvB2zEN4HznmYukn1TpNH9snkEA--
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-25 23:25:53] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-25 23:25:54] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1792967154 5a478bee46e88-36a026e04a0sm1908254eec.1 - gsmtp
+[2026-10-25 23:25:54] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-25 23:25:54] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection 5a478bee46e88-36a026e04a0sm1908254eec.1 - gsmtp
+[2026-10-28 04:31:39] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 98e67ed59e1d1-3ae57a56a1dsm630930a91.4 - gsmtp
+[2026-10-28 04:31:39] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:31:39] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250-SMTPUTF8
+250 LIMITS MAILMAX=1000 RCPTMAX=100
+[2026-10-28 04:31:39] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-28 04:31:39] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-28 04:31:40] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:31:40] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250-SMTPUTF8
+250 LIMITS MAILMAX=1000 RCPTMAX=100
+[2026-10-28 04:31:40] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-28 04:31:41] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-28 04:31:41] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:31:41] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-28 04:31:41] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:31:41] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-28 04:31:41] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-28 04:31:41] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK 98e67ed59e1d1-3ae57a56a1dsm630930a91.4 - gsmtp
+[2026-10-28 04:31:41] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<rosecalingo05@gmail.com>
+[2026-10-28 04:31:42] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK 98e67ed59e1d1-3ae57a56a1dsm630930a91.4 - gsmtp
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-28 04:31:42] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead 98e67ed59e1d1-3ae57a56a1dsm630930a91.4 - gsmtp
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Date: Wed, 28 Oct 2026 04:31:38 +0100
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: To: Mary Rose Calingo <rosecalingo05@gmail.com>
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Subject: Verify your HR Training System email
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <Exo5uBgPhoaARA2qkesHAHpm89DpNDsyTvIBZ9dYU@localhost>
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_Exo5uBgPhoaARA2qkesHAHpm89DpNDsyTvIBZ9dYU"
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: --b1=_Exo5uBgPhoaARA2qkesHAHpm89DpNDsyTvIBZ9dYU
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Hello Mary Rose,
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Verify your email address using this link:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: /hr_training/verify-employee-email.php?token=4a2abb6328a9c16d73586837b0fc63a8d25475aa148dfeb265dc3fe7dcfaeb20
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: This link expires in 30 minutes.
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: --b1=_Exo5uBgPhoaARA2qkesHAHpm89DpNDsyTvIBZ9dYU
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: <p>Hello Mary Rose,</p><p>An administrator has started creating your HR Training System account.</p><p>Click the link below to verify your email address. The link expires in 30 minutes.</p><p><a href="/hr_training/verify-employee-email.php?token=4a2abb6328a9c16d73586837b0fc63a8d25475aa148dfeb265dc3fe7dcfaeb20">Verify my email address</a></p><p>Your employee account will be created after verification.</p><p>If you were not expecting this email, you can ignore it.</p>
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: --b1=_Exo5uBgPhoaARA2qkesHAHpm89DpNDsyTvIBZ9dYU--
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:31:42] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-28 04:31:43] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1793158302 98e67ed59e1d1-3ae57a56a1dsm630930a91.4 - gsmtp
+[2026-10-28 04:31:43] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-28 04:31:43] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection 98e67ed59e1d1-3ae57a56a1dsm630930a91.4 - gsmtp
+[2026-10-28 04:44:47] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP d9443c01a7336-2eae6c34c1csm15695555ad.46 - gsmtp
+[2026-10-28 04:44:47] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:44:48] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-28 04:44:48] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-28 04:44:48] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-28 04:44:49] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:44:49] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-28 04:44:49] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-28 04:44:49] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-28 04:44:49] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:44:49] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-28 04:44:49] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:44:50] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-28 04:44:50] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK d9443c01a7336-2eae6c34c1csm15695555ad.46 - gsmtp
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<shadowsyntax67@gmail.com>
+[2026-10-28 04:44:50] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK d9443c01a7336-2eae6c34c1csm15695555ad.46 - gsmtp
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-28 04:44:50] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead d9443c01a7336-2eae6c34c1csm15695555ad.46 - gsmtp
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Date: Wed, 28 Oct 2026 04:44:47 +0100
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: To: shadow syntax <shadowsyntax67@gmail.com>
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Subject: Your HR Training System login credentials
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <aJbCow94Rv0iRjyjVirKo9zlSr8Cvfi1BK6aTq3jRQ@localhost>
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_aJbCow94Rv0iRjyjVirKo9zlSr8Cvfi1BK6aTq3jRQ"
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: --b1=_aJbCow94Rv0iRjyjVirKo9zlSr8Cvfi1BK6aTq3jRQ
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Greetings shadow,
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Welcome to the HR Training System.
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Your account has been created successfully.
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Email: shadowsyntax67@gmail.com
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Initial password: FAC-2026-001
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Faculty ID: FAC-2026-001
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Role: Trainer
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Use the password above to sign in. We recommend changing it after your first login.
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: --b1=_aJbCow94Rv0iRjyjVirKo9zlSr8Cvfi1BK6aTq3jRQ
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: <p>Greetings shadow,</p><p>Welcome to the HR Training System.</p><p>Your account has been created successfully.</p><p><strong>Email:</strong> shadowsyntax67@gmail.com</p><p><strong>Initial password:</strong> FAC-2026-001</p><p><strong>Faculty ID:</strong> FAC-2026-001</p><p><strong>Role:</strong> Trainer</p><p>Use the password above to sign in. We recommend changing it after your first login.</p>
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: --b1=_aJbCow94Rv0iRjyjVirKo9zlSr8Cvfi1BK6aTq3jRQ--
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:44:50] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-28 04:44:51] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1793159091 d9443c01a7336-2eae6c34c1csm15695555ad.46 - gsmtp
+[2026-10-28 04:44:51] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-28 04:44:52] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection d9443c01a7336-2eae6c34c1csm15695555ad.46 - gsmtp
+[2026-10-28 04:47:33] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP d2e1a72fcca58-8a6e634ae83sm279754b3a.20 - gsmtp
+[2026-10-28 04:47:33] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:47:34] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-28 04:47:34] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-28 04:47:34] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-28 04:47:35] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:47:35] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+[2026-10-28 04:47:35] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-28 04:47:35] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-28 04:47:35] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:47:35] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-28 04:47:35] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:47:36] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-28 04:47:36] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK d2e1a72fcca58-8a6e634ae83sm279754b3a.20 - gsmtp
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<shadowsyntax67@gmail.com>
+[2026-10-28 04:47:36] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK d2e1a72fcca58-8a6e634ae83sm279754b3a.20 - gsmtp
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-28 04:47:36] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead d2e1a72fcca58-8a6e634ae83sm279754b3a.20 - gsmtp
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Date: Wed, 28 Oct 2026 04:47:32 +0100
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: To: shadow syntax <shadowsyntax67@gmail.com>
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Subject: Your HR Training System login credentials
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <MaTu0TmzWHY1WC9yBqq7c2Wg2xuYuDG50HYjVWfag@localhost>
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_MaTu0TmzWHY1WC9yBqq7c2Wg2xuYuDG50HYjVWfag"
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: --b1=_MaTu0TmzWHY1WC9yBqq7c2Wg2xuYuDG50HYjVWfag
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Greetings shadow,
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Welcome to the HR Training System.
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Your account has been created successfully.
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Email: shadowsyntax67@gmail.com
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Initial password: TRN-2026-001
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Faculty ID: TRN-2026-001
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Role: Trainer
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Use the password above to sign in. We recommend changing it after your first login.
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: --b1=_MaTu0TmzWHY1WC9yBqq7c2Wg2xuYuDG50HYjVWfag
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: <p>Greetings shadow,</p><p>Welcome to the HR Training System.</p><p>Your account has been created successfully.</p><p><strong>Email:</strong> shadowsyntax67@gmail.com</p><p><strong>Initial password:</strong> TRN-2026-001</p><p><strong>Faculty ID:</strong> TRN-2026-001</p><p><strong>Role:</strong> Trainer</p><p>Use the password above to sign in. We recommend changing it after your first login.</p>
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: --b1=_MaTu0TmzWHY1WC9yBqq7c2Wg2xuYuDG50HYjVWfag--
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:47:36] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-28 04:47:37] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1793159256 d2e1a72fcca58-8a6e634ae83sm279754b3a.20 - gsmtp
+[2026-10-28 04:47:37] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-28 04:47:37] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection d2e1a72fcca58-8a6e634ae83sm279754b3a.20 - gsmtp
+[2026-10-28 04:56:03] PHPMailer [2]: SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 98e67ed59e1d1-3ae5a9035casm880112a91.2 - gsmtp
+[2026-10-28 04:56:03] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:56:03] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250-SMTPUTF8
+250 LIMITS MAILMAX=1000 RCPTMAX=100
+[2026-10-28 04:56:03] PHPMailer [1]: CLIENT -> SERVER: STARTTLS
+[2026-10-28 04:56:03] PHPMailer [2]: SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+[2026-10-28 04:56:04] PHPMailer [1]: CLIENT -> SERVER: EHLO localhost
+[2026-10-28 04:56:04] PHPMailer [2]: SERVER -> CLIENT: 250-smtp.gmail.com at your service, [180.191.75.130]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250-SMTPUTF8
+250 LIMITS MAILMAX=1000 RCPTMAX=100
+[2026-10-28 04:56:04] PHPMailer [1]: CLIENT -> SERVER: AUTH LOGIN
+[2026-10-28 04:56:04] PHPMailer [2]: SERVER -> CLIENT: 334 VXNlcm5hbWU6
+[2026-10-28 04:56:04] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:56:05] PHPMailer [2]: SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+[2026-10-28 04:56:05] PHPMailer [1]: CLIENT -> SERVER: [credentials hidden]
+[2026-10-28 04:56:05] PHPMailer [2]: SERVER -> CLIENT: 235 2.7.0 Accepted
+[2026-10-28 04:56:05] PHPMailer [1]: CLIENT -> SERVER: MAIL FROM:<escalajazzmartin@gmail.com>
+[2026-10-28 04:56:05] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.0 OK 98e67ed59e1d1-3ae5a9035casm880112a91.2 - gsmtp
+[2026-10-28 04:56:05] PHPMailer [1]: CLIENT -> SERVER: RCPT TO:<umali.mico.c247098@gmail.com>
+[2026-10-28 04:56:05] PHPMailer [2]: SERVER -> CLIENT: 250 2.1.5 OK 98e67ed59e1d1-3ae5a9035casm880112a91.2 - gsmtp
+[2026-10-28 04:56:05] PHPMailer [1]: CLIENT -> SERVER: DATA
+[2026-10-28 04:56:06] PHPMailer [2]: SERVER -> CLIENT: 354 Go ahead 98e67ed59e1d1-3ae5a9035casm880112a91.2 - gsmtp
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Date: Wed, 28 Oct 2026 04:56:02 +0100
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: To: Mico Umali <umali.mico.c247098@gmail.com>
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: From: HR Training System <escalajazzmartin@gmail.com>
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Subject: Your HR Training System login credentials
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Message-ID: <AYzb0sM3xPEll17VggyyXft8Po23lfukJnMfZ4xuHAU@localhost>
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: X-Mailer: PHPMailer 7.1.1 (https://github.com/PHPMailer/PHPMailer)
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: MIME-Version: 1.0
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Content-Type: multipart/alternative;
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:  boundary="b1=_AYzb0sM3xPEll17VggyyXft8Po23lfukJnMfZ4xuHAU"
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: --b1=_AYzb0sM3xPEll17VggyyXft8Po23lfukJnMfZ4xuHAU
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/plain; charset=us-ascii
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Greetings Mico,
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Welcome to the HR Training System.
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Your account has been created successfully.
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Email: umali.mico.c247098@gmail.com
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Initial password: TRN-2026-002
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Faculty ID: TRN-2026-002
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Role: Trainer
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Use the password above to sign in. We recommend changing it after your first login.
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: --b1=_AYzb0sM3xPEll17VggyyXft8Po23lfukJnMfZ4xuHAU
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: Content-Type: text/html; charset=us-ascii
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: <p>Greetings Mico,</p><p>Welcome to the HR Training System.</p><p>Your account has been created successfully.</p><p><strong>Email:</strong> umali.mico.c247098@gmail.com</p><p><strong>Initial password:</strong> TRN-2026-002</p><p><strong>Faculty ID:</strong> TRN-2026-002</p><p><strong>Role:</strong> Trainer</p><p>Use the password above to sign in. We recommend changing it after your first login.</p>
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: --b1=_AYzb0sM3xPEll17VggyyXft8Po23lfukJnMfZ4xuHAU--
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER:
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: .
+[2026-10-28 04:56:06] PHPMailer [2]: SERVER -> CLIENT: 250 2.0.0 OK  1793159766 98e67ed59e1d1-3ae5a9035casm880112a91.2 - gsmtp
+[2026-10-28 04:56:06] PHPMailer [1]: CLIENT -> SERVER: QUIT
+[2026-10-28 04:56:07] PHPMailer [2]: SERVER -> CLIENT: 221 2.0.0 closing connection 98e67ed59e1d1-3ae5a9035casm880112a91.2 - gsmtp

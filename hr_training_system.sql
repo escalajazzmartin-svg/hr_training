@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2026 at 02:36 PM
+-- Generation Time: Oct 28, 2026 at 04:40 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,15 +34,15 @@ CREATE TABLE `attendance` (
   `remarks` varchar(255) DEFAULT NULL,
   `marked_by` int(10) UNSIGNED DEFAULT NULL,
   `marked_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `attendance`
 --
 
 INSERT INTO `attendance` (`id`, `registration_id`, `attendance_status`, `remarks`, `marked_by`, `marked_at`) VALUES
-(1, 3, 'Present', 'Completed session', 3, '2026-10-17 09:18:03'),
-(2, 5, 'Present', 'Completed session', 3, '2026-10-17 09:18:03');
+(1, 3, 'Present', 'Completed session', 3, '2026-10-23 16:02:26'),
+(2, 5, 'Present', 'Completed session', 3, '2026-10-23 16:02:26');
 
 -- --------------------------------------------------------
 
@@ -56,7 +56,7 @@ CREATE TABLE `certificates` (
   `certificate_code` varchar(50) NOT NULL,
   `issued_at` date NOT NULL,
   `approved_by` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `certificates`
@@ -77,7 +77,7 @@ CREATE TABLE `competencies` (
   `name` varchar(140) NOT NULL,
   `category` varchar(100) NOT NULL DEFAULT 'Professional',
   `description` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `competencies`
@@ -110,19 +110,31 @@ CREATE TABLE `employees` (
   `hire_date` date DEFAULT NULL,
   `employment_status` enum('Active','On Leave','Inactive') NOT NULL DEFAULT 'Active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employees`
 --
 
 INSERT INTO `employees` (`id`, `employee_code`, `first_name`, `last_name`, `email`, `phone`, `department`, `job_title`, `specialization`, `hire_date`, `employment_status`, `created_at`) VALUES
-(1, 'FAC-2024-018', 'Alyssa', 'Reyes', 'alyssa.reyes@westmead.edu', '0917-555-0101', 'Information Technology', 'Instructor II', 'Programming', '2021-06-15', 'Active', '2026-10-17 09:18:03'),
-(2, 'FAC-2022-041', 'Marco', 'Santos', 'marco.santos@westmead.edu', '0917-555-0102', 'Information Technology', 'Assistant Professor', 'Networking', '2019-08-01', 'Active', '2026-10-17 09:18:03'),
-(3, 'FAC-2021-007', 'Lena', 'Villanueva', 'lena.villanueva@westmead.edu', '0917-555-0103', 'Science', 'Associate Professor', 'Digital Teaching', '2018-05-12', 'Active', '2026-10-17 09:18:03'),
-(4, 'FAC-2023-026', 'Daniel', 'Cruz', 'daniel.cruz@westmead.edu', '0917-555-0104', 'Mathematics', 'Instructor I', 'Data Analytics', '2022-06-10', 'Active', '2026-10-17 09:18:03'),
-(5, 'FAC-2020-012', 'Sofia', 'Garcia', 'sofia.garcia@westmead.edu', '0917-555-0105', 'Business', 'Assistant Professor', 'Research Methods', '2017-11-06', 'Active', '2026-10-17 09:18:03'),
-(6, 'FAC-2024-031', 'Noah', 'Flores', 'noah.flores@westmead.edu', '0917-555-0106', 'English', 'Instructor I', 'Digital Teaching', '2023-06-19', 'Active', '2026-10-17 09:18:03');
+(1, 'FAC-2024-018', 'Alyssa', 'Reyes', 'alyssa.reyes@westmead.edu', '0917 555 0101', 'Information Technology', 'Instructor II', 'Programming', '2021-06-15', 'Active', '2026-10-23 16:02:26'),
+(2, 'FAC-2022-041', 'Marco', 'Santos', 'marco.santos@westmead.edu', '0917-555-0102', 'Information Technology', 'Assistant Professor', 'Networking', '2019-08-01', 'Active', '2026-10-23 16:02:26'),
+(3, 'FAC-2021-007', 'Jazz Martin', 'Escala', 'escala.jazzmartin.c240185@gmail.com', '0994 645 0870', 'Science', 'Associate Professor', 'Digital Teaching', '2018-05-12', 'Active', '2026-10-23 16:02:26'),
+(4, 'FAC-2023-026', 'Xiron', 'Tarala', 'sipxcrisp@gmail.com', '0917 555 0104', 'Mathematics', 'Instructor I', 'Data Analytics', '2022-06-10', 'Active', '2026-10-23 16:02:26'),
+(5, 'FAC-2020-012', 'Sofia', 'Garcia', 'sofia.garcia@westmead.edu', '0917 555 0105', 'Business', 'Assistant Professor', 'Research Methods', '2017-11-06', 'Active', '2026-10-23 16:02:26'),
+(6, 'FAC-2024-031', 'Noah', 'Flores', 'noah.flores@westmead.edu', '0917 555 0105', 'English', 'Instructor I', 'Digital Teaching', '2023-06-19', 'Active', '2026-10-23 16:02:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employee_code_counters`
+--
+
+CREATE TABLE `employee_code_counters` (
+  `role_prefix` varchar(3) NOT NULL,
+  `registration_year` smallint(5) UNSIGNED NOT NULL,
+  `last_number` int(10) UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -138,7 +150,7 @@ CREATE TABLE `employee_competencies` (
   `target_score` tinyint(3) UNSIGNED NOT NULL DEFAULT 80,
   `last_assessed` date DEFAULT NULL,
   `notes` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employee_competencies`
@@ -155,6 +167,20 @@ INSERT INTO `employee_competencies` (`id`, `employee_id`, `competency_id`, `curr
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `employee_password_setup_tokens`
+--
+
+CREATE TABLE `employee_password_setup_tokens` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `evaluations`
 --
 
@@ -165,15 +191,30 @@ CREATE TABLE `evaluations` (
   `feedback` text DEFAULT NULL,
   `assessed_by` int(10) UNSIGNED DEFAULT NULL,
   `assessed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `evaluations`
 --
 
 INSERT INTO `evaluations` (`id`, `registration_id`, `score`, `feedback`, `assessed_by`, `assessed_at`) VALUES
-(1, 3, 92.00, 'Good application of the session concepts.', 3, '2026-10-17 09:18:03'),
-(2, 5, 84.00, 'Satisfactory progress.', 3, '2026-10-17 09:18:03');
+(1, 3, 92.00, 'Good application of the session concepts.', 3, '2026-10-23 16:02:26'),
+(2, 5, 84.00, 'Satisfactory progress.', 3, '2026-10-23 16:02:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pending_employee_verifications`
+--
+
+CREATE TABLE `pending_employee_verifications` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `email` varchar(160) NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `payload_json` longtext NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -187,18 +228,18 @@ CREATE TABLE `registrations` (
   `program_id` int(10) UNSIGNED NOT NULL,
   `status` enum('Registered','In Progress','Completed','Withdrawn') NOT NULL DEFAULT 'Registered',
   `registered_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `registrations`
 --
 
 INSERT INTO `registrations` (`id`, `employee_id`, `program_id`, `status`, `registered_at`) VALUES
-(1, 1, 1, 'Registered', '2026-10-17 09:18:03'),
-(2, 2, 3, 'Registered', '2026-10-17 09:18:03'),
-(3, 3, 2, 'Completed', '2026-10-17 09:18:03'),
-(4, 6, 2, 'Registered', '2026-10-17 09:18:03'),
-(5, 4, 4, 'Completed', '2026-10-17 09:18:03');
+(1, 1, 1, 'Registered', '2026-10-23 16:02:26'),
+(2, 2, 3, 'Registered', '2026-10-23 16:02:26'),
+(3, 3, 2, 'Completed', '2026-10-23 16:02:26'),
+(4, 6, 2, 'Registered', '2026-10-23 16:02:26'),
+(5, 4, 4, 'Completed', '2026-10-23 16:02:26');
 
 -- --------------------------------------------------------
 
@@ -221,17 +262,17 @@ CREATE TABLE `training_programs` (
   `status` enum('Draft','Upcoming','Ongoing','Completed','Cancelled') NOT NULL DEFAULT 'Upcoming',
   `created_by` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `training_programs`
 --
 
 INSERT INTO `training_programs` (`id`, `title`, `category`, `specialization`, `description`, `trainer_user_id`, `start_date`, `end_date`, `start_time`, `venue`, `capacity`, `status`, `created_by`, `created_at`) VALUES
-(1, 'Advanced Programming Training', 'Technical', 'Programming', 'Hands-on programming and application development training.', 3, '2026-10-22', '2026-10-23', '09:00:00', 'Computer Laboratory 2', 30, 'Upcoming', 1, '2026-10-17 09:18:03'),
-(2, 'Digital Teaching Strategies', 'Teaching', 'Digital Teaching', 'Practical use of digital tools for classroom instruction.', 3, '2026-10-28', '2026-10-28', '13:00:00', 'AVR 1', 40, 'Upcoming', 1, '2026-10-17 09:18:03'),
-(3, 'Networking Fundamentals Refresher', 'Technical', 'Networking', 'Network setup, diagnostics, and security basics.', 3, '2026-11-05', '2026-11-06', '09:30:00', 'ICT Lab', 25, 'Upcoming', 1, '2026-10-17 09:18:03'),
-(4, 'Data Literacy for Faculty', 'Technical', 'Data Analytics', 'Use data to support teaching and decision making.', 3, '2026-09-10', '2026-09-10', '10:00:00', 'Training Room A', 25, 'Completed', 1, '2026-10-17 09:18:03');
+(1, 'Advanced Programming Training', 'Technical', 'Programming', 'Hands-on programming and application development training.', 3, '2026-10-22', '2026-10-23', '09:00:00', 'Computer Laboratory 2', 30, 'Upcoming', 1, '2026-10-23 16:02:26'),
+(2, 'Digital Teaching Strategies', 'Teaching', 'Digital Teaching', 'Practical use of digital tools for classroom instruction.', 3, '2026-10-28', '2026-10-28', '13:00:00', 'AVR 1', 40, 'Upcoming', 1, '2026-10-23 16:02:26'),
+(3, 'Networking Fundamentals Refresher', 'Technical', 'Networking', 'Network setup, diagnostics, and security basics.', 3, '2026-11-05', '2026-11-06', '09:30:00', 'ICT Lab', 25, 'Upcoming', 1, '2026-10-23 16:02:26'),
+(4, 'Data Literacy for Faculty', 'Technical', 'Data Analytics', 'Use data to support teaching and decision making.', 3, '2026-09-10', '2026-09-10', '10:00:00', 'Training Room A', 25, 'Completed', 1, '2026-10-23 16:02:26');
 
 -- --------------------------------------------------------
 
@@ -249,57 +290,18 @@ CREATE TABLE `users` (
   `last_name` varchar(80) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
---
--- Table structure for table `pending_employee_verifications`
---
-
-CREATE TABLE `pending_employee_verifications` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `email` varchar(160) NOT NULL,
-  `token_hash` char(64) NOT NULL,
-  `payload_json` longtext NOT NULL,
-  `expires_at` datetime NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
---
--- Table structure for table `employee_code_counters`
---
-
-CREATE TABLE `employee_code_counters` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `role_prefix` varchar(10) NOT NULL,
-  `registration_year` year NOT NULL,
-  `last_number` int(10) UNSIGNED NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
---
--- Table structure for table `employee_password_setup_tokens`
---
-
-CREATE TABLE `employee_password_setup_tokens` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `token_hash` char(64) NOT NULL,
-  `expires_at` datetime NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `employee_id`, `email`, `password_hash`, `role`, `first_name`, `last_name`, `active`, `created_at`) VALUES
-(1, NULL, 'hr.officer@sthelena.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'admin', 'Dheo', 'Fabul', 1, '2026-10-17 09:18:03'),
-(2, 1, 'alyssa.reyes@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'employee', 'Alyssa', 'Reyes', 1, '2026-10-17 09:18:03'),
-(3, NULL, 'gabriel.lim@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'trainer', 'Gabriel', 'Lim', 1, '2026-10-17 09:18:03'),
-(4, 2, 'marco.santos@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'employee', 'Marco', 'Santos', 1, '2026-10-17 09:18:03'),
-(5, 3, 'lena.villanueva@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'employee', 'Lena', 'Villanueva', 1, '2026-10-17 09:18:03');
+(1, NULL, 'hr.officer@sthelena.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'admin', 'Dheo', 'Fabul', 1, '2026-10-23 16:02:26'),
+(2, 1, 'alyssa.reyes@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'employee', 'Alyssa', 'Reyes', 1, '2026-10-23 16:02:26'),
+(3, NULL, 'gabriel.lim@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'trainer', 'Gabriel', 'Lim', 1, '2026-10-23 16:02:26'),
+(4, 2, 'marco.santos@westmead.edu', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'employee', 'Marco', 'Santos', 1, '2026-10-23 16:02:26'),
+(5, 3, 'escala.jazzmartin.c240185@gmail.com', '$2y$12$GrzNk13m1LhjtCaxKB.oOOCsAWV2ZLa7fJX2jHOqjt4Zsr5j/XIOO', 'employee', 'Jazz Martin', 'Escala', 1, '2026-10-23 16:02:26');
 
 --
 -- Indexes for dumped tables
@@ -338,6 +340,12 @@ ALTER TABLE `employees`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `employee_code_counters`
+--
+ALTER TABLE `employee_code_counters`
+  ADD PRIMARY KEY (`role_prefix`,`registration_year`);
+
+--
 -- Indexes for table `employee_competencies`
 --
 ALTER TABLE `employee_competencies`
@@ -346,12 +354,30 @@ ALTER TABLE `employee_competencies`
   ADD KEY `fk_ec_competency` (`competency_id`);
 
 --
+-- Indexes for table `employee_password_setup_tokens`
+--
+ALTER TABLE `employee_password_setup_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_password_setup_user` (`user_id`),
+  ADD UNIQUE KEY `uq_password_setup_token` (`token_hash`),
+  ADD KEY `idx_password_setup_expiry` (`expires_at`);
+
+--
 -- Indexes for table `evaluations`
 --
 ALTER TABLE `evaluations`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `registration_id` (`registration_id`),
   ADD KEY `fk_eval_assessor` (`assessed_by`);
+
+--
+-- Indexes for table `pending_employee_verifications`
+--
+ALTER TABLE `pending_employee_verifications`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_pending_employee_email` (`email`),
+  ADD UNIQUE KEY `uq_pending_employee_token` (`token_hash`),
+  ADD KEY `idx_pending_employee_expiry` (`expires_at`);
 
 --
 -- Indexes for table `registrations`
@@ -412,10 +438,22 @@ ALTER TABLE `employee_competencies`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `employee_password_setup_tokens`
+--
+ALTER TABLE `employee_password_setup_tokens`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `evaluations`
 --
 ALTER TABLE `evaluations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `pending_employee_verifications`
+--
+ALTER TABLE `pending_employee_verifications`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `registrations`
@@ -459,6 +497,12 @@ ALTER TABLE `certificates`
 ALTER TABLE `employee_competencies`
   ADD CONSTRAINT `fk_ec_competency` FOREIGN KEY (`competency_id`) REFERENCES `competencies` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_ec_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `employee_password_setup_tokens`
+--
+ALTER TABLE `employee_password_setup_tokens`
+  ADD CONSTRAINT `fk_password_setup_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `evaluations`

@@ -39,15 +39,14 @@ function app_page_map(): array
             'My Training' => 'my-training.php',
             'Available Training' => 'available-training.php',
             'Recommended Training' => 'recommended-training.php',
-            'Training Results' => 'results.php',
         ],
         'employee' => [
             'Dashboard' => 'dashboard.php',
             'My Profile' => 'profile.php',
             'Recommended Training' => 'recommended-training.php',
-            'Available Training' => 'available-training.php',
             'My Training' => 'my-training.php',
             'My Attendance' => 'attendance.php',
+            'Scan QR Attendance' => 'scan-attendance.php',
             'My Assessments' => 'evaluations.php',
             'Assessments' => 'evaluations.php',
             'Assessments & Evaluations' => 'evaluations.php',
@@ -64,7 +63,6 @@ function app_page_map(): array
             'Attendance Monitoring' => 'attendance.php',
             'Assessments' => 'tests.php',
             'Assessments & Evaluations' => 'tests.php',
-            'Training Results' => 'results.php',
             'Certificates' => 'certificates.php',
         ],
     ];
@@ -104,7 +102,8 @@ function rewrite_page_links(string $html, string $role): string
         $quote = $m[2];
         $value = $m[3];
         if (!preg_match('~^(?:index\.php)?\?page=(.*)$~s', $value, $parts)) return $m[0];
-        $target = $parts[1];
+
+        $target = urldecode((string)$parts[1]);
         foreach ($labels as $label) {
             if (strncmp($target, $label, strlen($label)) !== 0) continue;
             $tail = substr($target, strlen($label));
@@ -151,12 +150,6 @@ function verify_csrf(): void
         exit('Your session expired. Go back, refresh the page, and try again.');
     }
 }
-function write_app_log(string $message): void
-{
-    $logFile = dirname(__DIR__) . '/employee_registration_errors.log';
-    $timestamp = date('Y-m-d H:i:s');
-    error_log("[{$timestamp}] {$message}" . PHP_EOL, 3, $logFile);
-}
 function flash(string $message, string $type = 'success'): void
 {
     $_SESSION['flash'] = ['message' => $message, 'type' => $type];
@@ -192,8 +185,8 @@ function nav_for(string $role): array
 {
     $all = [
         'admin' => [['Dashboard', 'grid'], ['Employees', 'users'], ['Employee Profiles', 'user'], ['Competency Management', 'target'], ['Training Needs Analysis', 'search'], ['Training Programs', 'book'], ['Training Calendar', 'calendar'], ['Employee Registration', 'clipboard'], ['Attendance Monitoring', 'check'], ['Assessments & Evaluations', 'chart'], ['Certificates', 'award'], ['Training History', 'history'], ['Reports', 'chart'], ['Settings', 'settings']],
-        'employee' => [['Dashboard', 'grid'], ['My Profile', 'user'], ['Recommended Training', 'target'], ['Available Training', 'book'], ['My Training', 'calendar'], ['My Attendance', 'check'], ['My Assessments', 'chart'], ['My Certificates', 'award'], ['My Training History', 'history']],
-        'trainer' => [['Dashboard', 'grid'], ['My Training Programs', 'book'], ['Attendees', 'users'], ['Attendance Monitoring', 'check'], ['Assessments', 'clipboard'], ['Training Results', 'chart']],
+        'employee' => [['Dashboard', 'grid'], ['My Profile', 'user'], ['Recommended Training', 'target'], ['My Training', 'calendar'], ['My Attendance', 'check'], ['Scan QR Attendance', 'qrcode'], ['My Assessments', 'chart'], ['My Certificates', 'award'], ['My Training History', 'history']],
+        'trainer' => [['Dashboard', 'grid'], ['My Training Programs', 'book'], ['Attendees', 'users'], ['Attendance Monitoring', 'check'], ['Assessments', 'clipboard']],
     ];
     return $all[$role] ?? $all['employee'];
 }
@@ -215,6 +208,7 @@ function icon(string $name, int $size = 18): string
         'chart' => '<path d="M3 3v18h18"/><path d="m7 14 4-4 4 3 5-7"/>',
         'settings' => '<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.7Z"/>',
         'logout' => '<path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>',
+        'qrcode' => '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8h3v3H8zm0 6h3v3H8zm6-6h3v3h-3zm-6 0V5m6 0h3v3h-3zm6 6h3v3h-3z"/><path d="M14 3v3h3"/>',
         'bell' => '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
         'menu' => '<path d="M4 6h16M4 12h16M4 18h16"/>',
         'plus' => '<path d="M12 5v14M5 12h14"/>',

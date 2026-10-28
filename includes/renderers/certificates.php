@@ -37,8 +37,8 @@ function render_certificates(PDO $pdo, array $user): string
         if (empty($user['employee_id'])) {
             return '<div class="certificates-page">'
                 . page_intro(
-                    'Certificates',
-                    'Review completed training and certificate eligibility.'
+                    '',
+                    ''
                 )
                 . '<section class="card">'
                 . '<p class="certificate-empty-message">'

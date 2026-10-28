@@ -105,6 +105,68 @@
     white-space: nowrap;
 }
 
+.attendance-page .attendance-filter-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0 0;
+    margin-bottom: 1rem;
+}
+
+.attendance-page .attendance-filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink, #2d2d2d);
+    white-space: nowrap;
+}
+
+.attendance-page .attendance-filter-select,
+.attendance-page .attendance-status-filter {
+    min-width: 200px;
+    min-height: 35px;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--line, #e9e7e2);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ink, #2d2d2d);
+    font: inherit;
+    flex: 0 0 auto;
+}
+
+.attendance-page .attendance-event-filter {
+    min-width: 260px;
+}
+
+.attendance-page .attendance-view-only-message {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dfe7f5;
+    border-radius: 6px;
+    background: #eef5ff;
+    color: #1d4f91;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.attendance-page .attendance-time-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.attendance-page .attendance-time-label {
+    margin: 0;
+    color: #3b3b3b;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.attendance-page .attendance-time-field {
+    min-width: 120px;
+}
+
 .attendance-page .attendance-table-wrap {
     width: 100%;
     min-width: 0;
