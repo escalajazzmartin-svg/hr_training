@@ -32,18 +32,34 @@ function render_competencies(PDO $pdo): string
             ''
         )
         . '</div>'
-        . '<button type="button" class="btn competency-add-button" '
+        . '<button type="button" class="btn competency-add-button competency-page-add" '
         . 'data-open-modal="add-competency-modal">'
         . icon('plus') . ' Add competency</button>'
         . '</div>';
 
     // Search and filters.
     $html .= '<section class="card competency-directory-card">'
+        . '<div class="competency-directory-actions">'
+        . '<button type="button" class="competency-directory-add" '
+        . 'data-open-modal="add-competency-modal" title="Add competency" '
+        . 'aria-label="Add competency"><i class="fa fa-plus" aria-hidden="true"></i></button>'
+        . '<button type="button" class="competency-directory-toggle" '
+        . 'id="competency-search-toggle" aria-expanded="false" '
+        . 'aria-controls="competency-search-panel" title="Search" aria-label="Search">'
+        . '<i class="fa fa-search" aria-hidden="true"></i></button>'
+        . '<button type="button" class="competency-directory-toggle" '
+        . 'id="competency-filters-toggle" aria-expanded="false" '
+        . 'aria-controls="competency-filters-panel" title="Filters" aria-label="Filters">'
+        . '<i class="fa fa-sliders" aria-hidden="true"></i></button>'
+        . '</div>'
+        . '<div id="competency-search-panel" class="competency-search-panel">'
         . '<div class="competency-search-row">'
         . '<input type="search" id="competency-search" '
         . 'placeholder="Search faculty, ID, department, or competency..." '
         . 'autocomplete="off" aria-label="Search competency records">'
         . '</div>'
+        . '</div>'
+        . '<div id="competency-filters-panel" class="competency-filters-panel">'
         . '<div class="competency-filter-row">'
         . '<select id="competency-department-filter" aria-label="Filter by department">'
         . '<option value="">All Departments</option>';
@@ -79,7 +95,7 @@ function render_competencies(PDO $pdo): string
     $html .= '</select>'
         . '<button type="button" id="clear-competency-filters" '
         . 'class="competency-clear-filters">Clear filters</button>'
-        . '</div>';
+        . '</div></div>';
 
     // Records table.
     $html .= '<div class="competency-table-scroll" data-max-rows="5">'
@@ -104,7 +120,7 @@ function render_competencies(PDO $pdo): string
             . ' data-competency="' . h($record['competency']) . '"'
             . ' data-readiness="' . ($onTarget ? 'on-target' : 'below-target') . '">';
 
-        $html .= '<td><div class="competency-person-cell">'
+        $html .= '<td data-label="Faculty member"><div class="competency-person-cell">'
             . '<span class="competency-avatar">'
             . h(initials($name))
             . '</span><span class="competency-person-copy">'
@@ -112,19 +128,19 @@ function render_competencies(PDO $pdo): string
             . '<small>' . h($record['employee_code'] ?? '') . '</small>'
             . '</span></div></td>';
 
-        $html .= '<td>' . h($record['department'] ?? '—') . '</td>';
-        $html .= '<td>' . h($record['competency']) . '</td>';
-        $html .= '<td class="competency-score">' . $score . '%</td>';
+        $html .= '<td data-label="Department">' . h($record['department'] ?? '—') . '</td>';
+        $html .= '<td data-label="Competency">' . h($record['competency']) . '</td>';
+        $html .= '<td data-label="Score" class="competency-score">' . $score . '%</td>';
 
-        $html .= '<td><span class="competency-progress" role="progressbar"'
+        $html .= '<td data-label="Readiness"><span class="competency-progress" role="progressbar"'
             . ' aria-label="' . h($name . ' readiness') . '"'
             . ' aria-valuemin="0" aria-valuemax="100"'
             . ' aria-valuenow="' . $score . '">'
             . '<span class="' . ($onTarget ? 'is-on-target' : '') . '"'
             . ' style="width:' . $score . '%"></span></span></td>';
 
-        $html .= '<td>' . $target . '%</td>';
-        $html .= '<td>' . h($record['last_assessed'] ?: 'Not assessed') . '</td>';
+        $html .= '<td data-label="Target">' . $target . '%</td>';
+        $html .= '<td data-label="Last assessed">' . h($record['last_assessed'] ?: 'Not assessed') . '</td>';
         $html .= '</tr>';
     }
 
@@ -189,6 +205,9 @@ function render_competencies(PDO $pdo): string
     $html .= <<<'HTML'
 <script>
 (function () {
+    const directory = document.querySelector('.competency-directory-card');
+    const searchToggle = document.getElementById('competency-search-toggle');
+    const filtersToggle = document.getElementById('competency-filters-toggle');
     const search = document.getElementById('competency-search');
     const department = document.getElementById('competency-department-filter');
     const readiness = document.getElementById('competency-status-filter');
@@ -196,6 +215,21 @@ function render_competencies(PDO $pdo): string
     const clear = document.getElementById('clear-competency-filters');
     const table = document.querySelector('.competency-table');
     const count = document.getElementById('competency-record-count');
+
+    if (directory && searchToggle) {
+        searchToggle.addEventListener('click', function () {
+            const isOpen = directory.classList.toggle('search-open');
+            searchToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (isOpen && search) search.focus();
+        });
+    }
+
+    if (directory && filtersToggle) {
+        filtersToggle.addEventListener('click', function () {
+            const isOpen = directory.classList.toggle('filters-open');
+            filtersToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+    }
 
     if (search && table) {
         const rows = Array.from(table.querySelectorAll('tbody tr'))

@@ -137,12 +137,6 @@ function render_needs_analysis(PDO $pdo): string
                     title="Training gap overview">'
             . icon('alert-triangle', 18) .
             '</button>
-
-            <a class="btn" href="'
-            . h(app_page_url('Competency Management', 'admin')) . '">'
-            . icon('target') . '
-                Assess competencies
-            </a>
         </div>'
     );
 
@@ -235,37 +229,68 @@ function render_needs_analysis(PDO $pdo): string
     $html .= '<script src="/hr_training/assets/js/admin/training-needs-help.js" defer></script>';
 
     $html .= '<section class="card tna-table-card">
+        <div class="tna-table-card-header">
+            <div class="tna-directory-actions">
+                <button type="button"
+                        class="tna-directory-toggle"
+                        id="tna-search-toggle"
+                        aria-expanded="false"
+                        aria-controls="tna-search-panel"
+                        title="Search"
+                        aria-label="Search">'
+                    . icon('search', 17) .
+                '</button>
+                <button type="button"
+                        class="tna-directory-toggle"
+                        id="tna-filters-toggle"
+                        aria-expanded="false"
+                        aria-controls="tna-filters-panel"
+                        title="Filters"
+                        aria-label="Filters">'
+                    . '<i class="fa fa-sliders" aria-hidden="true"></i>' .
+                '</button>
+            </div>
+            <a class="btn tna-assess-button" href="'
+            . h(app_page_url('Competency Management', 'admin')) . '">'
+            . icon('target') . '
+                Assess competencies
+            </a>
+        </div>
         <form class="filter-row tna-auto-filters"
               method="get"
               action="' . h($analysisUrl) . '"
               role="search">
 
-            <input class="search-input"
-                   type="search"
-                   name="q"
-                   placeholder="Search employee, ID, department, or competency..."
-                   autocomplete="off"
-                   aria-label="Search training gaps">
+            <div id="tna-search-panel" class="tna-search-panel">
+                <input class="search-input"
+                       type="search"
+                       name="q"
+                       placeholder="Search employee, ID, department, or competency..."
+                       autocomplete="off"
+                       aria-label="Search training gaps">
+            </div>
 
-            <select name="department" aria-label="Filter by department">
-                <option value="">All departments</option>';
+            <div id="tna-filters-panel" class="tna-filters-panel">
+                <select name="department" aria-label="Filter by department">
+                    <option value="">All departments</option>';
 
     foreach ($departments as $item) {
         $html .= '<option value="' . h($item) . '">' . h($item) . '</option>';
     }
 
     $html .= '
-            </select>
+                </select>
 
-            <select name="priority" aria-label="Filter by priority">
-                <option value="">All priorities</option>
-                <option value="high">High priority · 20+ points</option>
-                <option value="standard">Below 20 points</option>
-            </select>
+                <select name="priority" aria-label="Filter by priority">
+                    <option value="">All priorities</option>
+                    <option value="high">High priority · 20+ points</option>
+                    <option value="standard">Below 20 points</option>
+                </select>
 
-            <button type="button" class="tna-clear-button">
-                Clear
-            </button>
+                <button type="button" class="tna-clear-button">
+                    Clear
+                </button>
+            </div>
         </form>';
 
     $html .= '<div class="tna-table-results table-wrap" data-max-rows="5">';

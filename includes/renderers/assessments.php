@@ -121,14 +121,25 @@ function render_assessments(PDO $pdo, array $user): string
     natcasesort($departments);
 
     $html .= '<section class="card assessment-table-card">'
+        . '<div class="assessment-toolbar-actions">'
+        . '<button type="button" class="assessment-toolbar-toggle" '
+        . 'data-assessment-search-toggle aria-expanded="false" '
+        . 'aria-controls="assessment-search-panel" title="Search" '
+        . 'aria-label="Search"><i class="fa fa-search" aria-hidden="true"></i>'
+        . '</button>'
+        . '<button type="button" class="assessment-toolbar-toggle" '
+        . 'data-assessment-filters-toggle aria-expanded="false" '
+        . 'aria-controls="assessment-filters-panel" title="Filters" '
+        . 'aria-label="Filters"><i class="fa fa-sliders" aria-hidden="true"></i>'
+        . '</button></div>'
         . '<div class="assessment-toolbar">'
-        . '<label class="assessment-search-wrap">'
+        . '<label class="assessment-search-wrap" id="assessment-search-panel">'
         . '<span class="sr-only">Search assessments</span>'
         . '<input type="search" class="assessment-search" '
         . 'placeholder="Search employee, ID, department, or training program..." '
         . 'aria-label="Search employee, ID, department, or training program" '
         . 'data-assessment-search></label>'
-        . '<div class="assessment-filter-row">'
+        . '<div class="assessment-filter-row" id="assessment-filters-panel">'
         . '<label><span class="sr-only">Filter by department</span>'
         . '<select data-assessment-department aria-label="Filter by department">'
         . '<option value="">All Departments</option>';
@@ -186,7 +197,7 @@ function render_assessments(PDO $pdo, array $user): string
             . 'data-status="' . $statusKey . '">';
 
         // First column: Actions icon
-        $html .= '<td class="assessment-actions-cell">'
+        $html .= '<td class="assessment-actions-cell" data-label="Actions">'
             . '<button type="button" class="assessment-row-action" '
             . 'aria-label="Toggle assessment details for ' . h($fullName) . '" '
             . 'aria-expanded="false" aria-controls="' . $detailsId . '" '
@@ -198,19 +209,19 @@ function render_assessments(PDO $pdo, array $user): string
             . '</svg></button></td>';
 
         // Remaining columns
-        $html .= '<td>' . h($employeeCode) . '</td>';
+        $html .= '<td data-label="Employee ID">' . h($employeeCode) . '</td>';
 
-        $html .= '<td><strong class="assessment-faculty-name">'
+        $html .= '<td data-label="Faculty member"><strong class="assessment-faculty-name">'
             . h($fullName !== '' ? $fullName : 'Unknown employee') . '</strong></td>';
 
-        $html .= '<td>' . h($department) . '</td>';
+        $html .= '<td data-label="Department">' . h($department) . '</td>';
 
-        $html .= '<td><span class="assessment-program-title">'
+        $html .= '<td data-label="Training program"><span class="assessment-program-title">'
             . h($title) . '</span></td>';
 
-        $html .= '<td>' . h($startDate) . '</td>';
+        $html .= '<td data-label="Training date">' . h($startDate) . '</td>';
 
-        $html .= '<td><span class="assessment-status '
+        $html .= '<td data-label="Status"><span class="assessment-status '
             . ($hasScore ? 'is-scored' : 'is-pending') . '">'
             . ($hasScore ? 'Scored' : 'Pending') . '</span></td></tr>';
 
@@ -262,9 +273,22 @@ function render_assessments(PDO $pdo, array $user): string
     const department = root.querySelector('[data-assessment-department]');
     const status = root.querySelector('[data-assessment-status]');
     const clear = root.querySelector('[data-assessment-clear]');
+    const searchToggle = root.querySelector('[data-assessment-search-toggle]');
+    const filtersToggle = root.querySelector('[data-assessment-filters-toggle]');
     const rows = Array.from(root.querySelectorAll('[data-assessment-row]'));
     const noResults = root.querySelector('[data-assessment-no-results]');
     const count = root.querySelector('[data-assessment-count]');
+
+    searchToggle.addEventListener('click', function () {
+        const isOpen = root.classList.toggle('assessment-search-open');
+        searchToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (isOpen) search.focus();
+    });
+
+    filtersToggle.addEventListener('click', function () {
+        const isOpen = root.classList.toggle('assessment-filters-open');
+        filtersToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
 
     function filterRows() {
         const query = (search.value || '').trim().toLowerCase();

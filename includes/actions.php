@@ -130,6 +130,140 @@ function process_post_request(PDO $pdo): void
 
     try {
         switch ($action) {
+            case 'update_registration':
+                signed_in_user($pdo, 'admin');
+
+                $registrationId = (int)($_POST['registration_id'] ?? 0);
+                $employeeId = (int)($_POST['employee_id'] ?? 0);
+                $programId = (int)($_POST['program_id'] ?? 0);
+                $status = post_string('status', 'Registered');
+                $validStatuses = [
+                    'Registered',
+                    'In Progress',
+                    'Completed',
+                    'Withdrawn'
+                ];
+
+                if (
+                    $registrationId <= 0
+                    || $employeeId <= 0
+                    || $programId <= 0
+                    || !in_array($status, $validStatuses, true)
+                ) {
+                    throw new RuntimeException(
+                        'Choose a valid employee, training program, and status.'
+                    );
+                }
+
+                $registrationCheck = $pdo->prepare(
+                    'SELECT id FROM registrations WHERE id = ? LIMIT 1'
+                );
+                $registrationCheck->execute([$registrationId]);
+                if (!$registrationCheck->fetchColumn()) {
+                    throw new RuntimeException('That registration does not exist.');
+                }
+
+                $employeeCheck = $pdo->prepare(
+                    'SELECT id FROM employees WHERE id = ? LIMIT 1'
+                );
+                $employeeCheck->execute([$employeeId]);
+                if (!$employeeCheck->fetchColumn()) {
+                    throw new RuntimeException('That employee does not exist.');
+                }
+
+                $programCheck = $pdo->prepare(
+                    'SELECT id, capacity, status
+                     FROM training_programs
+                     WHERE id = ?
+                     LIMIT 1'
+                );
+                $programCheck->execute([$programId]);
+                $program = $programCheck->fetch();
+                if (!$program) {
+                    throw new RuntimeException('That training program does not exist.');
+                }
+
+                $duplicateCheck = $pdo->prepare(
+                    'SELECT id
+                     FROM registrations
+                     WHERE employee_id = ?
+                       AND program_id = ?
+                       AND id <> ?
+                       AND status <> \'Withdrawn\'
+                     LIMIT 1'
+                );
+                $duplicateCheck->execute([
+                    $employeeId,
+                    $programId,
+                    $registrationId
+                ]);
+                if ($duplicateCheck->fetchColumn()) {
+                    throw new RuntimeException(
+                        'This employee is already registered for that program.'
+                    );
+                }
+
+                if (
+                    $status !== 'Withdrawn'
+                    && !in_array($program['status'], ['Upcoming', 'Ongoing'], true)
+                ) {
+                    throw new RuntimeException(
+                        'Registration is closed for that training program.'
+                    );
+                }
+
+                $capacityCheck = $pdo->prepare(
+                    'SELECT COUNT(*)
+                     FROM registrations
+                     WHERE program_id = ?
+                       AND id <> ?
+                       AND status <> \'Withdrawn\''
+                );
+                $capacityCheck->execute([$programId, $registrationId]);
+                if (
+                    $status !== 'Withdrawn'
+                    && (int)$capacityCheck->fetchColumn() >= (int)$program['capacity']
+                ) {
+                    throw new RuntimeException(
+                        'That training program has reached its registration capacity.'
+                    );
+                }
+
+                $stmt = $pdo->prepare(
+                    'UPDATE registrations
+                     SET employee_id = ?, program_id = ?, status = ?
+                     WHERE id = ?'
+                );
+                $stmt->execute([
+                    $employeeId,
+                    $programId,
+                    $status,
+                    $registrationId
+                ]);
+
+                flash('Registration updated.');
+                redirect('Employee Registration');
+
+            case 'delete_registration':
+                signed_in_user($pdo, 'admin');
+
+                $registrationId = (int)($_POST['registration_id'] ?? 0);
+                if ($registrationId <= 0) {
+                    throw new RuntimeException('That registration is invalid.');
+                }
+
+                $stmt = $pdo->prepare(
+                    'DELETE FROM registrations WHERE id = ?'
+                );
+                $stmt->execute([$registrationId]);
+
+                if ($stmt->rowCount() < 1) {
+                    throw new RuntimeException('That registration does not exist.');
+                }
+
+                flash('Registration deleted.');
+                redirect('Employee Registration');
+
             case 'add_employee':
                 signed_in_user($pdo, 'admin');
 

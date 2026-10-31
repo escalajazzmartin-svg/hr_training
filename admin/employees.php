@@ -425,7 +425,7 @@ function render_employee_directory(PDO $pdo): string
     $html = page_intro(
         '',
         '',
-        '<a class="btn" href="#add-employee-modal" data-open-modal="add-employee-modal">'
+        '<a class="btn employee-page-add" href="#add-employee-modal" data-open-modal="add-employee-modal">'
             . icon('plus')
             . ' Add employee</a>'
     );
@@ -506,7 +506,24 @@ function render_employee_directory(PDO $pdo): string
     | SEARCH AND EMPLOYEE DIRECTORY
     |--------------------------------------------------------------------------
     */
-    $html .= '<section class="card" style="margin-bottom:1rem">'
+    $html .= '<section class="card employee-directory" style="margin-bottom:1rem">'
+        . '<div class="employee-directory-actions">'
+        . '<a class="employee-directory-add" href="#add-employee-modal" '
+        . 'data-open-modal="add-employee-modal" title="Add employee" aria-label="Add employee">'
+        . '<i class="fa fa-plus" aria-hidden="true"></i>'
+        . '</a>'
+        . '<button type="button" class="employee-directory-toggle" '
+        . 'id="employee-search-toggle" aria-expanded="false" '
+        . 'aria-controls="employee-search-panel" title="Search" aria-label="Search">'
+        . '<i class="fa fa-search" aria-hidden="true"></i>'
+        . '</button>'
+        . '<button type="button" class="employee-directory-toggle" '
+        . 'id="employee-filters-toggle" aria-expanded="false" '
+        . 'aria-controls="employee-directory-filters" title="Filters" aria-label="Filters">'
+        . '<i class="fa fa-sliders" aria-hidden="true"></i>'
+        . '</button>'
+        . '</div>'
+        . '<div id="employee-search-panel" class="employee-search-panel">'
         . '<div class="filter-row employee-search-wrapper">'
         . '<input type="text" id="employee-search-input" '
         . 'class="search-input" '
@@ -517,6 +534,7 @@ function render_employee_directory(PDO $pdo): string
         . '<i class="fa fa-times" aria-hidden="true"></i>'
         . '</button>'
         . '</div>';
+    $html .= '</div><div id="employee-directory-filters" class="employee-directory-filters">';
     $stmt = $pdo->query('SELECT * FROM employees ORDER BY last_name, first_name');
     $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $departments = [];
@@ -559,7 +577,7 @@ function render_employee_directory(PDO $pdo): string
     }
     $html .= '<button type="button" id="clear-employee-filters" '
         . 'class="employee-filter-reset">Clear filters</button>'
-        . '</div>';
+        . '</div></div>';
     /*
     |--------------------------------------------------------------------------
     | EMPLOYEE TABLE
@@ -656,6 +674,25 @@ HTML;
 <script>
 (function () {
     function initializeEmployeeSearch() {
+        const directory = document.querySelector('.employee-directory');
+        const searchToggle = document.getElementById('employee-search-toggle');
+        const filtersToggle = document.getElementById('employee-filters-toggle');
+        if (directory && searchToggle) {
+            searchToggle.addEventListener('click', function () {
+                const isOpen = directory.classList.toggle('search-open');
+                searchToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                if (isOpen) {
+                    const input = document.getElementById('employee-search-input');
+                    if (input) input.focus();
+                }
+            });
+        }
+        if (directory && filtersToggle) {
+            filtersToggle.addEventListener('click', function () {
+                const isOpen = directory.classList.toggle('filters-open');
+                filtersToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        }
         const searchInput = document.getElementById('employee-search-input');
         const wrapper = document.querySelector('.employee-table-scroll');
         const table = wrapper ? wrapper.querySelector('table') : null;
@@ -721,11 +758,12 @@ HTML;
                 return !row.hidden;
             });
             const rowLimit = 5;
+            const isTouchLayout = window.matchMedia('(max-width: 900px)').matches;
             const header = table.querySelector('thead');
             const headerHeight = header
                 ? header.getBoundingClientRect().height
                 : 0;
-            if (visibleRows.length <= rowLimit) {
+            if (isTouchLayout || visibleRows.length <= rowLimit) {
                 wrapper.style.maxHeight = 'none';
                 wrapper.style.overflowY = 'visible';
             } else {

@@ -259,6 +259,140 @@ body.modal-open {
     white-space: nowrap;
 }
 
+@media (max-width: 900px) {
+    .employee-table-scroll,
+    .employee-table-scroll .table-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .employee-table-scroll {
+        max-height: none !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        overscroll-behavior: auto !important;
+        touch-action: pan-y;
+    }
+
+    .employee-table-scroll .table-wrap table,
+    .employee-table-scroll .table-wrap thead,
+    .employee-table-scroll .table-wrap tbody,
+    .employee-table-scroll .table-wrap tr,
+    .employee-table-scroll .table-wrap td {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0 !important;
+        box-sizing: border-box;
+    }
+
+    .employee-table-scroll .table-wrap thead {
+        position: absolute;
+        width: 1px !important;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) {
+        display: flex;
+        flex-direction: column;
+        margin: 0 0 .75rem;
+        padding: .8rem;
+        border: 1px solid var(--line);
+        border-radius: .75rem;
+        background: var(--surface);
+        box-shadow: 0 2px 8px rgba(35, 25, 20, .04);
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td {
+        display: grid;
+        grid-template-columns: minmax(6.5rem, 34%) minmax(0, 1fr);
+        gap: .6rem;
+        align-items: start;
+        justify-items: start;
+        padding: .55rem 0;
+        border: 0;
+        overflow-wrap: anywhere;
+        text-align: left;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td + td {
+        border-top: 1px solid #f0eeea;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td:first-child {
+        display: none;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: var(--text-xs);
+        font-weight: 700;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td > * {
+        min-width: 0;
+        max-width: 100%;
+        margin-left: 0;
+        justify-self: start;
+        text-align: left;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) .person-cell {
+        width: 100%;
+        min-width: 0;
+        gap: .6rem;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) .person-cell .avatar {
+        flex: 0 0 2.25rem;
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) .person-cell small {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) .badge {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        text-align: left;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td:last-child .table-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td:last-child {
+        order: -1;
+        border-bottom: 1px solid #f0eeea;
+        padding-top: 0;
+        padding-bottom: .65rem;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr:not(.table-empty-row) td:last-child .table-actions {
+        justify-content: flex-end;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr.table-empty-row {
+        padding: .75rem 0;
+    }
+
+    .employee-table-scroll .table-wrap tbody tr.table-empty-row td {
+        display: block;
+        padding: 0;
+        border: 0;
+    }
+}
+
 /* Compact three-dot profile action column */
 .employee-table-scroll tbody td:first-child,
 .employee-table-scroll thead th:first-child {
@@ -394,6 +528,75 @@ body.modal-open {
     border-color: #a40000;
     color: #a40000;
     background: #fef2f2;
+}
+
+.employee-directory-actions {
+    display: none;
+}
+
+.employee-directory-add {
+    display: none;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .employee-directory {
+        position: relative;
+    }
+
+    .employee-page-add {
+        display: none;
+    }
+
+    .employee-directory-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: .45rem;
+        margin-bottom: .75rem;
+    }
+
+    .employee-directory-add,
+    .employee-directory-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 1px solid var(--card-border, #e7e1d9);
+        border-radius: .55rem;
+        background: var(--surface, #fff);
+        color: var(--maroon);
+        font-size: var(--text-sm);
+    }
+
+    .employee-directory-add {
+        color: #fff;
+        background: var(--maroon);
+        border-color: var(--maroon);
+        text-decoration: none;
+    }
+
+    .employee-directory-add:hover,
+    .employee-directory-add:focus-visible {
+        color: #fff;
+        background: var(--maroon-dark);
+    }
+
+    .employee-directory-actions #employee-search-toggle {
+        margin-left: auto;
+    }
+
+    .employee-search-panel,
+    .employee-directory-filters {
+        display: none;
+    }
+
+    .employee-directory.search-open .employee-search-panel,
+    .employee-directory.filters-open .employee-directory-filters {
+        display: block;
+    }
 }
 
 /* Use a predictable two-column layout on desktop. */

@@ -526,7 +526,6 @@
 
 }
 
-
 /* Reference layout: welcome banner, four metric cards, two side-by-side panels. */
 .content:has(> .dashboard-welcome) {
     box-sizing: border-box;
@@ -796,4 +795,252 @@
 
 .content:has(> .dashboard-welcome) .dashboard-event-list>.dashboard-compact-event:nth-of-type(n + 4) {
     display: none !important;
+}
+
+@media (max-width: 1200px) {
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .7rem;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics .metric-card {
+        min-width: 0;
+        min-height: 6rem;
+        padding: .8rem;
+        gap: .65rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-icon {
+        width: 2rem;
+        height: 2rem;
+        flex: 0 0 2rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-main {
+        min-width: 0;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-main > span,
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-main small {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 420px) {
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .55rem;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics .metric-card {
+        min-height: 5.25rem;
+        padding: .7rem;
+        gap: .45rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-icon {
+        width: 1.75rem;
+        height: 1.75rem;
+        flex-basis: 1.75rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-main strong {
+        font-size: 1.15rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dashboard-content > .dashboard-key-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .dashboard-content > .dashboard-key-metrics .metric-card {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .content:has(> .dashboard-welcome) {
+        width: 100%;
+        max-width: 100%;
+        padding: .8rem .75rem 1rem;
+        overflow-x: hidden;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-welcome {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+        min-height: 0;
+        padding: 1.15rem;
+        border-radius: .85rem;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-welcome h2 {
+        font-size: 1.35rem;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-welcome .welcome-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: stretch;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-welcome .welcome-actions .btn {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: .65rem .7rem;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics {
+        gap: .6rem;
+        margin-bottom: .7rem;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics .metric-card {
+        min-height: 6rem;
+        padding: .75rem;
+        gap: .55rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-icon {
+        width: 1.85rem;
+        height: 1.85rem;
+        flex-basis: 1.85rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-key-metrics .metric-main strong {
+        font-size: 1.2rem;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-grid > .card {
+        padding: .8rem;
+        border-radius: .8rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .section-head {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: visible;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap table,
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap thead,
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody,
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tr,
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap td {
+        box-sizing: border-box;
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0 !important;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap thead {
+        position: absolute;
+        width: 1px !important;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) {
+        box-sizing: border-box;
+        margin: 0 0 .65rem;
+        padding: .7rem;
+        border: 1px solid var(--line);
+        border-radius: .7rem;
+        background: var(--surface);
+        box-shadow: 0 2px 8px rgba(35, 25, 20, .04);
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row):last-child {
+        margin-bottom: 0;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) td {
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: minmax(5.5rem, 34%) minmax(0, 1fr);
+        gap: 3rem;
+        align-items: start;
+        justify-items: start;
+        min-width: 0;
+        padding: .42rem 0;
+        border: 0;
+        overflow-wrap: anywhere;
+        text-align: left;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) td + td {
+        border-top: 1px solid #f0eeea;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: var(--text-xs);
+        font-weight: 700;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) td > * {
+        min-width: 0;
+        max-width: 100%;
+        text-align: left;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) td > .badge {
+        justify-self: start;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr:not(.table-empty-row) td > * {
+        justify-self: start;
+        margin-left: 0;
+        text-align: left !important;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr.table-empty-row {
+        padding: .75rem 0;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .table-wrap tbody tr.table-empty-row td {
+        display: block;
+        padding: 0;
+        border: 0;
+    }
+}
+
+@media (max-width: 420px) {
+    .content:has(> .dashboard-welcome) > .dashboard-welcome .welcome-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .content:has(> .dashboard-welcome) > .dashboard-key-metrics .metric-card {
+        min-height: 4.75rem;
+    }
+
+    .content:has(> .dashboard-welcome) .dashboard-focus-card .section-head a.text-action {
+        width: 100%;
+    }
 }

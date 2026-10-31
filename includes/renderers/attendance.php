@@ -155,16 +155,16 @@ function render_attendance(PDO $pdo, array $user): string
 
         $attendanceStatus = (string)($r['attendance_status'] ?? '');
 
-        $html .= '<tr data-event="' . h($programTitle) . '" data-status="' . h($attendanceStatus) . '"><td><div class="person-cell"><span class="avatar">'
+        $html .= '<tr data-event="' . h($programTitle) . '" data-status="' . h($attendanceStatus) . '"><td data-label="Faculty member"><div class="person-cell"><span class="avatar">'
             . h(initials($fullName)) . '</span><span class="person-cell-details"><b>'
             . h($fullName) . '</b><small>'
             . h((string)($r['employee_code'] ?? '') . ' · ' . (string)($r['department'] ?? ''))
-            . '</small></span></div></td><td>'
-            . h($programTitle) . '</td><td>' . h($startDate)
-            . '</td><td><div class="attendance-time-wrap">'
+            . '</small></span></div></td><td data-label="Training program">'
+            . h($programTitle) . '</td><td data-label="Session date">' . h($startDate)
+            . '</td><td data-label="Time in"><div class="attendance-time-wrap">'
             . '<label class="attendance-time-label" for="time_in_' . $id . '">Time in</label>'
             . '<input id="time_in_' . $id . '" type="time" name="time_in[' . $id . ']" class="table-input attendance-time attendance-time-field" value="' . h($timeIn) . '" aria-label="Time in for ' . h($fullName) . '"' . ($canEditAttendance ? '' : ' readonly disabled') . '></div></td>'
-            . '<td><div class="attendance-time-wrap">'
+            . '<td data-label="Time out"><div class="attendance-time-wrap">'
             . '<label class="attendance-time-label" for="time_out_' . $id . '">Time out</label>'
             . '<input id="time_out_' . $id . '" type="time" name="time_out[' . $id . ']" class="table-input attendance-time attendance-time-field" value="' . h($timeOut) . '" aria-label="Time out for ' . h($fullName) . '"' . ($canEditAttendance ? '' : ' readonly disabled') . '></div></td></tr>';
     }

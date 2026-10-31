@@ -66,6 +66,32 @@
   outline-offset: 3px;
 }
 
+.registration-header-actions {
+  display: none;
+}
+
+.registration-directory-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.registration-directory-actions .registration-add-btn {
+  margin-right: auto;
+}
+
+.registration-add-btn-compact {
+  display: none !important;
+}
+
+.registration-search-panel,
+.registration-filter-panel {
+  display: contents;
+}
+
 /* Main registration card */
 .registration-page .registration-history-card {
   min-width: 0;
@@ -225,6 +251,51 @@
   text-align: center;
 }
 
+.registration-page .registration-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.registration-page .registration-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line, #d8deea);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--ink, #475569);
+  cursor: pointer;
+}
+
+.registration-page .registration-action:hover,
+.registration-page .registration-action:focus-visible {
+  border-color: var(--maroon, #800000);
+  color: var(--maroon, #800000);
+  background: var(--maroon-soft, #f8eded);
+}
+
+.registration-page .registration-delete-action:hover,
+.registration-page .registration-delete-action:focus-visible {
+  border-color: #b91c1c;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.registration-page .registration-action:focus-visible {
+  outline: 2px solid var(--gold, #d4af37);
+  outline-offset: 2px;
+}
+
+.registration-page .registration-delete-form {
+  display: inline-flex;
+  margin: 0;
+}
+
 /* Table record count */
 .registration-page .registration-table-footer {
   display: flex;
@@ -379,7 +450,7 @@ body.registration-modal-open {
 
 @media (max-width: 760px) {
   .registration-page-heading {
-    align-items: flex-start;
+    width: 100%;
   }
 
   .registration-page .registration-add-btn {
@@ -388,8 +459,64 @@ body.registration-modal-open {
     font-size: 0.8rem;
   }
 
+  .registration-add-btn-desktop {
+    display: none !important;
+  }
+
+  .registration-add-btn-compact {
+    display: inline-flex !important;
+  }
+
+  .registration-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+  }
+
+  .registration-header-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--line, #d8deea);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--maroon, #800000);
+    cursor: pointer;
+  }
+
+  .registration-header-toggle:hover,
+  .registration-header-toggle:focus-visible,
+  .registration-page.registration-search-open #registration-search-toggle,
+  .registration-page.registration-filters-open #registration-filters-toggle {
+    border-color: var(--maroon, #800000);
+    background: var(--maroon-soft, #f8eded);
+  }
+
+  .registration-header-toggle:focus-visible {
+    outline: 2px solid var(--gold, #d4af37);
+    outline-offset: 2px;
+  }
+
+  .registration-directory-actions {
+    margin-bottom: 12px;
+  }
+
   .registration-page .registration-filter-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .registration-search-panel,
+  .registration-filter-panel {
+    display: none;
+  }
+
+  .registration-page.registration-search-open .registration-search-panel,
+  .registration-page.registration-filters-open .registration-filter-panel {
+    display: block;
   }
 
   .registration-page .registration-history-card {
@@ -398,25 +525,115 @@ body.registration-modal-open {
 
   .registration-page .registration-table-wrap {
     max-height: 400px;
+    overflow: visible;
   }
 
-  .registration-page .registration-table th {
-    padding: 10px;
+  .registration-page .registration-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
   }
 
-  .registration-page .registration-table td {
-    padding: 11px 10px;
+  .registration-page .registration-table thead {
+    display: none;
+  }
+
+  .registration-page .registration-table tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) {
+    display: grid;
+    gap: 0;
+    border: 1px solid #e8e5e1;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgb(15 23 42 / 4%);
+    overflow: hidden;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td {
+    display: grid;
+    grid-template-columns: minmax(105px, 34%) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    width: auto;
+    padding: 12px 14px;
+    border-bottom: 1px solid #efede9;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td::before {
+    content: attr(data-label);
+    color: #85817e;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .045em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td:first-child {
+    display: block;
+    padding: 14px;
+    background: white;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td:first-child::before {
+    display: block;
+    margin-bottom: 9px;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td:last-child {
+    border-bottom: 0;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td.registration-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 7px;
+    order: -1;
+    border-bottom: 1px solid #efede9;
+    background: white;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row) td.registration-actions::before {
+    margin-right: auto;
+  }
+
+  .registration-page .registration-table tbody tr:hover {
+    background: #fff;
+  }
+
+  .registration-page .registration-table tbody tr:not(.registration-empty-row):hover td:first-child {
+    background: white;
+  }
+
+  .registration-page .registration-table tbody tr.registration-empty-row {
+    display: table-row;
+  }
+
+  .registration-page .registration-table tbody tr.registration-empty-row td {
+    display: table-cell;
+    padding: 24px 12px;
+    border: 0;
+  }
+
+  .registration-page .registration-table tbody tr.registration-empty-row td::before {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .registration-page-heading {
-    flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
 
   .registration-page .registration-add-btn {
-    align-self: stretch;
+    align-self: auto;
   }
 
   .registration-modal {

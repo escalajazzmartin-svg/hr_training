@@ -349,6 +349,51 @@ html {
 
 }
 
+.tna-table-card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    width: 100%;
+
+    margin-bottom: 16px;
+
+}
+
+.tna-directory-actions {
+
+    display: none;
+
+    order: 2;
+
+}
+
+.tna-assess-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    order: 1;
+
+}
+
+.tna-search-panel,
+.tna-filters-panel {
+
+    display: contents;
+
+}
+
 
 
 /* Overview panel */
@@ -1341,7 +1386,46 @@ html {
     justify-content: center;
 
     padding: 20px;
+}
 
+.metrics.four .metric-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+    width: 100%;
+}
+
+.metrics.four .metric-main > span,
+.metrics.four .metric-main > strong,
+.metrics.four .metric-main > small {
+    display: block;
+    width: 100%;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.metrics.four .metric-main > span {
+    color: #18243a;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.metrics.four .metric-main > strong {
+    color: #18243a;
+    font-size: var(--text-metric);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.metrics.four .metric-main > small {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
 }
 
 
@@ -1504,7 +1588,177 @@ html {
 
     }
 
+    .tna-table-results {
 
+        overflow-x: visible;
+
+    }
+
+    .tna-table-results table {
+
+        display: block;
+
+        min-width: 0;
+
+        table-layout: auto;
+
+    }
+
+    .tna-table-results table thead {
+
+        display: none;
+
+    }
+
+    .tna-table-results table tbody {
+
+        display: grid;
+
+        gap: 12px;
+
+    }
+
+    .tna-table-results table tbody tr {
+
+        display: grid;
+
+        gap: 0;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 12px;
+
+        background: #fff;
+
+        box-shadow: 0 2px 6px rgb(15 23 42 / 4%);
+
+        overflow: hidden;
+
+    }
+
+    .tna-table-results table tbody td,
+    .tna-table-results table tbody tr:last-child td {
+
+        display: grid;
+
+        grid-template-columns: minmax(105px, 34%) minmax(0, 1fr);
+
+        align-items: center;
+
+        gap: 12px;
+
+        width: auto;
+
+        padding: 12px 14px;
+
+        border-bottom: 1px solid #eee9e4;
+
+        background: #fff;
+
+    }
+
+    .tna-table-results table tbody td::before {
+
+        content: attr(data-label);
+
+        color: #85817d;
+
+        font-size: 11px;
+
+        font-weight: 800;
+
+        letter-spacing: .045em;
+
+        line-height: 1.4;
+
+        text-transform: uppercase;
+
+    }
+
+    .tna-table-results table tbody td:first-child {
+
+        display: block;
+
+        padding: 14px;
+
+        background: white;
+
+    }
+
+    .tna-table-results table tbody td:first-child::before {
+
+        display: block;
+
+        margin-bottom: 9px;
+
+    }
+
+    .tna-table-results table tbody td:last-child {
+
+        border-bottom: 0;
+
+    }
+
+    .tna-table-results table tbody td:last-child {
+
+        order: -1;
+
+        border-bottom: 1px solid #eee9e4;
+
+        background: white;
+
+    }
+
+    .tna-table-results table tbody td:last-child::before {
+
+        align-self: center;
+
+    }
+
+    .tna-table-results table tbody tr:hover td {
+
+        background: #fff;
+
+    }
+
+    .tna-table-results table tbody tr:hover td:first-child {
+
+        background: #faf9f7;
+
+    }
+
+    .tna-table-results table tbody tr.table-empty-row {
+
+        display: table-row;
+
+        border: 0;
+
+        box-shadow: none;
+
+    }
+
+    .tna-table-results table tbody tr.table-empty-row td {
+
+        display: table-cell;
+
+        padding: 14px;
+
+        border: 0;
+
+    }
+
+    .tna-table-results table tbody tr.table-empty-row td::before {
+
+        display: none;
+
+    }
+
+    .tna-table-results table th:nth-child(n),
+    .tna-table-results table td:nth-child(n) {
+
+        width: auto;
+
+    }
 
     .insight-grid {
 
@@ -1592,7 +1846,127 @@ html {
 
     }
 
+    .tna-table-card-header {
 
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 12px;
+
+    }
+
+    .tna-directory-actions {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: .45rem;
+
+    }
+
+    .tna-directory-toggle {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        width: 2.5rem;
+
+        height: 2.5rem;
+
+        padding: 0;
+
+        border: 1px solid #e7e1d9;
+
+        border-radius: .55rem;
+
+        background: #fff;
+
+        color: #970000;
+
+        cursor: pointer;
+
+    }
+
+    .tna-directory-toggle:hover,
+    .tna-directory-toggle:focus-visible,
+    .tna-table-card.search-open #tna-search-toggle,
+    .tna-table-card.filters-open #tna-filters-toggle {
+
+        border-color: #970000;
+
+        background: #fff5f5;
+
+    }
+
+    .tna-directory-toggle:focus-visible {
+
+        outline: 2px solid #970000;
+
+        outline-offset: 2px;
+
+    }
+
+    .tna-assess-button {
+
+        min-height: 40px;
+
+        padding: 9px 11px;
+
+        font-size: 12px;
+
+    }
+
+    .tna-search-panel,
+    .tna-filters-panel {
+
+        display: none;
+
+    }
+
+    .tna-table-card.search-open .tna-search-panel,
+    .tna-table-card.filters-open .tna-filters-panel {
+
+        display: block;
+
+    }
+
+    .tna-search-panel .search-input {
+
+        display: block;
+
+        width: 100%;
+
+    }
+
+    .tna-filters-panel {
+
+        display: none;
+
+        gap: 9px;
+
+    }
+
+    .tna-table-card.filters-open .tna-filters-panel {
+
+        display: grid;
+
+        grid-template-columns: minmax(0, 1fr);
+
+    }
+
+    .tna-filters-panel select,
+    .tna-filters-panel .tna-clear-button {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
 
     .insight-panel {
 
@@ -1648,14 +2022,6 @@ html {
 
 
 
-    .tna-table-results table {
-
-        min-width: 1000px;
-
-    }
-
-
-
     .tna-table-results table thead th,
 
     .tna-table-results table tbody td {
@@ -1693,13 +2059,148 @@ html {
 
 
     .table-pagination {
-
         align-items: flex-start;
-
         flex-direction: column;
-
     }
 
+}
+
+@media (max-width: 600px) {
+    .metrics.four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .6rem;
+    }
+
+    .metrics.four > * {
+        min-height: 7rem;
+        padding: .8rem;
+        gap: .45rem;
+    }
+
+    .metrics.four .metric-icon {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+
+    .metrics.four .metric-main > span {
+        font-size: .75rem;
+        line-height: 1.3;
+    }
+
+    .metrics.four .metric-main > strong {
+        font-size: 1.3rem;
+    }
+
+    .metrics.four .metric-main > small {
+        font-size: .7rem;
+        line-height: 1.35;
+    }
+
+    .tna-table-results {
+        width: 100%;
+        max-width: 100%;
+        max-height: none !important;
+        overflow: visible !important;
+        overscroll-behavior: auto !important;
+        touch-action: pan-y;
+    }
+
+    .tna-table-results table {
+        display: block;
+        width: 100%;
+        min-width: 0 !important;
+        max-width: 100%;
+    }
+
+    .tna-table-results table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .tna-table-results table tbody,
+    .tna-table-results table tbody tr,
+    .tna-table-results table tbody td {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .tna-table-results table tbody tr:not(.table-empty-row) {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: .7rem;
+        padding: .75rem;
+        border: 1px solid var(--line);
+        border-radius: .7rem;
+        background: var(--surface);
+        box-shadow: 0 2px 8px rgba(35, 25, 20, .04);
+    }
+
+    .tna-table-results table tbody tr:not(.table-empty-row) td {
+        display: grid;
+        grid-template-columns: minmax(5.5rem, 34%) minmax(0, 1fr);
+        gap: .55rem;
+        align-items: start;
+        justify-items: start;
+        padding: .45rem 0;
+        border: 0;
+        overflow-wrap: anywhere;
+        text-align: left;
+    }
+
+    .tna-table-results table tbody tr:not(.table-empty-row) td + td {
+        border-top: 1px solid #f0eeea;
+    }
+
+    .tna-table-results table tbody tr:not(.table-empty-row) td:last-child {
+        border-top: 0;
+        border-bottom: 1px solid #f0eeea;
+        background: white;
+    }
+
+    .tna-table-results table tbody tr:not(.table-empty-row) td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: var(--text-xs);
+        font-weight: 700;
+    }
+
+    .tna-table-results table tbody tr:not(.table-empty-row) td > * {
+        min-width: 0;
+        max-width: 100%;
+        justify-self: start;
+        margin-left: 0;
+        text-align: left;
+    }
+
+    .tna-table-results .person-cell {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .tna-table-results .person-cell b,
+    .tna-table-results .person-cell small {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .tna-table-results .tna-icon-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .tna-table-results table tbody tr.table-empty-row td {
+        display: block;
+        padding: .75rem 0;
+        border: 0;
+    }
 }
 
 
@@ -1858,7 +2359,7 @@ html {
 
     .metrics.four {
 
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
 
     }
 
@@ -2005,4 +2506,3 @@ html {
     }
 
 }
-

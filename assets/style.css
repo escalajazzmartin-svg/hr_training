@@ -41,6 +41,10 @@ Keep individual page layouts in assets/css/admin/*.css.
     color: var(--ink);
     background: var(--page);
     font-synthesis: none;
+  --login-mobile-background: #800000;
+  --login-mobile-sheet: #fbfaf8;
+  --login-mobile-radius: 2rem;
+  --login-mobile-panel-padding: 1.4rem;
 }
 
 *,
@@ -1063,7 +1067,7 @@ td {
 
 /* Responsive shared shell */
 
-@media (max-width: 1100px) and (min-width: 761px) {
+@media (max-width: 1100px) and (min-width: 981px) {
     .sidebar-wrap {
         flex-basis: 260px;
         width: 260px;
@@ -1092,9 +1096,18 @@ td {
     }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 980px) {
     .app-shell {
         display: block;
+    }
+
+    .sidebar nav {
+        gap: .2rem;
+    }
+
+    .sidebar nav a,
+    .sidebar nav button {
+        font-size: 12px;
     }
 
     .sidebar-wrap {
@@ -1221,6 +1234,17 @@ td {
     }
 }
 
+@media (max-width: 600px) {
+    .sidebar nav {
+        gap: .1rem;
+    }
+
+    .sidebar nav a,
+    .sidebar nav button {
+        font-size: 11px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     *,
@@ -1254,7 +1278,7 @@ Page-specific calendar/dashboard layouts remain in their own files. */
 
 /* Ensure sidebar links (not only buttons) follow the responsive sidebar layout. */
 
-@media (max-width: 760px) {
+@media (max-width: 980px) {
 
     .sidebar-wrap.open,
     .sidebar-wrap.is-open {
@@ -1276,7 +1300,7 @@ Page-specific calendar/dashboard layouts remain in their own files. */
     }
 }
 
-@media (max-width: 980px) and (min-width: 761px) {
+@media (max-width: 980px) and (min-width: 981px) {
     .sidebar nav a {
         justify-content: center;
         padding: 12px;
@@ -1357,7 +1381,7 @@ Page-specific calendar/dashboard layouts remain in their own files. */
     min-width: 0;
 }
 
-@media (max-width: 980px) and (min-width: 761px) {
+@media (max-width: 980px) and (min-width: 981px) {
     .side-brand {
         justify-content: center;
         padding: 18px 10px;
@@ -1390,7 +1414,7 @@ Page-specific calendar/dashboard layouts remain in their own files. */
     }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 980px) {
 
     .side-brand>div:last-of-type,
     .side-role,
@@ -1422,8 +1446,10 @@ Page-specific calendar/dashboard layouts remain in their own files. */
 
 .login-page {
     min-height: 100vh;
+    width: 100%;
     display: grid;
     grid-template-columns: 1.05fr 0.95fr;
+    overflow-x: hidden;
 }
 
 /* LEFT BRAND PANEL */
@@ -1544,10 +1570,13 @@ Page-specific calendar/dashboard layouts remain in their own files. */
     padding: 3rem;
     background: #fbfaf8;
     min-width: 0;
+    min-height: 100vh;
 }
 
 .login-box {
     width: min(100%, 480px);
+    min-width: 0;
+    margin-inline: auto;
 }
 
 .login-box h2 {
@@ -1860,42 +1889,132 @@ input[type="checkbox"] {
     }
 
     .login-panel {
+        position: relative;
+        display: block;
         min-height: 100vh;
-        padding: 2rem;
+        min-height: 100dvh;
+        padding: 0 2rem;
+        width: 100%;
+        overflow: hidden;
+        background: var(--login-mobile-background);
     }
 
     .login-box {
+        position: relative;
         width: min(100%, 460px);
+        min-height: calc(100dvh - 11rem);
+        margin: 11rem auto 0;
+        padding: 3rem 2rem 2rem;
+        border-radius: var(--login-mobile-radius) var(--login-mobile-radius) 0 0;
+        background: var(--login-mobile-sheet);
+        box-shadow: 0 -0.5rem 1.5rem rgba(26, 12, 31, .12);
     }
 
     .mobile-logo {
+        position: absolute;
+        top: -9.5rem;
+        left: 0;
+        right: 0;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.85rem;
-        margin-bottom: 2.5rem;
-        color: var(--ink);
+        margin: 0;
+        color: #fff;
+        text-align: left;
     }
 
     .mobile-logo .brand-seal {
-        color: var(--maroon);
-        border-color: var(--maroon);
+        color: #fff;
+        border-color: rgba(255, 255, 255, .9);
+    }
+
+    .mobile-logo .brand-seal {
+        width: 3.4rem;
+        height: 3.4rem;
     }
 
     .mobile-logo b {
+        max-width: 17rem;
+        color: #fff;
         font-family: var(--font-heading);
         font-size: var(--text-sm);
         line-height: 1.4;
     }
-}
 
-@media (max-width: 480px) {
-    .login-panel {
-        padding: 1.5rem 1.1rem;
-        place-items: center;
+    .login-box > .eyebrow {
+        display: block;
+        margin-bottom: .45rem;
+        color: var(--maroon);
+        text-align: center;
     }
 
     .login-box h2 {
-        font-size: 1.35rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-panel {
+        position: relative;
+        display: block;
+        min-height: 100dvh;
+        padding: 0 1rem;
+        overflow: hidden;
+        background: var(--login-mobile-background);
+    }
+
+    .login-box {
+        position: relative;
+        width: min(100%, 420px);
+        min-height: calc(100dvh - 9.5rem);
+        margin: 9.5rem auto 0;
+        padding: 3rem var(--login-mobile-panel-padding) 1.75rem;
+        border-radius: var(--login-mobile-radius) var(--login-mobile-radius) 0 0;
+        background: var(--login-mobile-sheet);
+        box-shadow: 0 -0.5rem 1.5rem rgba(26, 12, 31, .12);
+    }
+
+    .mobile-logo {
+        position: absolute;
+        top: -8.2rem;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.7rem;
+        margin: 0;
+        color: #fff;
+        text-align: left;
+    }
+
+    .mobile-logo .brand-seal {
+        width: 3.2rem;
+        height: 3.2rem;
+        color: #fff;
+        border-color: rgba(255, 255, 255, .9);
+    }
+
+    .mobile-logo b {
+        max-width: 15rem;
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: .82rem;
+        line-height: 1.35;
+    }
+
+    .login-box > .eyebrow {
+        display: block;
+        margin-bottom: .45rem;
+        color: var(--maroon);
+    }
+
+    .login-box h2 {
+        font-size: 1.5rem;
+        line-height: 1.2;
+        margin-bottom: 1.35rem;
+        text-align: center;
     }
 
     .muted {
@@ -1911,8 +2030,82 @@ input[type="checkbox"] {
         flex-direction: column;
     }
 
+    .form-meta > * {
+        width: 100%;
+    }
+
+    .login-box form {
+        width: 100%;
+    }
+
+    .login-box .field-label {
+        margin-top: 1.15rem;
+    }
+
+    .login-field {
+        min-height: 3rem;
+    }
+
+    .privacy {
+        font-size: 0.72rem;
+    }
+
     .trust-row {
         gap: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .login-panel {
+        padding: 0 .75rem;
+    }
+
+    .login-box {
+        width: 100%;
+        margin-top: 8.75rem;
+        padding: 2.5rem 1.1rem 1.5rem;
+        border-radius: calc(var(--login-mobile-radius) - .3rem) calc(var(--login-mobile-radius) - .3rem) 0 0;
+    }
+
+    .mobile-logo {
+        top: -7.5rem;
+    }
+
+    .mobile-logo .brand-seal {
+        width: 2.85rem;
+        height: 2.85rem;
+    }
+
+    .mobile-logo b {
+        max-width: 13rem;
+        font-size: .75rem;
+    }
+
+    .login-box h2 {
+        font-size: 1.35rem;
+    }
+
+    .field-label {
+        margin-top: 0.85rem;
+    }
+
+    .login-field {
+        min-height: 2.9rem;
+        font-size: 0.96rem;
+    }
+
+    .btn {
+        font-size: 0.81rem;
+        padding: 0.7rem 0.85rem;
+    }
+
+    .mobile-logo b {
+        font-size: 0.72rem;
+    }
+
+    .privacy {
+        gap: 0.3rem;
+        line-height: 1.4;
     }
 }
 

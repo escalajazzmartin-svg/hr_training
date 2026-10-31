@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = form?.querySelector('[name="q"]');
     const departmentSelect = form?.querySelector('[name="department"]');
     const prioritySelect = form?.querySelector('[name="priority"]');
+    const tableCard = form?.closest('.tna-table-card');
+    const searchToggle = document.getElementById('tna-search-toggle');
+    const filtersToggle = document.getElementById('tna-filters-toggle');
 
     const tableContainer = document.querySelector('.tna-table-results');
     const resultCount = document.querySelector('.tna-result-count');
@@ -11,6 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!form || !tableContainer || !resultCount) {
         return;
     }
+
+    searchToggle?.addEventListener('click', () => {
+        const isOpen = tableCard?.classList.toggle('search-open') || false;
+        searchToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+        if (isOpen) {
+            searchInput?.focus();
+        }
+    });
+
+    filtersToggle?.addEventListener('click', () => {
+        const isOpen = tableCard?.classList.toggle('filters-open') || false;
+        filtersToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
 
     const table = tableContainer.querySelector('table');
     const tbody = table?.querySelector('tbody');

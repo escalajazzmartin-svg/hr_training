@@ -1,4 +1,4 @@
-﻿/* Admin page-specific styles: dashboard.css */
+/* Admin page-specific styles: dashboard.css */
 
 /* Keep the dashboard layout scoped to the page containing the dashboard welcome section. */
 .content:has(> .dashboard-welcome) .metrics.dashboard-key-metrics {

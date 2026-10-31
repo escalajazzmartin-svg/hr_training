@@ -40,7 +40,7 @@ function render_registration(PDO $pdo): string
 
     $html = '<div class="registration-page">';
 
-    // Page heading and Add button.
+    // Page heading.
     $html .= '<div class="registration-page-heading">'
         . '<div class="registration-page-intro">'
         . page_intro(
@@ -48,22 +48,43 @@ function render_registration(PDO $pdo): string
             ''
         )
         . '</div>'
-        . '<button type="button" class="registration-add-btn" '
-        . 'id="openRegistrationModal">'
+        . '<button type="button" class="registration-add-btn registration-add-btn-desktop" '
+        . 'id="openRegistrationModalDesktop">'
         . '<span aria-hidden="true">＋</span> Add Registration'
         . '</button>'
         . '</div>';
     // Main card.
-    $html .= '<section class="card registration-history-card">';
+    $html .= '<section class="card registration-history-card">'
+        . '<div class="registration-directory-actions">'
+        . '<button type="button" class="registration-add-btn registration-add-btn-compact" '
+        . 'id="openRegistrationModalCompact">'
+        . '<span aria-hidden="true">＋</span> Add Registration'
+        . '</button>'
+        . '<div class="registration-header-actions">'
+        . '<button type="button" class="registration-header-toggle" '
+        . 'id="registration-search-toggle" aria-expanded="false" '
+        . 'aria-controls="registration-search-panel" title="Search" '
+        . 'aria-label="Search"><i class="fa fa-search" aria-hidden="true"></i>'
+        . '</button>'
+        . '<button type="button" class="registration-header-toggle" '
+        . 'id="registration-filters-toggle" aria-expanded="false" '
+        . 'aria-controls="registration-filter-panel" title="Filters" '
+        . 'aria-label="Filters"><i class="fa fa-sliders" aria-hidden="true"></i>'
+        . '</button>'
+        . '</div>'
+        . '</div>';
 
     // Search field.
     $html .= '<div class="registration-filters">'
+        . '<div id="registration-search-panel" class="registration-search-panel">'
         . '<input type="search" id="registrationSearch" '
         . 'placeholder="Search employee, ID, department, or training program..." '
-        . 'aria-label="Search registrations">';
+        . 'aria-label="Search registrations">'
+        . '</div>';
 
     // Filters.
-    $html .= '<div class="registration-filter-row">'
+    $html .= '<div id="registration-filter-panel" class="registration-filter-panel">'
+        . '<div class="registration-filter-row">'
         . '<select id="registrationDepartment" aria-label="Filter by department">'
         . '<option value="">All Departments</option>';
 
@@ -84,7 +105,7 @@ function render_registration(PDO $pdo): string
     $html .= '</select>'
         . '<button type="button" class="registration-clear-filters" '
         . 'id="clearRegistrationFilters">Clear filters</button>'
-        . '</div></div>';
+        . '</div></div></div>';
 
     // Table rows.
     $html .= '<div class="table-wrap registration-table-wrap" data-max-rows="5">'
@@ -95,6 +116,7 @@ function render_registration(PDO $pdo): string
         . '<th>TRAINING PROGRAM</th>'
         . '<th>TRAINING DATE</th>'
         . '<th>STATUS</th>'
+        . '<th>ACTION</th>'
         . '</tr></thead><tbody>';
 
     foreach ($joined as $r) {
@@ -123,9 +145,12 @@ function render_registration(PDO $pdo): string
 
         $html .= '<tr data-search="' . h($searchText) . '" '
             . 'data-department="' . h($department) . '" '
-            . 'data-status="' . h($status) . '">';
+            . 'data-status="' . h($status) . '" '
+            . 'data-registration-id="' . (int)$r['id'] . '" '
+            . 'data-employee-id="' . (int)$r['employee_id'] . '" '
+            . 'data-program-id="' . (int)$r['program_id'] . '">';
 
-        $html .= '<td>'
+        $html .= '<td data-label="Faculty member">'
             . '<div class="registration-faculty-member">'
             . '<span class="registration-faculty-avatar" aria-hidden="true">'
             . h($initials !== '' ? $initials : '?')
@@ -136,18 +161,35 @@ function render_registration(PDO $pdo): string
             . '</span>'
             . '</div>'
             . '</td>'
-            . '<td>' . h($department !== '' ? $department : '—') . '</td>'
-            . '<td>' . h($programTitle) . '</td>'
-            . '<td>' . ($trainingDate !== ''
+            . '<td data-label="Department">' . h($department !== '' ? $department : '—') . '</td>'
+            . '<td data-label="Training program">' . h($programTitle) . '</td>'
+            . '<td data-label="Training date">' . ($trainingDate !== ''
                 ? h(date('M j, Y', strtotime($trainingDate)))
                 : '—') . '</td>'
-            . '<td>' . badge($status) . '</td>'
+            . '<td data-label="Status">' . badge($status) . '</td>'
+            . '<td data-label="Action" class="registration-actions">'
+            . '<button type="button" class="registration-action registration-edit-action" '
+            . 'data-edit-registration aria-label="Edit registration for '
+            . h($employeeName) . '" title="Edit registration">'
+            . '<i class="fa fa-pencil" aria-hidden="true"></i>'
+            . '</button>'
+            . '<form method="post" class="registration-delete-form">'
+            . '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">'
+            . '<input type="hidden" name="action" value="delete_registration">'
+            . '<input type="hidden" name="registration_id" value="' . (int)$r['id'] . '">'
+            . '<button type="submit" class="registration-action registration-delete-action" '
+            . 'aria-label="Delete registration for ' . h($employeeName) . '" '
+            . 'title="Delete registration">'
+            . '<i class="fa fa-trash" aria-hidden="true"></i>'
+            . '</button>'
+            . '</form>'
+            . '</td>'
             . '</tr>';
     }
 
     if (!$joined) {
         $html .= '<tr class="registration-empty-row">'
-            . '<td colspan="5">No registrations have been created yet.</td>'
+            . '<td colspan="6">No registrations have been created yet.</td>'
             . '</tr>';
     }
 
@@ -229,6 +271,73 @@ function render_registration(PDO $pdo): string
         . icon('arrow', 14) . '</button>'
         . '</div></form></section></div>';
 
+    $html .= '<div class="registration-modal" id="editRegistrationModal" '
+        . 'aria-hidden="true">'
+        . '<div class="registration-modal-backdrop" '
+        . 'data-close-registration-modal></div>'
+        . '<section class="registration-modal-dialog" role="dialog" '
+        . 'aria-modal="true" aria-labelledby="editRegistrationModalTitle">'
+        . '<div class="registration-modal-header">'
+        . '<div><h2 id="editRegistrationModalTitle">Edit Registration</h2>'
+        . '<p>Update the employee, training program, or registration status.</p>'
+        . '</div>'
+        . '<button type="button" class="registration-modal-close" '
+        . 'aria-label="Close modal" data-close-registration-modal>×</button>'
+        . '</div>'
+        . '<form method="post" class="registration-form">'
+        . '<input type="hidden" name="csrf_token" value="' . h(csrf_token()) . '">'
+        . '<input type="hidden" name="action" value="update_registration">'
+        . '<input type="hidden" name="registration_id" id="edit-registration-id">'
+        . '<div class="form-field">'
+        . '<label for="edit-registration-employee">Employee *</label>'
+        . '<select id="edit-registration-employee" name="employee_id" required>';
+
+    foreach ($emps as $e) {
+        $employeeName = trim(
+            (string)($e['first_name'] ?? '') . ' '
+                . (string)($e['last_name'] ?? '')
+        );
+        $employeeLabel = trim(
+            (string)($e['employee_code'] ?? '') . ' · ' . $employeeName,
+            ' ·'
+        );
+        $html .= '<option value="' . (int)$e['id'] . '">'
+            . h($employeeLabel) . '</option>';
+    }
+
+    $html .= '</select></div>'
+        . '<div class="form-field">'
+        . '<label for="edit-registration-program">Training program *</label>'
+        . '<select id="edit-registration-program" name="program_id" required>';
+
+    foreach ($progs as $p) {
+        $dateLabel = !empty($p['start_date'])
+            ? date('M j, Y', strtotime((string)$p['start_date']))
+            : 'Date not set';
+        $programLabel = trim(
+            (string)($p['title'] ?? '') . ' · ' . $dateLabel,
+            ' ·'
+        );
+        $html .= '<option value="' . (int)$p['id'] . '">'
+            . h($programLabel) . '</option>';
+    }
+
+    $html .= '</select></div>'
+        . '<div class="form-field">'
+        . '<label for="edit-registration-status">Status *</label>'
+        . '<select id="edit-registration-status" name="status" required>'
+        . '<option value="Registered">Registered</option>'
+        . '<option value="In Progress">In Progress</option>'
+        . '<option value="Completed">Completed</option>'
+        . '<option value="Withdrawn">Withdrawn</option>'
+        . '</select></div>'
+        . '<div class="registration-modal-actions">'
+        . '<button type="button" class="btn btn-secondary" '
+        . 'data-close-registration-modal>Cancel</button>'
+        . '<button type="submit" class="btn">Save changes '
+        . icon('check', 14) . '</button>'
+        . '</div></form></section></div>';
+
     // Search, filters, and modal behavior.
     $html .= <<<'HTML'
 <script>
@@ -238,11 +347,22 @@ function render_registration(PDO $pdo): string
     root.dataset.registrationReady = 'true';
 
     const modal = root.querySelector('#registrationModal');
-    const openButton = root.querySelector('#openRegistrationModal');
+    const editModal = root.querySelector('#editRegistrationModal');
+    const openButtons = root.querySelectorAll(
+        '[id^="openRegistrationModal"]'
+    );
+    const editEmployee = root.querySelector('#edit-registration-employee');
+    const editProgram = root.querySelector('#edit-registration-program');
+    const editStatus = root.querySelector('#edit-registration-status');
+    const editId = root.querySelector('#edit-registration-id');
     const search = root.querySelector('#registrationSearch');
     const department = root.querySelector('#registrationDepartment');
     const status = root.querySelector('#registrationStatus');
     const clearButton = root.querySelector('#clearRegistrationFilters');
+    const searchToggle = root.querySelector('#registration-search-toggle');
+    const filtersToggle = root.querySelector('#registration-filters-toggle');
+    const searchPanel = root.querySelector('#registration-search-panel');
+    const filterPanel = root.querySelector('#registration-filter-panel');
     const table = root.querySelector('#registrationTable');
     const count = root.querySelector('#registrationCount');
 
@@ -276,7 +396,7 @@ function render_registration(PDO $pdo): string
                 emptyRow = document.createElement('tr');
                 emptyRow.className = 'registration-empty-row registration-filter-empty';
                 emptyRow.innerHTML =
-                    '<td colspan="5">No matching registrations found.</td>';
+                    '<td colspan="6">No matching registrations found.</td>';
                 table.tBodies[0].appendChild(emptyRow);
             }
             emptyRow.hidden = false;
@@ -300,19 +420,76 @@ function render_registration(PDO $pdo): string
         modal.classList.remove('is-open');
         modal.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('registration-modal-open');
-        if (openButton) openButton.focus();
+        if (openButtons.length > 0) openButtons[0].focus();
     }
 
-    openButton.addEventListener('click', openModal);
+    function openEditModal(row) {
+        editId.value = row.dataset.registrationId || '';
+        editEmployee.value = row.dataset.employeeId || '';
+        editProgram.value = row.dataset.programId || '';
+        editStatus.value = row.dataset.status || 'Registered';
+        editModal.classList.add('is-open');
+        editModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('registration-modal-open');
+        editEmployee.focus();
+    }
 
-    modal.querySelectorAll('[data-close-registration-modal]')
+    function closeEditModal() {
+        editModal.classList.remove('is-open');
+        editModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('registration-modal-open');
+    }
+
+    openButtons.forEach(function (button) {
+        button.addEventListener('click', openModal);
+    });
+
+    searchToggle.addEventListener('click', function () {
+        const isOpen = root.classList.toggle('registration-search-open');
+        searchToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (isOpen) search.focus();
+    });
+
+    filtersToggle.addEventListener('click', function () {
+        const isOpen = root.classList.toggle('registration-filters-open');
+        filtersToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    root.querySelectorAll('[data-close-registration-modal]')
         .forEach(function (button) {
-            button.addEventListener('click', closeModal);
+            button.addEventListener('click', function () {
+                if (button.closest('#editRegistrationModal')) {
+                    closeEditModal();
+                    return;
+                }
+                closeModal();
+            });
+        });
+
+    root.querySelectorAll('[data-edit-registration]')
+        .forEach(function (button) {
+            button.addEventListener('click', function () {
+                openEditModal(button.closest('tr'));
+            });
+        });
+
+    root.querySelectorAll('.registration-delete-form')
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!window.confirm(
+                    'Delete this registration? Related attendance, evaluation, and certificate records will also be deleted.'
+                )) {
+                    event.preventDefault();
+                }
+            });
         });
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && modal.classList.contains('is-open')) {
             closeModal();
+        }
+        if (event.key === 'Escape' && editModal.classList.contains('is-open')) {
+            closeEditModal();
         }
     });
 

@@ -37,14 +37,16 @@ function render_table(
         foreach ($rows as $row) {
             $html .= '<tr>';
 
-            foreach (array_slice(array_values($row), 0, $columnCount) as $cell) {
-                $html .= '<td>' . (string)$cell . '</td>';
+            foreach (array_slice(array_values($row), 0, $columnCount) as $index => $cell) {
+                $html .= '<td data-label="' . h((string) $headers[$index]) . '">'
+                    . (string) $cell
+                    . '</td>';
             }
 
             // Keep every row aligned with the header count if a cell is missing.
             $missingCells = $columnCount - count($row);
             for ($i = 0; $i < $missingCells; $i++) {
-                $html .= '<td></td>';
+                $html .= '<td data-label="' . h((string) $headers[count($row) + $i]) . '"></td>';
             }
 
             $html .= '</tr>';

@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^php -l C:\\\\xampp\\\\htdocs\\\\hr_training\\\\includes\\\\login\\.php$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

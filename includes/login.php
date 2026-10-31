@@ -61,7 +61,8 @@ function render_login(?array $flash): void
                             type="email"
                             required
                             autocomplete="username"
-                            aria-label="Email address">
+                            aria-label="Email address"
+                            placeholder="Enter your email">
 
                         <label class="field-label" for="login-password">Password</label>
                         <div class="password-field">
@@ -71,7 +72,8 @@ function render_login(?array $flash): void
                                 name="password"
                                 type="password"
                                 required
-                                autocomplete="current-password">
+                                autocomplete="current-password"
+                                placeholder="Enter your password">
                             <button
                                 type="button"
                                 class="icon-btn"
@@ -80,13 +82,10 @@ function render_login(?array $flash): void
                         </div>
 
                         <div class="form-meta">
-                            <label>
-                                <input type="checkbox"> Remember me
-                            </label>
                             <span class="small-muted">Forgot password? Contact your HR officer.</span>
                         </div>
 
-                        <button class="btn" type="submit">Sign in securely <?= icon('arrow') ?></button>
+                        <button class="btn" type="submit">Log in <?= icon('arrow') ?></button>
 
                         <p class="privacy"><?= icon('shield', 15) ?> Your information is protected by the school's data privacy policy.</p>
                     </form>

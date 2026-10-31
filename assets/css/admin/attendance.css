@@ -317,6 +317,91 @@
 }
 
 @media (max-width: 760px) {
+    .attendance-page .attendance-table-wrap {
+        max-height: none !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        scrollbar-width: none;
+    }
+
+    .attendance-page .attendance-table {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .attendance-page .attendance-table thead {
+        display: none;
+    }
+
+    .attendance-page .attendance-table tbody {
+        display: grid;
+        gap: 12px;
+    }
+
+    .attendance-page .attendance-table tbody tr {
+        display: grid;
+        gap: 0;
+        border: 1px solid #e8e5e1;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 2px 6px rgb(15 23 42 / 4%);
+        overflow: hidden;
+    }
+
+    .attendance-page .attendance-table tbody td {
+        display: grid;
+        grid-template-columns: minmax(105px, 34%) minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        width: auto;
+        padding: 12px 14px;
+        border-bottom: 1px solid #efede9;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    .attendance-page .attendance-table tbody td::before {
+        content: attr(data-label);
+        color: var(--muted, #73747a);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .045em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
+    .attendance-page .attendance-table tbody td:first-child {
+        display: block;
+        padding: 14px;
+        background: white;
+    }
+
+    .attendance-page .attendance-table tbody td:first-child::before {
+        display: block;
+        margin-bottom: 9px;
+    }
+
+    .attendance-page .attendance-table tbody td:last-child {
+        border-bottom: 0;
+    }
+
+    .attendance-page .attendance-table tbody tr:hover {
+        background: #fff;
+    }
+
+    .attendance-page .attendance-table tbody tr:hover td:first-child {
+        background: white;
+    }
+
+    .attendance-page .attendance-table .attendance-time-wrap {
+        width: 100%;
+    }
+
+    .attendance-page .attendance-table .table-input {
+        min-width: 0;
+    }
+
     .attendance-page .session-banner {
         flex-wrap: wrap;
         align-items: flex-start;

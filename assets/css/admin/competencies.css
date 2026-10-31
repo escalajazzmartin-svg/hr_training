@@ -212,6 +212,11 @@ html {
     background: #faf9f7;
 }
 
+.competency-directory-actions,
+.competency-directory-add {
+    display: none;
+}
+
 /* Table scrolling area */
 .competency-table-scroll {
     position: relative;
@@ -401,6 +406,110 @@ html {
     }
 }
 
+@media (max-width: 900px) {
+    .competency-table-scroll {
+        width: 100%;
+        max-width: 100%;
+        max-height: none !important;
+        overflow: visible !important;
+        overscroll-behavior: auto !important;
+        touch-action: pan-y;
+    }
+
+    .competency-table {
+        display: block;
+        width: 100%;
+        min-width: 0 !important;
+        max-width: 100%;
+    }
+
+    .competency-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .competency-table tbody,
+    .competency-table tr,
+    .competency-table td {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) {
+        display: block;
+        margin: 0 0 .75rem;
+        padding: .8rem;
+        border: 1px solid var(--line);
+        border-radius: .75rem;
+        background: var(--surface);
+        box-shadow: 0 2px 8px rgba(35, 25, 20, .04);
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)):last-child {
+        margin-bottom: 0;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) td {
+        display: grid;
+        grid-template-columns: minmax(6.5rem, 34%) minmax(0, 1fr);
+        gap: .6rem;
+        align-items: start;
+        justify-items: start;
+        padding: .55rem 0;
+        border: 0;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+        text-align: left;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) td + td {
+        border-top: 1px solid #f0eeea;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: var(--text-xs);
+        font-weight: 700;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) td > * {
+        min-width: 0;
+        max-width: 100%;
+        justify-self: start;
+        text-align: left;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) .competency-person-cell {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) .competency-person-copy strong,
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) .competency-person-copy small {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .competency-table tbody tr:not([hidden]):not(:has(.competency-empty)) .competency-progress {
+        width: 100%;
+    }
+
+    .competency-table tbody tr:has(.competency-empty) td {
+        display: block;
+        padding: .75rem 0;
+        border: 0;
+    }
+}
+
 @media (max-width: 520px) {
     .competency-page-toolbar {
         align-items: flex-start;
@@ -426,5 +535,61 @@ html {
     .competency-clear-filters {
         height: 46px;
         min-height: 46px;
+    }
+}
+
+@media (max-width: 600px) {
+    .competency-page-add {
+        display: none;
+    }
+
+    .competency-directory-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: .45rem;
+        margin-bottom: .75rem;
+    }
+
+    .competency-directory-add,
+    .competency-directory-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 1px solid var(--card-border, #e7e1d9);
+        border-radius: .55rem;
+        background: var(--surface, #fff);
+        color: var(--maroon);
+        font-size: var(--text-sm);
+        cursor: pointer;
+    }
+
+    .competency-directory-add {
+        color: #fff;
+        background: var(--maroon);
+        border-color: var(--maroon);
+    }
+
+    .competency-directory-add:hover,
+    .competency-directory-add:focus-visible {
+        color: #fff;
+        background: var(--maroon-dark);
+    }
+
+    .competency-directory-actions #competency-search-toggle {
+        margin-left: auto;
+    }
+
+    .competency-search-panel,
+    .competency-filters-panel {
+        display: none;
+    }
+
+    .competency-directory-card.search-open .competency-search-panel,
+    .competency-directory-card.filters-open .competency-filters-panel {
+        display: block;
     }
 }
